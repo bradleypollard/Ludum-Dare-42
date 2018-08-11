@@ -6,8 +6,7 @@ public enum GateType
 {
 	Add,
 	Subtract,
-	Increment,
-	Decrement,
+	IncrementDecrement,
 	Multiply,
 	Divide,
 	Cross

@@ -111,10 +111,17 @@ public class GridManager : MonoBehaviour
 	{
 		uint x = 0;
 		uint y = (uint)Random.Range( 1, DimensionY );
-		int value = Random.Range( 1, MaxInputValue );
+		int value = Random.Range( 1, MaxInputValue + 1 );
+		while( GetCell( new CellCoordinates( x, y ) ) != null )
+		{
+			y = (uint)Random.Range( 1, DimensionY );
+		}
 
-		m_inputs.Add( new InputCell( new CellCoordinates( x, y ), ObjectOrientation.Or0, value ) );
+		InputCell input = new InputCell( new CellCoordinates( x, y ), ObjectOrientation.Or0, value );
+		m_inputs.Add( input );
+		InsertObject( input );
 		Debug.Log( "GridManager: Input added - (" + x + "," + y + ") value " + value );
+
 	}
 
 	private void GenerateOutputs()
@@ -136,11 +143,17 @@ public class GridManager : MonoBehaviour
 
 	private void GenerateOutput()
 	{
-		uint x = DimensionX;
+		uint x = DimensionX + 1;
 		uint y = (uint)Random.Range( 1, DimensionY );
-		int target = Random.Range( 1, MaxOutputTarget );
+		int target = Random.Range( 1, MaxOutputTarget + 1 );
+		while ( GetCell( new CellCoordinates( x, y ) ) != null )
+		{
+			y = (uint)Random.Range( 1, DimensionY );
+		}
 
-		m_outputs.Add( new OutputCell( new CellCoordinates( x, y ), ObjectOrientation.Or0, target ) );
+		OutputCell output = ( new OutputCell( new CellCoordinates( x, y ), ObjectOrientation.Or0, target ) );
+		m_outputs.Add( output );
+		InsertObject( output );
 		Debug.Log( "GridManager: Output added - (" + x + "," + y + ") target " + target );
 	}
 
@@ -196,9 +209,9 @@ public class GridManager : MonoBehaviour
 			{
 				// Need to solve all outputs next
 				GridObject output = GetCell( _gate.Outputs[i] );
-				if ( output != null)
+				if ( output != null )
 				{
-					ret.Add(output);
+					ret.Add( output );
 				}
 			}
 		}

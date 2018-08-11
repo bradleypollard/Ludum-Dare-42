@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SubtractionGate : Gate
+public class SubtractGate : Gate
 {
-    public SubtractionGate( CellCoordinates _coordinates, ObjectOrientation _orientation )
+	public SubtractGate( CellCoordinates _coordinates, ObjectOrientation _orientation )
 		: base( FindFootprint( _coordinates, _orientation ), FindInputs( _coordinates, _orientation ), FindOutputs( _coordinates, _orientation ), GateType.Subtract )
 	{
 	}

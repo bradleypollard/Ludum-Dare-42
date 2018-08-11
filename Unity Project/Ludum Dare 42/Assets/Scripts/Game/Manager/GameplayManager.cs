@@ -138,7 +138,7 @@ public class GameplayManager : MonoBehaviour
         {
             case GateType.Subtract:
             {
-                gridObject = new SubtractionGate(_coordinates, _orientation);
+                gridObject = new SubtractGate(_coordinates, _orientation);
                 break;
             }
         }
