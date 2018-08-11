@@ -7,7 +7,7 @@ public class InputCell : GridObject
 	public readonly int InputValue;
 	public readonly CellCoordinates Exit;
 
-	InputCell( CellCoordinates _coordinates, ObjectOrientation _orientation, int _value )
+	public InputCell( CellCoordinates _coordinates, ObjectOrientation _orientation, int _value )
 		: base( GridObjectType.Input, FindFootprint( _coordinates, _orientation ) )
 	{
 		InputValue = _value;

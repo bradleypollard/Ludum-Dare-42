@@ -7,7 +7,7 @@ public class OutputCell : GridObject
 	public readonly int OutputTarget;
 	public readonly CellCoordinates Entry;
 
-	OutputCell( CellCoordinates _coordinates, ObjectOrientation _orientation, int _target )
+	public OutputCell( CellCoordinates _coordinates, ObjectOrientation _orientation, int _target )
 		: base( GridObjectType.Input, FindFootprint( _coordinates, _orientation ) )
 	{
 		OutputTarget = _target;

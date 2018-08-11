@@ -9,6 +9,11 @@ public class SubtractionGate : Gate
 	{
 	}
 
+	public override void DoOperation()
+	{
+		base.DoOperation();
+	}
+
 	private static CellCoordinates[] FindFootprint( CellCoordinates _coordinates, ObjectOrientation _orientation )
 	{
 		return GridObjectOrientationHelper.Find2x1Footprint( _coordinates, _orientation );

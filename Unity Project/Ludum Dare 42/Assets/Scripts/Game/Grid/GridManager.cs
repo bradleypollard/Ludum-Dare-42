@@ -5,22 +5,52 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
 	public int Dimension;
+	public uint NumInputs = 3;
+	public uint NumStartingOutputs = 1;
+	public uint NumOutputsPerGeneration = 1;
+	public bool IsSolved = false;
 
 	private GridObject[,] m_grid;
+	private uint m_generation;
+	private List<InputCell> m_inputs;
+	private List<OutputCell> m_outputs;
 
 	// Use this for initialization
 	void Start()
 	{
-		ClearGrid();
+		Initialise();
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
-		// TODO: Parse grid, work out input/outputs
+		Solve();
 	}
 
 	// API
+	public void Initialise()
+	{
+		ClearGrid();
+		GenerateInputs();
+		GenerateOutputs();
+	}
+
+	public List<InputCell> GetInputs()
+	{
+		return m_inputs;
+	}
+
+	public List<OutputCell> GetOutputs()
+	{
+		return m_outputs;
+	}
+
+	public void AdvanceGeneration()
+	{
+		m_generation++;
+		GenerateOutputs();
+	}
+
 	public void InsertObject( GridObject _object )
 	{
 		// Inserts the given GridObject into all the coordinates it occupies
@@ -51,7 +81,31 @@ public class GridManager : MonoBehaviour
 	private void ClearGrid()
 	{
 		// Generate grid 2 cells larger than required for inputs and outputs. 
-		// Player can only edit the centre Dimension x Dimension grid
+		// Player can only edit the centre Dimension x Dimension grid.
 		m_grid = new GridObject[Dimension + 2, Dimension + 2];
+		m_generation = 0;
+		m_inputs = new List<InputCell>();
+		m_outputs = new List<OutputCell>();
+	}
+
+	private void GenerateInputs()
+	{
+		// Create the initial starting input GridObjects and place them in the grid.
+		for ( uint i = 0; i < NumInputs; ++i )
+		{
+
+		}
+	}
+
+	private void GenerateOutputs()
+	{
+		// Generate outputs needed for the current generation, preserving existing outputs
+		// for the generation.
+	}
+
+	private void Solve()
+	{
+		// Attempt to solve the grid to determine if you are a good boi.
+		IsSolved = false;
 	}
 }
