@@ -10,8 +10,19 @@ public class OutputCell : GridObject
 	public OutputCell( CellCoordinates _coordinates, ObjectOrientation _orientation, int _target )
 		: base( GridObjectType.Input, FindFootprint( _coordinates, _orientation ) )
 	{
+		CurrentValues = new int[1];
 		OutputTarget = _target;
 		Entry = GridObjectOrientationHelper.Find1x1OffsetLeft( _coordinates, _orientation );
+	}
+
+	public bool IsCurrentlySatisfied()
+	{
+		return OutputTarget == CurrentValues[0];
+	}
+
+	public override int GetValueForCoordinate( CellCoordinates _coordinates )
+	{
+		return CurrentValues[0];
 	}
 
 	private static CellCoordinates[] FindFootprint( CellCoordinates _coordinates, ObjectOrientation _orientation )

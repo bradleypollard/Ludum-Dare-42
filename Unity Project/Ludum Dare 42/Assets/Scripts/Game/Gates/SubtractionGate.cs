@@ -20,6 +20,18 @@ public class SubtractionGate : Gate
 		return new int[] { result };
 	}
 
+	public override CellCoordinates GetCoordinateForInput( uint input )
+	{
+		if ( input == 0 )
+		{
+			return Coordinates[0];
+		}
+		else
+		{
+			return Coordinates[1];
+		}
+	}
+
 	private static CellCoordinates[] FindFootprint( CellCoordinates _coordinates, ObjectOrientation _orientation )
 	{
 		return GridObjectOrientationHelper.Find2x1Footprint( _coordinates, _orientation );

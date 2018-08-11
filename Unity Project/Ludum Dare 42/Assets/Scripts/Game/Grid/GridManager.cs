@@ -59,7 +59,7 @@ public class GridManager : MonoBehaviour
 		// Inserts the given GridObject into all the coordinates it occupies
 		for ( uint i = 0; i < _object.Coordinates.Length; ++i )
 		{
-			if ( m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] != null )
+			if ( GetCell( _object.Coordinates[i] ) != null )
 			{
 				Debug.LogError( "GridManager: Inserting a GridObject into an occupied cell - (" + _object.Coordinates[i].X.ToString() + "," + _object.Coordinates[i].Y.ToString() + ")" );
 			}
@@ -83,6 +83,11 @@ public class GridManager : MonoBehaviour
 	}
 
 	///////////////////////// Helpers /////////////////////////
+	private GridObject GetCell( CellCoordinates _coordinates )
+	{
+		return m_grid[_coordinates.X, _coordinates.Y];
+	}
+
 	private void ClearGrid()
 	{
 		// Generate grid 2 cells larger than required for inputs and outputs.
@@ -139,11 +144,164 @@ public class GridManager : MonoBehaviour
 		Debug.Log( "GridManager: Output added - (" + x + "," + y + ") target " + target );
 	}
 
+	private List<GridObject> SolveWire( Wire _wire, List<GridObject> _checkedObjects )
+	{
+		GridObject entry = GetCell( _wire.Entry );
+		if ( !_checkedObjects.Contains( entry ) )
+		{
+			Debug.LogError( "GridManager: SolveWire encountered a wire whose entry has not been solved!" );
+		}
+		_wire.CurrentValues = new int[] { entry.GetValueForCoordinate( _wire.Coordinates[0] ) }; // Assumes wires are 1x1
+		GridObject exit = GetCell( _wire.Exit );
+		if ( exit != null )
+		{
+			return new List<GridObject> { exit };
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	private List<GridObject> SolveGate( Gate _gate, List<GridObject> _checkedObjects )
+	{
+		List<GridObject> ret = new List<GridObject> { _gate };
+		GridObject[] inputs = new GridObject[_gate.Inputs.Length];
+		bool ready = true;
+		for ( uint i = 0; i < inputs.Length; ++i )
+		{
+			// Check if all inputs have been solved
+			inputs[i] = GetCell( _gate.Inputs[i] );
+			if ( !_checkedObjects.Contains( inputs[i] ) )
+			{
+				Debug.Log( "GridManager: Input for gate not yet solved, skipping gate." );
+				ready = false;
+				break;
+			}
+		}
+		if ( ready )
+		{
+			Debug.Log( "GridManager: All inputs for gate solved, solving gate." ); // TODO: log coords
+			int[] inputValues = new int[inputs.Length];
+			for ( uint i = 0; i < inputs.Length; ++i )
+			{
+				// Get value for coordinate which depepnds on which input we are getting 
+				inputValues[i] = inputs[i].GetValueForCoordinate( _gate.GetCoordinateForInput( i ) );
+			}
+			// Actually perform the operation
+			_gate.DoOperation( inputValues );
+
+			ret = new List<GridObject>();
+			for ( uint i = 0; i < _gate.Outputs.Length; ++i )
+			{
+				// Need to solve all outputs next
+				GridObject output = GetCell( _gate.Outputs[i] );
+				if ( output != null)
+				{
+					ret.Add(output);
+				}
+			}
+		}
+		return ret.Count != 0 ? ret : null;
+	}
+
+	private List<GridObject> SolveInput( InputCell _inputCell, List<GridObject> _checkedObjects )
+	{
+		_inputCell.CurrentValues = new int[] { _inputCell.InputValue };
+		GridObject exit = GetCell( _inputCell.Exit );
+		if ( exit != null )
+		{
+			return new List<GridObject> { exit };
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	private List<GridObject> SolveOutput( OutputCell _outputCell, List<GridObject> _checkedObjects )
+	{
+		GridObject entry = GetCell( _outputCell.Entry );
+		if ( !_checkedObjects.Contains( entry ) )
+		{
+			Debug.LogError( "GridManager: SolveOutput encountered an output whose entry has not been solved!" );
+		}
+		_outputCell.CurrentValues = new int[] { entry.GetValueForCoordinate( _outputCell.Coordinates[0] ) }; // Assumes outputs are 1x1
+		return null;
+	}
+
 	private void Solve()
 	{
 		// Attempt to solve the grid to determine if you are a good boi.
+		Queue<GridObject> objectsToCheck = new Queue<GridObject>();
+		Queue<GridObject> objectsToCheckNextPass = new Queue<GridObject>();
+		List<GridObject> checkedObjects = new List<GridObject>();
+		foreach ( InputCell input in m_inputs )
+		{
+			objectsToCheck.Enqueue( input );
+		}
+
+		bool didWork = true;
+		while ( didWork )
+		{
+			didWork = false;
+			while ( objectsToCheck.Count != 0 )
+			{
+				// Solve all the current objects
+				GridObject head = objectsToCheck.Dequeue();
+				List<GridObject> next = null;
+				switch ( head.ObjectType )
+				{
+					case GridObjectType.Wire:
+					{
+						next = SolveWire( (Wire)head, checkedObjects );
+						break;
+					}
+					case GridObjectType.Gate:
+					{
+						next = SolveGate( (Gate)head, checkedObjects );
+						break;
+					}
+					case GridObjectType.Input:
+					{
+						next = SolveInput( (InputCell)head, checkedObjects );
+						break;
+					}
+					case GridObjectType.Output:
+					{
+						next = SolveOutput( (OutputCell)head, checkedObjects );
+						break;
+					}
+				}
+
+				if ( next == null || ( !next.Contains( head ) && next.Count == 1 ) )
+				{
+					// We found some new objects to solve (explicity NOT the same ones as before), and this one has now been solved
+					didWork = true;
+					checkedObjects.Add( head );
+				}
+
+				if ( next != null )
+				{
+					// Enqueue new objects to solve
+					foreach ( GridObject obj in next )
+					{
+						objectsToCheckNextPass.Enqueue( obj );
+					}
+				}
+			}
+			// Prepare to check new objects
+			objectsToCheck = objectsToCheckNextPass;
+		}
+
 		IsSolved = true;
-
-
+		foreach ( OutputCell output in m_outputs )
+		{
+			if ( !output.IsCurrentlySatisfied() )
+			{
+				IsSolved = false;
+				break;
+			}
+		}
 	}
 }

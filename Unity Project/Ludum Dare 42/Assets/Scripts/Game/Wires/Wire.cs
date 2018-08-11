@@ -16,7 +16,13 @@ public abstract class Wire : GridObject
 
 	protected Wire( CellCoordinates[] _coordinates, CellCoordinates _entry, CellCoordinates _exit, WireType _wire ) : base( GridObjectType.Wire, _coordinates )
 	{
+		CurrentValues = new int[1];
 		Entry = _entry;
 		Exit = _exit;
+	}
+
+	public override int GetValueForCoordinate( CellCoordinates _coordinates )
+	{
+		return CurrentValues[0];
 	}
 }
