@@ -8,7 +8,7 @@ public class OutputCell : GridObject
 	public readonly CellCoordinates Entry;
 
 	public OutputCell( CellCoordinates _coordinates, ObjectOrientation _orientation, int _target )
-		: base( GridObjectType.Input, FindFootprint( _coordinates, _orientation ) )
+		: base( GridObjectType.Output, FindFootprint( _coordinates, _orientation ) )
 	{
 		CurrentValues = new int[1];
 		OutputTarget = _target;

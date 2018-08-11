@@ -20,7 +20,6 @@ public class GridManager : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		Initialise();
 	}
 
 	// Update is called once per frame
@@ -139,6 +138,7 @@ public class GridManager : MonoBehaviour
 		{
 			GenerateOutput();
 		}
+		IsSolved = false;
 	}
 
 	private void GenerateOutput()
@@ -194,7 +194,6 @@ public class GridManager : MonoBehaviour
 		}
 		if ( ready )
 		{
-			Debug.Log( "GridManager: All inputs for gate solved, solving gate." ); // TODO: log coords
 			int[] inputValues = new int[inputs.Length];
 			for ( uint i = 0; i < inputs.Length; ++i )
 			{
@@ -247,7 +246,6 @@ public class GridManager : MonoBehaviour
 	{
 		// Attempt to solve the grid to determine if you are a good boi.
 		Queue<GridObject> objectsToCheck = new Queue<GridObject>();
-		Queue<GridObject> objectsToCheckNextPass = new Queue<GridObject>();
 		List<GridObject> checkedObjects = new List<GridObject>();
 		foreach ( InputCell input in m_inputs )
 		{
@@ -258,6 +256,7 @@ public class GridManager : MonoBehaviour
 		while ( didWork )
 		{
 			didWork = false;
+			Queue<GridObject> objectsToCheckNextPass = new Queue<GridObject>();
 			while ( objectsToCheck.Count != 0 )
 			{
 				// Solve all the current objects
@@ -299,12 +298,15 @@ public class GridManager : MonoBehaviour
 					// Enqueue new objects to solve
 					foreach ( GridObject obj in next )
 					{
-						objectsToCheckNextPass.Enqueue( obj );
+						if ( !objectsToCheckNextPass.Contains( obj ) )
+						{
+							objectsToCheckNextPass.Enqueue( obj );
+						}
 					}
 				}
 			}
 			// Prepare to check new objects
-			objectsToCheck = objectsToCheckNextPass;
+			objectsToCheck = new Queue<GridObject>( objectsToCheckNextPass );
 		}
 
 		IsSolved = true;

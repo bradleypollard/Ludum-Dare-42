@@ -26,7 +26,7 @@ public abstract class Gate : GridObject
 		Type = _type;
 	}
 
-	public abstract int[] DoOperation( int[] _inputs );
+	public abstract void DoOperation( int[] _inputs );
 
 	public virtual CellCoordinates GetCoordinateForInput( uint input )
 	{

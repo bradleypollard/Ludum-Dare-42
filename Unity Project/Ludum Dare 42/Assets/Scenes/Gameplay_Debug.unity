@@ -2415,8 +2415,8 @@ MonoBehaviour:
   NumInputs: 3
   NumStartingOutputs: 1
   NumOutputsPerGeneration: 1
-  MaxInputValue: 10
-  MaxOutputTarget: 10
+  MaxInputValue: 2
+  MaxOutputTarget: 1
   IsSolved: 0
 --- !u!1 &2110602833
 GameObject:

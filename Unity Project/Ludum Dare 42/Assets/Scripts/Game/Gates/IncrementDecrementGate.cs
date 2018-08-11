@@ -12,7 +12,7 @@ public class IncrementDecrementGate : Gate
 		m_amount = _amount;
 	}
 
-	public override int[] DoOperation( int[] _inputs )
+	public override void DoOperation( int[] _inputs )
 	{
 		if ( _inputs.Length != 1 )
 		{
@@ -20,7 +20,7 @@ public class IncrementDecrementGate : Gate
 		}
 
 		int result = _inputs[0] + m_amount;
-		return new int[] { result };
+		CurrentValues = new int[] { result };
 	}
 
 	private static CellCoordinates[] FindFootprint( CellCoordinates _coordinates, ObjectOrientation _orientation )

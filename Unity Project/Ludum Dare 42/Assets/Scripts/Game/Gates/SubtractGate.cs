@@ -9,7 +9,7 @@ public class SubtractGate : Gate
 	{
 	}
 
-	public override int[] DoOperation( int[] _inputs )
+	public override void DoOperation( int[] _inputs )
 	{
 		if ( _inputs.Length != 2 )
 		{
@@ -17,7 +17,7 @@ public class SubtractGate : Gate
 		}
 
 		int result = _inputs[0] - _inputs[1];
-		return new int[] { result };
+		CurrentValues = new int[] { result };
 	}
 
 	public override CellCoordinates GetCoordinateForInput( uint input )
