@@ -9,9 +9,15 @@ public class SubtractionGate : Gate
 	{
 	}
 
-	public override void DoOperation()
+	public override int[] DoOperation( int[] _inputs )
 	{
-		base.DoOperation();
+		if ( _inputs.Length != 2 )
+		{
+			Debug.LogError( "SubtractionGate: Expected 2 inputs got " + _inputs.Length );
+		}
+
+		int result = _inputs[0] - _inputs[1];
+		return new int[] { result };
 	}
 
 	private static CellCoordinates[] FindFootprint( CellCoordinates _coordinates, ObjectOrientation _orientation )

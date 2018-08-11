@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-	public int DimensionX, DimensionY;
+	public uint DimensionX, DimensionY;
 	public uint NumInputs = 3;
 	public uint NumStartingOutputs = 1;
 	public uint NumOutputsPerGeneration = 1;
+	public int MaxInputValue = 10;
+	public int MaxOutputTarget = 10;
 	public bool IsSolved = false;
 
 	private GridObject[,] m_grid;
@@ -27,7 +29,7 @@ public class GridManager : MonoBehaviour
 		Solve();
 	}
 
-	// API
+	///////////////////////// API /////////////////////////
 	public void Initialise()
 	{
 		ClearGrid();
@@ -48,6 +50,7 @@ public class GridManager : MonoBehaviour
 	public void AdvanceGeneration()
 	{
 		m_generation++;
+		Debug.Log( "GridManager: Generation advanced - " + m_generation );
 		GenerateOutputs();
 	}
 
@@ -58,11 +61,11 @@ public class GridManager : MonoBehaviour
 		{
 			if ( m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] != null )
 			{
-				Debug.LogError( "Inserting a GridObject into an occupied cell." );
+				Debug.LogError( "GridManager: Inserting a GridObject into an occupied cell - (" + _object.Coordinates[i].X.ToString() + "," + _object.Coordinates[i].Y.ToString() + ")" );
 			}
 
-            Debug.Log("Inserting a GridObject into " + _object.Coordinates[i].X.ToString() + ", " + _object.Coordinates[i].Y.ToString());
-            m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] = _object;
+			Debug.Log( "GridManager: Inserting a GridObject into (" + _object.Coordinates[i].X.ToString() + "," + _object.Coordinates[i].Y.ToString() + ")" );
+			m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] = _object;
 		}
 	}
 
@@ -79,7 +82,7 @@ public class GridManager : MonoBehaviour
 		}
 	}
 
-	// Helpers
+	///////////////////////// Helpers /////////////////////////
 	private void ClearGrid()
 	{
 		// Generate grid 2 cells larger than required for inputs and outputs.
@@ -95,19 +98,52 @@ public class GridManager : MonoBehaviour
 		// Create the initial starting input GridObjects and place them in the grid.
 		for ( uint i = 0; i < NumInputs; ++i )
 		{
-
+			GenerateInput();
 		}
+	}
+
+	private void GenerateInput()
+	{
+		uint x = 0;
+		uint y = (uint)Random.Range( 1, DimensionY );
+		int value = Random.Range( 1, MaxInputValue );
+
+		m_inputs.Add( new InputCell( new CellCoordinates( x, y ), ObjectOrientation.Or0, value ) );
+		Debug.Log( "GridManager: Input added - (" + x + "," + y + ") value " + value );
 	}
 
 	private void GenerateOutputs()
 	{
 		// Generate outputs needed for the current generation, preserving existing outputs
 		// for the generation.
+		if ( m_generation == 0 )
+		{
+			for ( uint i = 0; i < NumStartingOutputs; ++i )
+			{
+				GenerateOutput();
+			}
+		}
+		else
+		{
+			GenerateOutput();
+		}
+	}
+
+	private void GenerateOutput()
+	{
+		uint x = DimensionX;
+		uint y = (uint)Random.Range( 1, DimensionY );
+		int target = Random.Range( 1, MaxOutputTarget );
+
+		m_outputs.Add( new OutputCell( new CellCoordinates( x, y ), ObjectOrientation.Or0, target ) );
+		Debug.Log( "GridManager: Output added - (" + x + "," + y + ") target " + target );
 	}
 
 	private void Solve()
 	{
 		// Attempt to solve the grid to determine if you are a good boi.
-		IsSolved = false;
+		IsSolved = true;
+
+
 	}
 }

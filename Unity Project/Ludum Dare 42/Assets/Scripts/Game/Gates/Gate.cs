@@ -24,8 +24,5 @@ public abstract class Gate : GridObject
 		Type = _type;
 	}
 
-	public virtual void DoOperation()
-	{
-		// Implement me in base class
-	}
+	public abstract int[] DoOperation( int[] _inputs );
 }
