@@ -62,24 +62,12 @@ public class VisualGridManager : MonoBehaviour
         return false;
     }
 
-    public void Update()
+    public Vector2 GetScreenFromGrid(CellCoordinates _coordinates)
     {
-        if (isDebug)
-        {
-            Vector2 gridSize = new Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
-            Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
+        Vector2 gridSize = new Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
+        Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
 
-            //Draw HoriLines
-            for (float y = startPos.y; y <= endPos.y; y += squareSize.y)
-            {
-                Debug.DrawLine(new Vector3(startPos.x, y, 5), new Vector3(endPos.x, y, 5));
-            }
-
-            for (float x = startPos.x; x <= endPos.x; x += squareSize.x)
-            {
-                Debug.DrawLine(new Vector3(x, startPos.y, 5), new Vector3(x, endPos.y, 5));
-            }
-        }
+        return startPos + (new Vector2((int)_coordinates.X - 1, (int)_coordinates.Y - 1) * squareSize) + (squareSize * 0.5f);
     }
 
     public void OnGUI()
