@@ -20,17 +20,21 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
     private RectTransform m_rectTransform;
     private Canvas m_canvas;
 
+    public bool conformToGrid;
+    private VisualGridManager m_visualGridManager; 
+
     // Methods
     public virtual new void OnPointerDown(PointerEventData _eventData)
     {
         //Check for null Transform
-        if (m_rectTransform == null || m_canvas == null)
+        if (m_rectTransform == null || m_canvas == null || (conformToGrid && m_visualGridManager == null))
         {
             m_rectTransform = GetComponent<RectTransform>();
             m_canvas = FindObjectOfType<Canvas>();
+            m_visualGridManager = FindObjectOfType<VisualGridManager>();
         }
 
-        if (m_rectTransform != null && m_canvas != null)
+        if (m_rectTransform != null && m_canvas != null && (!conformToGrid || m_visualGridManager != null))
         {
             DoStateTransition(SelectionState.Pressed, false);
             m_isBeingDragged = true;
@@ -50,7 +54,7 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
         {
             //Drag Logic
             Vector2 screenHalf = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-            Vector2 mousePosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+            Vector2 mousePosition = m_visualGridManager.GetSnapPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
             m_rectTransform.anchoredPosition = (mousePosition - screenHalf) / m_canvas.scaleFactor;
             yield return null;
         }
