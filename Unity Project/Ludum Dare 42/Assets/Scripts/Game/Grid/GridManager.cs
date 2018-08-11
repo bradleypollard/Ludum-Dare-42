@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-<<<<<<< HEAD
-	public int Dimension;
+	public int DimensionX, DimensionY;
 	public uint NumInputs = 3;
 	public uint NumStartingOutputs = 1;
 	public uint NumOutputsPerGeneration = 1;
 	public bool IsSolved = false;
-=======
-	public int DimensionX, DimensionY;
->>>>>>> d8661ff508940b1191009cc2b819d3f794c7d0c2
 
 	private GridObject[,] m_grid;
 	private uint m_generation;
