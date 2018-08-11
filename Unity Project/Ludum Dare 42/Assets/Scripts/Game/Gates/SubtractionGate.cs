@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SubtractionGate : Gate
 {
-	SubtractionGate( CellCoordinates _coordinates, ObjectOrientation _orientation )
+    public SubtractionGate( CellCoordinates _coordinates, ObjectOrientation _orientation )
 		: base( FindFootprint( _coordinates, _orientation ), FindInputs( _coordinates, _orientation ), FindOutputs( _coordinates, _orientation ), GateType.Subtract )
 	{
 	}

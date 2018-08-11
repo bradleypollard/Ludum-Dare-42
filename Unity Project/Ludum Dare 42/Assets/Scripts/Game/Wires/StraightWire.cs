@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StraightWire : Wire
 {
-	StraightWire( CellCoordinates _coordinates, ObjectOrientation _orientation ) 
+	public StraightWire( CellCoordinates _coordinates, ObjectOrientation _orientation ) 
 		: base( FindFootprint( _coordinates, _orientation ), FindEntry( _coordinates, _orientation ), FindExit( _coordinates, _orientation ), WireType.Straight )
 	{
 	}

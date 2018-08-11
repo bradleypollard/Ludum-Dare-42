@@ -21,20 +21,22 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
     private Canvas m_canvas;
 
     public bool conformToGrid;
-    private VisualGridManager m_visualGridManager; 
+    private VisualGridManager m_visualGridManager;
+    private GameplayManager m_gameplayManager;
 
     // Methods
     public virtual new void OnPointerDown(PointerEventData _eventData)
     {
         //Check for null Transform
-        if (m_rectTransform == null || m_canvas == null || (conformToGrid && m_visualGridManager == null))
+        if (m_rectTransform == null || m_canvas == null || (conformToGrid && m_visualGridManager == null) || m_gameplayManager == null)
         {
             m_rectTransform = GetComponent<RectTransform>();
             m_canvas = FindObjectOfType<Canvas>();
             m_visualGridManager = FindObjectOfType<VisualGridManager>();
+            m_gameplayManager = FindObjectOfType<GameplayManager>();
         }
 
-        if (m_rectTransform != null && m_canvas != null && (!conformToGrid || m_visualGridManager != null))
+        if (m_rectTransform != null && m_canvas != null && (!conformToGrid || m_visualGridManager != null) && m_gameplayManager != null)
         {
             DoStateTransition(SelectionState.Pressed, false);
             m_isBeingDragged = true;
@@ -46,6 +48,23 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
     {
         DoStateTransition(currentSelectionState, false);
         m_isBeingDragged = false;
+
+        Vector2Int gridPoint = new Vector2Int();
+        if(m_visualGridManager.GetGridCoordinates(m_rectTransform.anchoredPosition, ref gridPoint))
+        {
+            CellCoordinates cell = new CellCoordinates((uint)gridPoint.x, (uint)gridPoint.y);
+
+            VisualGate visualGate = GetComponent<VisualGate>();
+            if (visualGate != null)
+            {
+                m_gameplayManager.AddGate(visualGate.gateType, cell, ObjectOrientation.Or0);
+            }
+            VisualWire visualWire = GetComponent<VisualWire>();
+            if (visualWire != null)
+            {
+                m_gameplayManager.AddWire(visualWire.wireType, cell, ObjectOrientation.Or0);
+            }
+        }     
     }
 
     private IEnumerator OnDrag()

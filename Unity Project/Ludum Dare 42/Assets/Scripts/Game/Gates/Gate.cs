@@ -13,7 +13,7 @@ public enum GateType
 	Cross
 }
 
-public class Gate : GridObject
+public abstract class Gate : GridObject
 {
 	public readonly CellCoordinates[] Inputs;
 	public readonly CellCoordinates[] Outputs;
