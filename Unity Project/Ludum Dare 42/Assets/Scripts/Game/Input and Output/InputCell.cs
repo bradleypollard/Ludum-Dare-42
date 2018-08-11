@@ -7,9 +7,15 @@ public class InputCell : GridObject
 	public readonly int InputValue;
 	public readonly CellCoordinates Exit;
 
-	InputCell( CellCoordinates[] _coordinates, CellCoordinates _exit, int _value ) : base( GridObjectType.Input, _coordinates )
+	InputCell( CellCoordinates _coordinates, ObjectOrientation _orientation, int _value )
+		: base( GridObjectType.Input, FindFootprint( _coordinates, _orientation ) )
 	{
 		InputValue = _value;
-		Exit = _exit;
+		Exit = GridObjectOrientationHelper.Find1x1OffsetRight( _coordinates, _orientation );
+	}
+
+	private static CellCoordinates[] FindFootprint( CellCoordinates _coordinates, ObjectOrientation _orientation )
+	{
+		return GridObjectOrientationHelper.Find1x1Footprint( _coordinates, _orientation );
 	}
 }

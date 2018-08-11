@@ -9,18 +9,19 @@ public enum GateType
 	Increment,
 	Decrement,
 	Multiply,
-	Divide
+	Divide,
+	Cross
 }
 
 public class Gate : GridObject
 {
 	public readonly CellCoordinates[] Inputs;
 	public readonly CellCoordinates[] Outputs;
-	public readonly GateType GateType;
+	public readonly GateType Type;
 
 	protected Gate( CellCoordinates[] _coordinates, CellCoordinates[] _inputs, CellCoordinates[] _outputs, GateType _type ) : base( GridObjectType.Gate, _coordinates )
 	{
-		GateType = _type;
+		Type = _type;
 	}
 
 	public virtual void DoOperation()

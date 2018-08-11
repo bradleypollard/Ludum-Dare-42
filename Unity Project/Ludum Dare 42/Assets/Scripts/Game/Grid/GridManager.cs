@@ -26,7 +26,7 @@ public class GridManager : MonoBehaviour
 		// Inserts the given GridObject into all the coordinates it occupies
 		for ( uint i = 0; i < _object.Coordinates.Length; ++i )
 		{
-			if ( m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] != null)
+			if ( m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] != null )
 			{
 				Debug.LogError( "Inserting a GridObject into an occupied cell." );
 			}
@@ -34,7 +34,7 @@ public class GridManager : MonoBehaviour
 		}
 	}
 
-	public void ClearCell( CellCoordinates _coordinates)
+	public void ClearCell( CellCoordinates _coordinates )
 	{
 		// Removes all references to the GridObject at _coordinates from the grid
 		GridObject o = m_grid[_coordinates.X, _coordinates.Y];
