@@ -10,14 +10,28 @@ public class VisualGridManager : MonoBehaviour
     public int gridWidth, gridHeight;
     public bool isDebug;
 
+    private UICanvasFixer uiCanvasFixer;
+    private Texture2D line;
+
+    private void Start()
+    {
+        uiCanvasFixer = FindObjectOfType<UICanvasFixer>();
+
+        line = new Texture2D(1, 1);
+        line.SetPixel(0, 0, Color.white);
+        line.Apply();
+    }
+
     public Vector2 GetSnapPoint(Vector2 _position)
     {
-        if (_position.x > startPos.x && _position.y > startPos.y && _position.x < endPos.x && _position.y < endPos.y)
+        Vector2 actualPos = uiCanvasFixer.ScreenPosToCanvas(_position);
+
+        if (actualPos.x > startPos.x && actualPos.y > startPos.y && actualPos.x < endPos.x && actualPos.y < endPos.y)
         {
             Vector2 gridSize = new Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
             Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
 
-            Vector2 closestSnapPoint = ((_position - startPos) / squareSize);
+            Vector2 closestSnapPoint = ((actualPos - startPos) / squareSize);
             Vector2 flooredSnapPoint = new Vector2(Mathf.Floor(closestSnapPoint.x), Mathf.Floor(closestSnapPoint.y));
             flooredSnapPoint *= squareSize;
 
@@ -26,41 +40,69 @@ public class VisualGridManager : MonoBehaviour
             return flooredSnapPoint + startPos;
         }
 
-        return _position;
+        return actualPos;
     }
 
-    public bool GetGridCoordinates(Vector2 _position, ref Vector2Int o_position)
+    public bool GetGridCoordinates(Vector2 _position, ref Vector2Int o_position, bool _convertToCanvas)
     {
-        if (_position.x > startPos.x && _position.y > startPos.y && _position.x < endPos.x && _position.y < endPos.y)
+        Vector2 actualPos = _convertToCanvas ? uiCanvasFixer.ScreenPosToCanvas(_position) : _position;
+
+        if (actualPos.x > startPos.x && actualPos.y > startPos.y && actualPos.x < endPos.x && actualPos.y < endPos.y)
         {
+            actualPos -= startPos;
+
             Vector2 gridSize = new Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
             Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
 
-            Vector2 closestSnapPoint = ((_position - startPos) / squareSize);
-            o_position = new Vector2Int(Mathf.FloorToInt(closestSnapPoint.x), Mathf.FloorToInt(closestSnapPoint.y));
+            o_position = new Vector2Int(Mathf.FloorToInt(actualPos.x / squareSize.x) + 1, Mathf.FloorToInt(actualPos.y / squareSize.y) + 1);
+
             return true;
         }
 
         return false;
     }
 
-    public void Update()
+    public Vector2 GetScreenFromGrid(CellCoordinates _coordinates)
     {
-        if (isDebug)
+        Vector2 gridSize = new Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
+        Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
+
+        return startPos + (new Vector2((int)_coordinates.X - 1, (int)_coordinates.Y - 1) * squareSize) + (squareSize * 0.5f);
+    }
+
+    public void OnGUI()
+    {
+        GUI.matrix = uiCanvasFixer.GetGUIMatrix();
+
+        Vector2 gridSize = new Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
+        Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
+
+        //Draw HoriLines
+        for (float y = startPos.y; y <= endPos.y; y += squareSize.y)
         {
-            Vector2 gridSize = new Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
-            Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
-
-            //Draw HoriLines
-            for (float y = startPos.y; y <= endPos.y; y += squareSize.y)
-            {
-                Debug.DrawLine(new Vector3(startPos.x, y, 5), new Vector3(endPos.x, y, 5));
-            }
-
-            for (float x = startPos.x; x <= endPos.x; x += squareSize.x)
-            {
-                Debug.DrawLine(new Vector3(x, startPos.y, 5), new Vector3(x, endPos.y, 5));
-            }
+            GUI.DrawTexture(new Rect(startPos.x, y, endPos.x - startPos.x, 4), line);
         }
+
+        for (float x = startPos.x; x <= endPos.x; x += squareSize.x)
+        {
+            GUI.DrawTexture(new Rect(x, startPos.y, 4, endPos.y - startPos.y), line);
+        }
+
+        GUIStyle style = new GUIStyle();
+        style.fontSize = 30;
+
+        Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        GUI.Label(new Rect(0, 0, 300, 50), " Mouse Pos:" + mousePos, style);
+
+
+        GUI.Label(new Rect(0, 50, 300, 50), " Matrix Mouse Pos:" + uiCanvasFixer.ScreenPosToCanvas(mousePos), style);
+
+        Vector2Int oGrid = Vector2Int.zero;
+
+        if (GetGridCoordinates(mousePos, ref oGrid, true))
+        {
+            GUI.Label(new Rect(0, 100, 300, 50), " Grid Cell " + oGrid, style);
+        }
+
     }
 }

@@ -17,13 +17,16 @@ public class GameplayManager : MonoBehaviour
     private int score, wave, gridWidth, gridHeight;
     private bool isPlaying;
 
-    private List<GameInputOutput> inputs;
-    private List<GameInputOutput> outputs;
+    private Dictionary<InputCell, GameObject> inputs;
+    private Dictionary<OutputCell, GameObject> outputs;
 
     //UI Accessors (Cause Lazy)
     public Text timerText;
     public Text waveText;
     public Text scoreText;
+
+    public RectTransform gridParent;
+    public GameObject inputCellPrefab, outputCellPrefab;
 
     //Components
     private GridManager gridManager;
@@ -50,6 +53,8 @@ public class GameplayManager : MonoBehaviour
         isPlaying = true;
         gridWidth = 5;
         gridHeight = 5;
+        inputs = new Dictionary<InputCell, GameObject>();
+        outputs = new Dictionary<OutputCell, GameObject>();
 
         StartCoroutine(GameLoop());
     }
@@ -82,21 +87,51 @@ public class GameplayManager : MonoBehaviour
         //Increment Wave
         wave++;
 
-        //Decide a new input value
-        //inputs.Add();
-
-        //Decide a new output value that is achieveable based on existing inputs
-        //outputs.Add();
+        if(wave == 0)
+        {
+            gridManager.Initialise();
+        }
+        else
+        {
+            gridManager.AdvanceGeneration();
+        }
 
         //Update Visual Grid
         VisualGridManager visualGridManager = FindObjectOfType<VisualGridManager>();
         visualGridManager.gridWidth = gridWidth;
         visualGridManager.gridHeight = gridHeight;
+
+        //Update Visual Inputs / Outputs
+        foreach(InputCell input in gridManager.GetInputs())
+        {
+            if(!inputs.ContainsKey(input))
+            {
+                //Generate Prefab at position
+                GameObject prefab = Instantiate(inputCellPrefab, gridParent);
+                prefab.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(input.Coordinates[0]);
+                prefab.GetComponentInChildren<Text>().text = input.InputValue.ToString();
+
+                inputs.Add(input, prefab);
+            }
+        }
+
+        foreach (OutputCell output in gridManager.GetOutputs())
+        {
+            if (!outputs.ContainsKey(output))
+            {
+                //Generate Prefab at position
+                GameObject prefab = Instantiate(outputCellPrefab, gridParent);
+                prefab.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(output.Coordinates[0]);
+                prefab.GetComponentInChildren<Text>().text = output.OutputTarget.ToString();
+
+                outputs.Add(output, prefab);
+            }
+        }
     }
 
     private bool IsWaveBeaten()
     {
-        return false;
+        return gridManager.IsSolved;
     }
 
     private int GetWaveClearScore()
