@@ -49,10 +49,10 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
         DoStateTransition(currentSelectionState, false);
         m_isBeingDragged = false;
 
-        Vector2Int gridPoint = new Vector2Int();
-        if(m_visualGridManager.GetGridCoordinates(m_rectTransform.anchoredPosition, ref gridPoint))
+        Vector2Int oGrid = Vector2Int.zero;
+        if (m_visualGridManager.GetGridCoordinates(m_rectTransform.anchoredPosition, ref oGrid, false))
         {
-            CellCoordinates cell = new CellCoordinates((uint)gridPoint.x, (uint)gridPoint.y);
+            CellCoordinates cell = new CellCoordinates((uint)oGrid.x, (uint)oGrid.y);
 
             VisualGate visualGate = GetComponent<VisualGate>();
             if (visualGate != null)
@@ -72,9 +72,8 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
         while(m_isBeingDragged)
         {
             //Drag Logic
-            Vector2 screenHalf = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
             Vector2 mousePosition = m_visualGridManager.GetSnapPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
-            m_rectTransform.anchoredPosition = (mousePosition - screenHalf) / m_canvas.scaleFactor;
+            m_rectTransform.anchoredPosition = mousePosition;
             yield return null;
         }
     }

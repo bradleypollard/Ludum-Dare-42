@@ -1274,8 +1274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1166a1e96b400e4ea6a39ca645bb58e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPos: {x: 340.98, y: 82.9}
-  endPos: {x: 735.8, y: 477.1}
+  startPos: {x: 650, y: 155}
+  endPos: {x: 1415, y: 920}
   gridWidth: 5
   gridHeight: 5
   isDebug: 1
