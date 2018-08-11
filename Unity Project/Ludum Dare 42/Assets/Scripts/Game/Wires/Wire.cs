@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wire : IGridObject
+public class Wire : GridObject
 {
-	public CellSide EntrySide;
-	public CellSide ExitSide;
+	public readonly CellCoordinates Entry;
+	public readonly CellCoordinates Exit;
 
-	public CellCoordinates GetExitCoordinates( CellCoordinates _pos )
+	Wire( CellCoordinates[] _coordinates, CellCoordinates _entry, CellCoordinates _exit ) : base( GridObjectType.Wire, _coordinates )
 	{
-		return CellCoordinates.GetCoordinatesForSide( _pos, ExitSide );
-	}
-
-	public CellCoordinates GetEntryCoordinates( CellCoordinates _pos )
-	{
-		return CellCoordinates.GetCoordinatesForSide( _pos, EntrySide );
+		Entry = _entry;
+		Exit = _exit;
 	}
 }

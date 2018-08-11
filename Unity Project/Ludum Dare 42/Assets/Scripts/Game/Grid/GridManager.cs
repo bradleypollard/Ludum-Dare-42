@@ -6,14 +6,12 @@ public class GridManager : MonoBehaviour
 {
 	public int Dimension;
 
-	private IGridObject[,] m_grid;
+	private GridObject[,] m_grid;
 
 	// Use this for initialization
 	void Start()
 	{
-		// Generate grid 2 cells larger than required for inputs and outputs. 
-		// Player can only edit the centre Dimension x Dimension grid
-		m_grid = new IGridObject[Dimension + 2, Dimension + 2];
+		ClearGrid();
 	}
 
 	// Update is called once per frame
@@ -23,9 +21,37 @@ public class GridManager : MonoBehaviour
 	}
 
 	// API
-	public void Insert( int _x, int _y, IGridObject _object )
+	public void InsertObject( GridObject _object )
 	{
-		m_grid[_x, _y] = _object;
+		// Inserts the given GridObject into all the coordinates it occupies
+		for ( uint i = 0; i < _object.Coordinates.Length; ++i )
+		{
+			if ( m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] != null)
+			{
+				Debug.LogError( "Inserting a GridObject into an occupied cell." );
+			}
+			m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] = _object;
+		}
 	}
 
+	public void ClearCell( CellCoordinates _coordinates)
+	{
+		// Removes all references to the GridObject at _coordinates from the grid
+		GridObject o = m_grid[_coordinates.X, _coordinates.Y];
+		if ( o != null )
+		{
+			for ( uint i = 0; i < o.Coordinates.Length; ++i )
+			{
+				m_grid[o.Coordinates[i].X, o.Coordinates[i].Y] = null;
+			}
+		}
+	}
+
+	// Helpers
+	private void ClearGrid()
+	{
+		// Generate grid 2 cells larger than required for inputs and outputs. 
+		// Player can only edit the centre Dimension x Dimension grid
+		m_grid = new GridObject[Dimension + 2, Dimension + 2];
+	}
 }
