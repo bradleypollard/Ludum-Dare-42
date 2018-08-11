@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-	public int Dimension;
+	public int DimensionX, DimensionY;
 
 	private GridObject[,] m_grid;
 
@@ -30,7 +30,9 @@ public class GridManager : MonoBehaviour
 			{
 				Debug.LogError( "Inserting a GridObject into an occupied cell." );
 			}
-			m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] = _object;
+
+            Debug.Log("Inserting a GridObject into " + _object.Coordinates[i].X.ToString() + ", " + _object.Coordinates[i].Y.ToString());
+            m_grid[_object.Coordinates[i].X, _object.Coordinates[i].Y] = _object;
 		}
 	}
 
@@ -52,6 +54,6 @@ public class GridManager : MonoBehaviour
 	{
 		// Generate grid 2 cells larger than required for inputs and outputs. 
 		// Player can only edit the centre Dimension x Dimension grid
-		m_grid = new GridObject[Dimension + 2, Dimension + 2];
+		m_grid = new GridObject[DimensionX + 2, DimensionY + 2];
 	}
 }

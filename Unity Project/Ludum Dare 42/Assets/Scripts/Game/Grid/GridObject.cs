@@ -10,7 +10,7 @@ public enum GridObjectType
 	Output
 }
 
-public class GridObject
+public abstract class GridObject
 {
 	public readonly GridObjectType ObjectType;
 	public readonly CellCoordinates[] Coordinates; // All of the coordinates we occupy

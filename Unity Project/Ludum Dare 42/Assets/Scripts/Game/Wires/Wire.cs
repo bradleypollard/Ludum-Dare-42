@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wire : GridObject
+public abstract class Wire : GridObject
 {
 	public enum WireType
 	{
