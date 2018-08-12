@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WireManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class WireManager : MonoBehaviour
 	private GameplayManager m_gameplayManager;
 	private WireVisualManager m_wireVisualManager;
 	private bool m_isDragging;
+	private float justExited = 0;
 
 	// Use this for initialization
 	void Start()
@@ -24,6 +26,11 @@ public class WireManager : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		if ( justExited > 0.0f )
+		{
+			justExited -= Time.deltaTime;
+		}
+
 		if ( IsInWireEditMode() )
 		{
 			Vector2 mousePosition = m_visualGridManager.GetSnapPoint( new Vector2( Input.mousePosition.x, Input.mousePosition.y ) );
@@ -134,13 +141,16 @@ public class WireManager : MonoBehaviour
 
 	public void ToggleMode()
 	{
-		if ( !m_inWireEditMode )
+		if ( justExited <= 0.0f )
 		{
-			StartMode();
-		}
-		else
-		{
-			EndMode();
+			if ( !m_inWireEditMode )
+			{
+				StartMode();
+			}
+			else
+			{
+				EndMode();
+			}
 		}
 	}
 
@@ -154,6 +164,7 @@ public class WireManager : MonoBehaviour
 	public void EndMode()
 	{
 		m_inWireEditMode = false;
+		justExited = 0.1f;
 	}
 
 	public void ResetMode()
