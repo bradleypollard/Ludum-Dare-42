@@ -367,7 +367,7 @@ public class GridManager : MonoBehaviour
 					}
 				}
 
-				if ( next == null || ( !next.Contains( head ) && next.Count == 1 ) )
+				if ( next == null || !( next.Contains( head ) && next.Count == 1 ) )
 				{
 					// We found some new objects to solve (explicity NOT the same ones as before), and this one has now been solved
 					didWork = true;
