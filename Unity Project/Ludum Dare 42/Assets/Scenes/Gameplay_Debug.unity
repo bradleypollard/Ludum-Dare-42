@@ -310,6 +310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gateType: 0
   value: 0
+  objectOrientation: 0
 --- !u!1 &165888785
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,6 +488,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gateType: 1
   value: 0
+  objectOrientation: 0
 --- !u!1 &307820685
 GameObject:
   m_ObjectHideFlags: 0
@@ -538,6 +540,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gateType: 5
   value: 0
+  objectOrientation: 0
 --- !u!114 &307820688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -735,6 +738,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gateType: 3
   value: 0
+  objectOrientation: 0
 --- !u!114 &357762717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1106,6 +1110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gateType: 2
   value: 1
+  objectOrientation: 0
 --- !u!114 &812877089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1868,7 +1873,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f40d01cbf06b4f546a506daf71a794ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wireType: 0
+  wireType: 1
 --- !u!114 &1810310486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1991,6 +1996,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gateType: 2
   value: -1
+  objectOrientation: 0
 --- !u!114 &1819586705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2358,6 +2364,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gateType: 4
   value: 0
+  objectOrientation: 0
 --- !u!114 &2009226141
 MonoBehaviour:
   m_ObjectHideFlags: 0

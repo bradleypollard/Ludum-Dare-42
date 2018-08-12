@@ -58,6 +58,7 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
             if (m_visualGridManager.GetGridCoordinates(m_rectTransform.anchoredPosition, ref oGrid, false))
             {
                 CellCoordinates cell = new CellCoordinates((uint)oGrid.x, (uint)oGrid.y);
+                GameObject copy = Instantiate(gameObject, transform.parent);
 
                 VisualGate visualGate = GetComponent<VisualGate>();
                 if (visualGate != null)
@@ -70,11 +71,27 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
                     {
                         m_gameplayManager.AddIncrementDecrementGate(cell, ObjectOrientation.Or0, visualGate.value);
                     }
+
+                    copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
                 }
                 VisualWire visualWire = GetComponent<VisualWire>();
                 if (visualWire != null)
                 {
                     m_gameplayManager.AddWire(visualWire.wireType, cell, ObjectOrientation.Or0);
+                    copy.GetComponent<RectTransform>().anchoredPosition = visualWire.GetSpawnLocation();
+                }        
+            }
+            else
+            {
+                VisualGate visualGate = GetComponent<VisualGate>();
+                if (visualGate != null)
+                {
+                    GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
+                }
+                VisualWire visualWire = GetComponent<VisualWire>();
+                if (visualWire != null)
+                {
+                    GetComponent<RectTransform>().anchoredPosition = visualWire.GetSpawnLocation();
                 }
             }
         }
