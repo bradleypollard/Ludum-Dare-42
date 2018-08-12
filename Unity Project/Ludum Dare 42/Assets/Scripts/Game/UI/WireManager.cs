@@ -184,16 +184,10 @@ public class WireManager : MonoBehaviour
 		List<Wire> wiresToCreate = new List<Wire>();
 		List<CellCoordinates> coordinates = new List<CellCoordinates>( m_passedThrough );
 		coordinates.Reverse(); // Probably?
-		for ( int i = 2; i < coordinates.Count; ++i )
-		{
-			wiresToCreate.Add( new Wire( new CellCoordinates[]{ coordinates[i - 1] }, coordinates[i - 2], coordinates[i] ) );
-		}
+		Wire toCreate = new Wire( coordinates.GetRange( 1, coordinates.Count - 2 ).ToArray(), coordinates[0], coordinates[coordinates.Count - 1] );
 
-		// Insert wires into grid
-		foreach ( Wire wire in wiresToCreate )
-		{
-			m_gridManager.InsertObject( wire );
-		}
+		// Insert wire into grid
+		m_gridManager.InsertObject( toCreate );
 
 		Debug.Log( "WireManager: Successfully committed at " + _end.ToString() );
 		EndMode();
