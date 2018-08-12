@@ -171,6 +171,7 @@ public class WireManager : MonoBehaviour
 	{
 		m_passedThrough = new Stack<CellCoordinates>();
 		m_isDragging = false;
+		m_wireVisualManager.Reset();
 	}
 
 	public List<CellCoordinates> GetCurrentPath()
