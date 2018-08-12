@@ -74,6 +74,14 @@ public class WireManager : MonoBehaviour
 					CellCoordinates cell = new CellCoordinates( (uint)oGridoob.x, (uint)oGridoob.y );
 					// Valid start point, begin
 					StartDragging( cell );
+					if ( !m_isDragging )
+					{
+						EndMode();
+					}
+				}
+				else
+				{
+					EndMode();
 				}
 			}
 
@@ -105,6 +113,14 @@ public class WireManager : MonoBehaviour
 						m_wireVisualManager.ClearWire( cell );
 						m_gridManager.ClearCell( cell );
 					}
+					else
+					{
+						EndMode();
+					}
+				}
+				else
+				{
+					EndMode();
 				}
 			}
 		}
@@ -194,7 +210,7 @@ public class WireManager : MonoBehaviour
 		m_gameplayManager.UpdateGiblets( toCreate.Exit );
 
 		Debug.Log( "WireManager: Successfully committed at " + _end.ToString() );
-		EndMode();
+		ResetMode();
 	}
 
 	private void PassThroughCell( CellCoordinates _cell )
