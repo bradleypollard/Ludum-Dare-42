@@ -140,7 +140,33 @@ public class GameplayManager : MonoBehaviour
         //Activate Player Input
 
         yield return StartCoroutine(GameLoop());
-    }
+
+		//Transition back
+		clearedBackground = backgroundColour;
+		clearedBackground.a = 0.0f;
+		yield return FadeBackground( clearedBackground, backgroundColour, fadeLayer, 1.0f );
+		fadeLayer.raycastTarget = true;
+
+		gameInterface.SetActive( false );
+		mainMenu.SetActive( true );
+
+		yield return FadeBackground( fadeLayer.color, clearedBackground, fadeLayer, 1.0f );
+		fadeLayer.raycastTarget = false;
+
+		//Clear visual grid
+		foreach ( GameObject input in inputs.Values )
+		{
+			Destroy( input );
+		}
+		foreach ( GameObject output in outputs.Values )
+		{
+			Destroy( output );
+		}
+		foreach ( GameObject grid in placedGridObjects.Values )
+		{
+			Destroy( grid );
+		}
+}
 
     private IEnumerator GameLoop()
     {
@@ -552,14 +578,30 @@ public class GameplayManager : MonoBehaviour
 		List<InputCell> inputs = new List<InputCell>();
 		List<OutputCell> outputs = new List<OutputCell>();
 		int numStartingOutputs = 1;
+		int dimensionX = 5;
+		int dimensionY = 5;
+		Color color;
 
 		// Level One
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
 		numStartingOutputs = 1;
-		int dimensionX = 5;
-		int dimensionY = 5;
-		Color color;
+		dimensionX = 5;
+		dimensionY = 5;
+		ColorUtility.TryParseHtmlString( "#7F8C8D", out color );
+
+		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 1 ) );
+
+		outputs.Add( new OutputCell( new CellCoordinates( 6, 2 ), ObjectOrientation.Or0, 1 ) );
+
+		m_levels.Add( "one", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+
+		// Level three
+		inputs = new List<InputCell>();
+		outputs = new List<OutputCell>();
+		numStartingOutputs = 1;
+		dimensionX = 5;
+		dimensionY = 5;
 		ColorUtility.TryParseHtmlString( "#7F8C8D", out color );
 
 		inputs.Add( new InputCell( new CellCoordinates( 0, 1 ), ObjectOrientation.Or0, 2 ) );
@@ -571,6 +613,6 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 4 ), ObjectOrientation.Or0, 6 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 5 ), ObjectOrientation.Or0, 2 ) );
 
-		m_levels.Add( "one", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
-}
+		m_levels.Add( "three", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+	}
 }
