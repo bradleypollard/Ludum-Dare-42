@@ -93,8 +93,16 @@ public class GameplayManager : MonoBehaviour
         inputs = new Dictionary<InputCell, GameObject>();
         outputs = new Dictionary<OutputCell, GameObject>();
         placedGridObjects = new Dictionary<GridObject, GameObject>();
-		TimeUpText.gameObject.SetActive( false );
-		LevelCompleteText.gameObject.SetActive( false );
+		Color timeUpColour = TimeUpText.color;
+		timeUpColour.a = 0;
+		TimeUpText.color = timeUpColour;
+		Color levelCompleteColour = LevelCompleteText.color;
+		levelCompleteColour.a = 0.0f;
+		LevelCompleteText.color =  levelCompleteColour;
+		Color scoreTextColour = ScoreText.color;
+		scoreTextColour.a = 0.0f;
+		ScoreText.color = scoreTextColour;
+		timerText.color = unsolvedColour;
 
 		StartCoroutine(LoadLevel(levelName));
     }
@@ -223,13 +231,15 @@ public class GameplayManager : MonoBehaviour
             {
 				if ( completedAllWaves )
 				{
-					// TODO: Rob make pretty
 					ScoreText.text = gridManager.GetEmptyCells() + " EMPTY CELLS";
 					LevelCompleteText.gameObject.SetActive( true );
+					yield return FadeInText( LevelCompleteText, ScoreText, 0.5f );
 				}
 				else
 				{
-					TimeUpText.gameObject.SetActive( true );
+					timerText.color = unsolvedWireColour;
+					timerText.text = "0";
+					yield return FadeInText( TimeUpText, 0.5f );
 				}
 				yield return new WaitForSeconds(1.0f);
             }
@@ -421,7 +431,48 @@ public class GameplayManager : MonoBehaviour
         _image.color = _end;
     }
 
-    public void AddGate(GateType _type, CellCoordinates _coordinates, ObjectOrientation _orientation, GameObject _selfGameObject)
+	private IEnumerator FadeInText( Text _text, float _fadeTime = 0.25f )
+	{
+		Color startColour = _text.color;
+		startColour.a = 0.0f;
+		Color endColour = _text.color;
+		endColour.a = 1.0f;
+
+		float startTime = Time.time;
+		while ( Time.time - startTime < _fadeTime )
+		{
+			_text.color = Color.Lerp( startColour, endColour, ( Time.time - startTime ) / _fadeTime );
+			yield return null;
+		}
+
+		_text.color = endColour;
+	}
+
+	private IEnumerator FadeInText( Text _text1, Text _text2, float _fadeTime = 0.25f )
+	{
+		Color startColour1 = _text1.color;
+		startColour1.a = 0.0f;
+		Color endColour1 = _text1.color;
+		endColour1.a = 1.0f;
+
+		Color startColour2 = _text2.color;
+		startColour2.a = 0.0f;
+		Color endColour2 = _text2.color;
+		endColour2.a = 1.0f;
+
+		float startTime = Time.time;
+		while ( Time.time - startTime < _fadeTime )
+		{
+			_text1.color = Color.Lerp( startColour1, endColour1, ( Time.time - startTime ) / _fadeTime );
+			_text2.color = Color.Lerp( startColour2, endColour2, ( Time.time - startTime ) / _fadeTime );
+			yield return null;
+		}
+
+		_text1.color = endColour1;
+		_text2.color = endColour2;
+	}
+
+	public void AddGate(GateType _type, CellCoordinates _coordinates, ObjectOrientation _orientation, GameObject _selfGameObject)
     {
         //Check if an object is already there
         GridObject gridObject = gridManager.GetCell(_coordinates);
