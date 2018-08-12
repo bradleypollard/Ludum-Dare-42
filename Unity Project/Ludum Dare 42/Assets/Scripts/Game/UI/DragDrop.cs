@@ -25,6 +25,9 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
 	private GameplayManager m_gameplayManager;
 	private WireManager m_wireManager;
 
+    private bool m_isPlaced;
+    private CellCoordinates m_cellCoordinates;
+
 	// Methods
 	public virtual new void OnPointerDown( PointerEventData _eventData )
 	{
@@ -54,7 +57,6 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
 					m_isBeingDragged = true;
 					StartCoroutine( OnDrag() );
 				}
-
 			}
 		}
 	}
@@ -66,13 +68,23 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
 			DoStateTransition( currentSelectionState, false );
 			m_isBeingDragged = false;
 
+            //If we were on a space clear it
+            if(m_isPlaced)
+            {
+                m_gameplayManager.ClearCell(m_cellCoordinates);
+            }
+
 			Vector2Int oGrid = Vector2Int.zero;
 			if ( m_visualGridManager.GetGridCoordinates( m_rectTransform.anchoredPosition, ref oGrid, false ) )
 			{
 				CellCoordinates cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y );
-				GameObject copy = Instantiate( gameObject, transform.parent );
+                m_cellCoordinates = cell;
+                m_isPlaced = true;
 
-				VisualGate visualGate = GetComponent<VisualGate>();
+                GameObject copy = Instantiate( gameObject, transform.parent );
+                copy.GetComponent<VisualBase>().ResetBase();
+
+                VisualGate visualGate = GetComponent<VisualGate>();
 				if ( visualGate != null )
 				{
 					if ( visualGate.gateType != GateType.IncrementDecrement )
@@ -95,16 +107,24 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
 			}
 			else
 			{
-				VisualGate visualGate = GetComponent<VisualGate>();
-				if ( visualGate != null )
-				{
-					GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
-				}
-				VisualWire visualWire = GetComponent<VisualWire>();
-				if ( visualWire != null )
-				{
-					GetComponent<RectTransform>().anchoredPosition = visualWire.GetSpawnLocation();
-				}
+                if (!m_isPlaced)
+                {
+                    VisualGate visualGate = GetComponent<VisualGate>();
+                    if (visualGate != null)
+                    {
+                        GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
+                    }
+                    VisualWire visualWire = GetComponent<VisualWire>();
+                    if (visualWire != null)
+                    {
+                        GetComponent<RectTransform>().anchoredPosition = visualWire.GetSpawnLocation();
+                    }
+                }
+                else
+                {
+                    //If we have already been placed. Kill yourself
+                    Destroy(gameObject);
+                }
 			}
 		}
 		else if ( _eventData.button == PointerEventData.InputButton.Right )

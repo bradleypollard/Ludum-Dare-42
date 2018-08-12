@@ -31,6 +31,9 @@ public class GameplayManager : MonoBehaviour
     //Components
     private GridManager gridManager;
 
+    private readonly Color solvedColour = new Color(0.423f, 0.858f, 0.612f);
+    private readonly Color unsolvedColour = new Color(0.925f, 0.941f, 0.945f);
+
     // Use this for initialization
     void Start ()
     {
@@ -72,6 +75,32 @@ public class GameplayManager : MonoBehaviour
                 if(timeLeft <= 0.0f)
                 {
                     isPlaying = false;
+                }
+
+                //Update Outputs
+                foreach(KeyValuePair<OutputCell, GameObject> output in outputs)
+                {
+                    foreach (Image image in output.Value.GetComponentsInChildren<Image>())
+                    {
+                        //Colour wires if complete
+                        if (output.Key.IsCurrentlySatisfied())
+                        {
+                            image.color = solvedColour;
+                        }
+                        else
+                        {
+                            image.color = unsolvedColour;
+                        }
+                    }
+
+                    if (output.Key.IsCurrentlySatisfied())
+                    {
+                        output.Value.GetComponentInChildren<Text>().color = solvedColour;
+                    }
+                    else
+                    {
+                        output.Value.GetComponentInChildren<Text>().color = unsolvedColour;
+                    }                  
                 }
 
                 yield return null;
@@ -230,6 +259,11 @@ public class GameplayManager : MonoBehaviour
     {
         GridObject gridObject = new IncrementDecrementGate(_coordinates, _orientation, _value);
         gridManager.InsertObject(gridObject);
+    }
+
+    public void ClearCell(CellCoordinates _coordinates)
+    {
+        gridManager.ClearCell(_coordinates);
     }
 
     struct GameInputOutput

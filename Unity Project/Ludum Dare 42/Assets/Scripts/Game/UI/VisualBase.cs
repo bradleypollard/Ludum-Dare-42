@@ -33,4 +33,12 @@ public class VisualBase : MonoBehaviour
 			trans.Rotate( new Vector3( 0, 0, 90 ) );
 		}
 	}
+
+    public void ResetBase()
+    {
+        objectOrientation = ObjectOrientation.Or0;
+
+        RectTransform trans = GetComponent<RectTransform>();
+        trans.rotation = Quaternion.identity;
+    }
 }
