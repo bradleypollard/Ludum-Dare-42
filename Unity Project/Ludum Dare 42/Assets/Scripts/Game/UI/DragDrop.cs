@@ -64,20 +64,36 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
                 {
                     if (visualGate.gateType != GateType.IncrementDecrement)
                     {
-                        m_gameplayManager.AddGate(visualGate.gateType, cell, ObjectOrientation.Or0);
+                        m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation);
                     }
                     else
                     {
-                        m_gameplayManager.AddIncrementDecrementGate(cell, ObjectOrientation.Or0, visualGate.value);
+                        m_gameplayManager.AddIncrementDecrementGate(cell, visualGate.objectOrientation, visualGate.value);
                     }
                 }
                 VisualWire visualWire = GetComponent<VisualWire>();
                 if (visualWire != null)
                 {
-                    m_gameplayManager.AddWire(visualWire.wireType, cell, ObjectOrientation.Or0);
+                    m_gameplayManager.AddWire(visualWire.wireType, cell, visualWire.objectOrientation);
                 }
             }
         }
+		else if ( _eventData.button == PointerEventData.InputButton.Right )
+		{
+			if ( m_isBeingDragged )
+			{
+				VisualGate visualGate = GetComponent<VisualGate>();
+				if ( visualGate != null )
+				{
+					visualGate.Rotate( true );
+				}
+				VisualWire visualWire = GetComponent<VisualWire>();
+				if ( visualWire != null )
+				{
+					visualWire.Rotate( true );
+				}
+			}
+		}
     }
 
     private IEnumerator OnDrag()
