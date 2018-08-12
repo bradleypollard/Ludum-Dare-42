@@ -139,9 +139,9 @@ public class WireManager : MonoBehaviour
 			EndMode();
 			return;
 		}
-		if ( m_passedThrough.Count <= 1 )
+		if ( m_passedThrough.Count < 3 )
 		{
-			Debug.Log( "WireManager: Commit attempted on starting cell " + _end.ToString() + ", ending mode." );
+			Debug.Log( "WireManager: Commit attempted with too few cells passed through." );
 			EndMode();
 			return;
 		}
@@ -202,7 +202,6 @@ public class WireManager : MonoBehaviour
 		*/
 
 		// Generate wire objects
-		List<Wire> wiresToCreate = new List<Wire>();
 		List<CellCoordinates> coordinates = new List<CellCoordinates>( m_passedThrough );
 		coordinates.Reverse(); // Probably?
 		Wire toCreate = new Wire( coordinates.GetRange( 1, coordinates.Count - 2 ).ToArray(), coordinates[0], coordinates[coordinates.Count - 1] );

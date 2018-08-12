@@ -89,6 +89,21 @@ public class GridManager : MonoBehaviour
 		GridObject o = m_grid[_coordinates.X, _coordinates.Y];
 		if ( o != null )
 		{
+			// Delete wires (if any)
+			if ( o.ObjectType == GridObjectType.Gate )
+			{
+				Gate gate = (Gate)o;
+				foreach ( CellCoordinates inputCoords in gate.Inputs )
+				{
+					GridObject input = GetCell( inputCoords );
+					if ( input != null && input.ObjectType == GridObjectType.Wire )
+					{
+						ClearCell( input.Coordinates[0] );
+					}
+				}
+			}
+
+			// Delete self
 			for ( uint i = 0; i < o.Coordinates.Length; ++i )
 			{
 				Debug.Log( "GridManager: Clearing a GridObject from (" + o.Coordinates[i].X.ToString() + "," + o.Coordinates[i].Y.ToString() + ")" );
@@ -196,7 +211,7 @@ public class GridManager : MonoBehaviour
 
 	private bool AddNextOutput()
 	{
-		if ( m_futureOutputs.Count > 0)
+		if ( m_futureOutputs.Count > 0 )
 		{
 			OutputCell output = m_futureOutputs[0];
 			InsertObject( output );
