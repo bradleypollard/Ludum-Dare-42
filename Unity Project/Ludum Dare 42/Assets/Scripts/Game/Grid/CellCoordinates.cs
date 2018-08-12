@@ -13,6 +13,11 @@ public struct CellCoordinates
         Y = _y;
     }
 
+	public override string ToString()
+	{
+		return "(" + X + "," + Y + ")";
+	}
+
 	public static bool operator ==( CellCoordinates lhs, CellCoordinates rhs )
 	{
 		return lhs.Equals( rhs );
