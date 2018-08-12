@@ -1560,7 +1560,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &517757935
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7402,6 +7402,9 @@ MonoBehaviour:
   gridWidth: 5
   gridHeight: 5
   isDebug: 0
+  gridLinePrefab: {fileID: 1723833956699824, guid: 85fd124cbba67a14885f967f8c518f8c,
+    type: 2}
+  interfaceParent: {fileID: 919733880}
 --- !u!1 &2110602833
 GameObject:
   m_ObjectHideFlags: 0

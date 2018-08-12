@@ -15,7 +15,7 @@ public class GameplayManager : MonoBehaviour
 
     //Game Variables
     private float timeLeft;
-    private int score, wave, gridWidth, gridHeight;
+    private int score, wave;
     private bool isPlaying;
 
     private Dictionary<InputCell, GameObject> inputs;
@@ -85,8 +85,6 @@ public class GameplayManager : MonoBehaviour
         score = 0;
         wave = -1;
         isPlaying = true;
-        gridWidth = 5;
-        gridHeight = 5;
         inputs = new Dictionary<InputCell, GameObject>();
         outputs = new Dictionary<OutputCell, GameObject>();
         placedGridObjects = new Dictionary<GridObject, GameObject>();
@@ -133,6 +131,8 @@ public class GameplayManager : MonoBehaviour
 			backgroundColour = file.BGColour;
 		}
 
+        UpdateCells();
+
         yield return FadeBackground(fadeLayer.color, clearedBackground, fadeLayer, 1.0f);
         fadeLayer.raycastTarget = false;
         yield return null;
@@ -146,13 +146,11 @@ public class GameplayManager : MonoBehaviour
     {
         while (isPlaying)
         {
-            bool isGameOver = !GenerateWave();
-
             while(isPlaying && !IsWaveBeaten())
             {
                 timeLeft -= Time.deltaTime;
 
-                if(timeLeft <= 0.0f || isGameOver)
+                if(timeLeft <= 0.0f)
                 {
                     isPlaying = false;
                 }
@@ -186,6 +184,12 @@ public class GameplayManager : MonoBehaviour
                 yield return null;
             }
 
+            bool isGameOver = !GenerateWave();
+            if(isGameOver)
+                {
+                isPlaying = false;
+            }
+
             score += GetWaveClearScore();
             timeLeft += GetWaveClearTime();
         }
@@ -200,16 +204,18 @@ public class GameplayManager : MonoBehaviour
         //Increment Wave
         wave++;
 
-			canAdvance = gridManager.AdvanceGeneration(); // TODO: Use for victory screen
+		canAdvance = gridManager.AdvanceGeneration(); // TODO: Use for victory screen
+        UpdateCells();
 
-        //Update Visual Grid
-        visualGridManager.gridWidth = gridWidth;
-        visualGridManager.gridHeight = gridHeight;
+        return canAdvance;
+    }
 
+    private void UpdateCells()
+    {
         //Update Visual Inputs / Outputs
-        foreach(InputCell input in gridManager.GetInputs())
+        foreach (InputCell input in gridManager.GetInputs())
         {
-            if(!inputs.ContainsKey(input))
+            if (!inputs.ContainsKey(input))
             {
                 //Generate Prefab at position
                 GameObject prefab = Instantiate(inputCellPrefab, gridParent);
@@ -232,8 +238,6 @@ public class GameplayManager : MonoBehaviour
                 outputs.Add(output, prefab);
             }
         }
-
-        return canAdvance;
     }
 
     private bool IsWaveBeaten()

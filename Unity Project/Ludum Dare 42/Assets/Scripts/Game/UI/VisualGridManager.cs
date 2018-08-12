@@ -14,12 +14,19 @@ public class VisualGridManager : MonoBehaviour
 	private UICanvasFixer uiCanvasFixer;
     private Texture2D line;
 
-    void OnEnable()
+    public GameObject gridLinePrefab, interfaceParent;
+    private List<GameObject> gridLines;
+
+    private const float offset = 20;
+    private const float height = 10;
+
+    void Start()
     {
 		//Get Components
 		gridManager = FindObjectOfType<GridManager>();
+        gridLines = new List<GameObject>();
 
-		uiCanvasFixer = FindObjectOfType<UICanvasFixer>();
+        uiCanvasFixer = FindObjectOfType<UICanvasFixer>();
 
         line = new Texture2D(1, 1);
         line.SetPixel(0, 0, Color.white);
@@ -30,7 +37,49 @@ public class VisualGridManager : MonoBehaviour
 	{
 		gridWidth = (int)gridManager.DimensionX;
 		gridHeight = (int)gridManager.DimensionY;
-	}
+
+        if(gridLines != null)
+        {
+            foreach(GameObject gridLine in gridLines)
+            {
+                Destroy(gridLine);
+            }
+        }
+
+        gridLines = new List<GameObject>();
+
+        //Create Gridlines
+        Vector2 localStartPos   = startPos;
+        Vector2 localEndPos     = endPos;
+
+        Vector2 gridSize = localEndPos - localStartPos;
+        Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
+
+        //Draw HoriLines
+        for (float y = localStartPos.y; y <= localEndPos.y; y += squareSize.y)
+        {
+            Vector2 localPos = new Vector2(localStartPos.x + offset, y);
+
+            GameObject gridLine = Instantiate(gridLinePrefab, interfaceParent.transform);
+            gridLine.GetComponent<RectTransform>().anchoredPosition = localPos;
+            gridLine.GetComponent<RectTransform>().sizeDelta = new Vector2(localEndPos.x - localStartPos.x - (offset * 2.0f), height);
+            gridLines.Add(gridLine);
+
+        }
+
+        //Draw VerticalLines
+        for (float x = localStartPos.x; x <= localEndPos.x; x += squareSize.x)
+        {
+            Vector2 localPos = new Vector2(x, localStartPos.y + offset);
+
+            GameObject gridLine = Instantiate(gridLinePrefab, interfaceParent.transform);
+            gridLine.GetComponent<RectTransform>().anchoredPosition = localPos;
+            gridLine.GetComponent<RectTransform>().sizeDelta = new Vector2(localEndPos.y - localStartPos.y - (offset * 2.0f), height);
+            gridLine.GetComponent<RectTransform>().Rotate(new Vector3(0, 0, 90));
+            gridLines.Add(gridLine);
+
+        }
+    }
 
     public Vector2 GetSnapPoint(Vector2 _position, VisualGate _visualGate = null)
     {

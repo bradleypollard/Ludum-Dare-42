@@ -41,31 +41,7 @@ public class WireVisualManager : MonoBehaviour
         {
             if (isShowingLocalWire)
             {
-                bool fail = true;
-
-                //Clear Local Wire
-                if (localWire.Count >= 3)
-                {               
-                    GridObject endPoint = gridManager.GetCell(localWire[localWire.Count - 1]);
-                    if (endPoint != null)
-                    {
-                        GridObjectType endPointType = endPoint.ObjectType;
-                        if (endPointType == GridObjectType.Gate || endPointType == GridObjectType.Output)
-                        {
-                            completedWires.Add(localWire[1], localGameObjects);
-                            fail = false;
-                        }
-                    }
-                }
-
-                if(fail)
-                {
-                    ClearLocalPath();
-                }
-
-                localWire = null;
-                localGameObjects = null;
-                isShowingLocalWire = false;
+                Reset();
             }
         }
         
@@ -94,6 +70,35 @@ public class WireVisualManager : MonoBehaviour
 
         }
 	}
+
+    public void Reset()
+    {
+        bool fail = true;
+
+        //Clear Local Wire
+        if (localWire.Count >= 3)
+        {
+            GridObject endPoint = gridManager.GetCell(localWire[localWire.Count - 1]);
+            if (endPoint != null)
+            {
+                GridObjectType endPointType = endPoint.ObjectType;
+                if (endPointType == GridObjectType.Gate || endPointType == GridObjectType.Output)
+                {
+                    completedWires.Add(localWire[1], localGameObjects);
+                    fail = false;
+                }
+            }
+        }
+
+        if (fail)
+        {
+            ClearLocalPath();
+        }
+
+        localWire = null;
+        localGameObjects = null;
+        isShowingLocalWire = false;
+    }
 
     void GenerateWire(List<CellCoordinates> _wirePath)
     {
