@@ -15,6 +15,11 @@ public class OutputCell : GridObject
 		Entry = GridObjectOrientationHelper.Find1x1OffsetLeft( _coordinates, _orientation );
 	}
 
+	public void Reset()
+	{
+		CurrentValues[0] = 0;
+	}
+
 	public bool IsCurrentlySatisfied()
 	{
 		return OutputTarget == CurrentValues[0];

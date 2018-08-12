@@ -163,6 +163,7 @@ public class GridManager : MonoBehaviour
 		if ( !_checkedObjects.Contains( entry ) )
 		{
 			Debug.LogError( "GridManager: SolveWire encountered a wire whose entry has not been solved!" );
+			return null;
 		}
 		_wire.CurrentValues = new int[] { entry.GetValueForCoordinate( _wire.Coordinates[0] ) }; // Assumes wires are 1x1
 		GridObject exit = GetCell( _wire.Exit );
@@ -236,6 +237,7 @@ public class GridManager : MonoBehaviour
 		if ( !_checkedObjects.Contains( entry ) )
 		{
 			Debug.LogError( "GridManager: SolveOutput encountered an output whose entry has not been solved!" );
+			return null;
 		}
 		_outputCell.CurrentValues = new int[] { entry.GetValueForCoordinate( _outputCell.Coordinates[0] ) }; // Assumes outputs are 1x1
 		return null;
@@ -243,6 +245,12 @@ public class GridManager : MonoBehaviour
 
 	private void Solve()
 	{
+		// Start by assuming all outputs are unsolved
+		foreach ( OutputCell output in m_outputs )
+		{
+			output.Reset();
+		}
+
 		// Attempt to solve the grid to determine if you are a good boi.
 		Queue<GridObject> objectsToCheck = new Queue<GridObject>();
 		List<GridObject> checkedObjects = new List<GridObject>();

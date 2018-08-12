@@ -23,5 +23,14 @@ public class VisualBase : MonoBehaviour
 		objectOrientation = (ObjectOrientation)or;
 
 		// Do visual rotation
+		RectTransform trans = GetComponent<RectTransform>();
+		if ( _clockwise)
+		{
+			trans.Rotate( new Vector3( 0, 0, -90 ) );
+		}
+		else
+		{
+			trans.Rotate( new Vector3( 0, 0, 90 ) );
+		}
 	}
 }
