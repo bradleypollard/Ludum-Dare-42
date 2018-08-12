@@ -136,7 +136,7 @@ public class VisualGridManager : MonoBehaviour
         return false;
     }
 
-    /*public void OnGUI()
+    public void OnGUI()
     {
         GUI.matrix = uiCanvasFixer.GetGUIMatrix();
 
@@ -153,6 +153,9 @@ public class VisualGridManager : MonoBehaviour
         {
             GUI.DrawTexture(new Rect(x, startPos.y, 4, endPos.y - startPos.y), line);
         }
+    }
+        
+        /*
 
         GUIStyle style = new GUIStyle();
         style.fontSize = 30;

@@ -25,7 +25,7 @@ public class GameplayManager : MonoBehaviour
     public Text waveText;
     public Text scoreText;
 
-    public RectTransform gridParent;
+    public RectTransform gridParent, scrollViewParent;
     public GameObject inputCellPrefab, outputCellPrefab;
 
     //Components

@@ -50,6 +50,8 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler
 				{ 
 					DoStateTransition(SelectionState.Pressed, false);
 					m_isBeingDragged = true;
+                    m_rectTransform.SetParent(m_gameplayManager.gridParent);
+
                     StartCoroutine(OnDrag());
                 }
             }
@@ -83,7 +85,7 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler
 
                     if (m_visualGate != null)
                     {
-                        GameObject copy = Instantiate(gameObject, transform.parent);
+                        GameObject copy = Instantiate(gameObject, m_gameplayManager.scrollViewParent);
                         copy.GetComponent<VisualBase>().ResetBase();
 
                         VisualGate visualGate = GetComponent<VisualGate>();
@@ -108,7 +110,7 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler
                     {
                         if (m_visualGate != null)
                         {
-
+                            GetComponent<RectTransform>().SetParent(m_gameplayManager.scrollViewParent);
                             GetComponent<RectTransform>().anchoredPosition = m_visualGate.GetSpawnLocation();
                             GetComponent<VisualBase>().ResetBase();
                         }

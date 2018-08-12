@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class VisualBase : MonoBehaviour
 {
+    [HideInInspector]
 	public ObjectOrientation objectOrientation;
 
 	private Vector2 spawnLocation;
