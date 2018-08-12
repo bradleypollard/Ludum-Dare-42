@@ -22,8 +22,6 @@ public class WireVisualManager : MonoBehaviour
         wireManager = FindObjectOfType<WireManager>();
         visualGridManager = FindObjectOfType<VisualGridManager>();
         gridManager = FindObjectOfType<GridManager>();
-
-        completedWires = new Dictionary<CellCoordinates, List<GameObject>>();
     }
 	
 	// Update is called once per frame
@@ -71,7 +69,17 @@ public class WireVisualManager : MonoBehaviour
         }
 	}
 
-    public void Reset()
+	public void Initialise()
+	{
+		completedWires = new Dictionary<CellCoordinates, List<GameObject>>();
+	}
+
+	public Dictionary<CellCoordinates, List<GameObject>> GetCompletedWires()
+	{
+		return completedWires;
+	}
+
+	public void Reset()
     {
         bool fail = true;
 
