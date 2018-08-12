@@ -171,9 +171,34 @@ public class GameplayManager : MonoBehaviour
        GridObject gridObject = null;
        switch(_type)
         {
+            case GateType.Add:
+            {
+                gridObject = new AddGate(_coordinates, _orientation);
+                break;
+            }
             case GateType.Subtract:
             {
                 gridObject = new SubtractGate(_coordinates, _orientation);
+                break;
+            }
+            case GateType.Multiply:
+            {
+                gridObject = new MultiplyGate(_coordinates, _orientation);
+                break;
+            }
+            case GateType.Divide:
+            {
+                gridObject = new DivideGate(_coordinates, _orientation);
+                break;
+            }
+            case GateType.IncrementDecrement:
+            {
+                gridObject = new IncrementDecrementGate(_coordinates, _orientation);
+                break;
+            }
+            case GateType.Cross:
+            {
+                gridObject = new CrossGate(_coordinates, _orientation);
                 break;
             }
         }
@@ -187,12 +212,23 @@ public class GameplayManager : MonoBehaviour
         switch (_type)
         {
             case Wire.WireType.Straight:
-                {
-                    gridObject = new StraightWire(_coordinates, _orientation);
-                    break;
-                }
+            {
+                gridObject = new StraightWire(_coordinates, _orientation);
+                break;
+            }
+            case Wire.WireType.Turn:
+            {
+                gridObject = new TurnWire(_coordinates, _orientation);
+                break;
+            }
         }
 
+        gridManager.InsertObject(gridObject);
+    }
+
+    public void AddIncrementDecrementGate(CellCoordinates _coordinates, ObjectOrientation _orientation, int _value)
+    {
+        GridObject gridObject = new IncrementDecrementGate(_coordinates, _orientation, _value);
         gridManager.InsertObject(gridObject);
     }
 

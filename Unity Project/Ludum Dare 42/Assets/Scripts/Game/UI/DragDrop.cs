@@ -28,43 +28,56 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
     public virtual new void OnPointerDown(PointerEventData _eventData)
     {
         //Check for null Transform
-        if (m_rectTransform == null || m_canvas == null || (conformToGrid && m_visualGridManager == null) || m_gameplayManager == null)
+        if (_eventData.button == PointerEventData.InputButton.Left)
         {
-            m_rectTransform = GetComponent<RectTransform>();
-            m_canvas = FindObjectOfType<Canvas>();
-            m_visualGridManager = FindObjectOfType<VisualGridManager>();
-            m_gameplayManager = FindObjectOfType<GameplayManager>();
-        }
+            if (m_rectTransform == null || m_canvas == null || (conformToGrid && m_visualGridManager == null) || m_gameplayManager == null)
+            {
+                m_rectTransform = GetComponent<RectTransform>();
+                m_canvas = FindObjectOfType<Canvas>();
+                m_visualGridManager = FindObjectOfType<VisualGridManager>();
+                m_gameplayManager = FindObjectOfType<GameplayManager>();
+            }
 
-        if (m_rectTransform != null && m_canvas != null && (!conformToGrid || m_visualGridManager != null) && m_gameplayManager != null)
-        {
-            DoStateTransition(SelectionState.Pressed, false);
-            m_isBeingDragged = true;
-            StartCoroutine(OnDrag());
+            if (m_rectTransform != null && m_canvas != null && (!conformToGrid || m_visualGridManager != null) && m_gameplayManager != null)
+            {
+                DoStateTransition(SelectionState.Pressed, false);
+                m_isBeingDragged = true;
+                StartCoroutine(OnDrag());
+            }
         }
     }
 
     public virtual new void OnPointerUp(PointerEventData _eventData)
     {
-        DoStateTransition(currentSelectionState, false);
-        m_isBeingDragged = false;
-
-        Vector2Int oGrid = Vector2Int.zero;
-        if (m_visualGridManager.GetGridCoordinates(m_rectTransform.anchoredPosition, ref oGrid, false))
+        if (_eventData.button == PointerEventData.InputButton.Left)
         {
-            CellCoordinates cell = new CellCoordinates((uint)oGrid.x, (uint)oGrid.y);
+            DoStateTransition(currentSelectionState, false);
+            m_isBeingDragged = false;
 
-            VisualGate visualGate = GetComponent<VisualGate>();
-            if (visualGate != null)
+            Vector2Int oGrid = Vector2Int.zero;
+            if (m_visualGridManager.GetGridCoordinates(m_rectTransform.anchoredPosition, ref oGrid, false))
             {
-                m_gameplayManager.AddGate(visualGate.gateType, cell, ObjectOrientation.Or0);
+                CellCoordinates cell = new CellCoordinates((uint)oGrid.x, (uint)oGrid.y);
+
+                VisualGate visualGate = GetComponent<VisualGate>();
+                if (visualGate != null)
+                {
+                    if (visualGate.gateType != GateType.IncrementDecrement)
+                    {
+                        m_gameplayManager.AddGate(visualGate.gateType, cell, ObjectOrientation.Or0);
+                    }
+                    else
+                    {
+                        m_gameplayManager.AddIncrementDecrementGate(cell, ObjectOrientation.Or0, visualGate.value);
+                    }
+                }
+                VisualWire visualWire = GetComponent<VisualWire>();
+                if (visualWire != null)
+                {
+                    m_gameplayManager.AddWire(visualWire.wireType, cell, ObjectOrientation.Or0);
+                }
             }
-            VisualWire visualWire = GetComponent<VisualWire>();
-            if (visualWire != null)
-            {
-                m_gameplayManager.AddWire(visualWire.wireType, cell, ObjectOrientation.Or0);
-            }
-        }     
+        }
     }
 
     private IEnumerator OnDrag()
