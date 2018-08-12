@@ -76,7 +76,8 @@ public class GridManager : MonoBehaviour
 		{
 			for ( uint i = 0; i < o.Coordinates.Length; ++i )
 			{
-				m_grid[o.Coordinates[i].X, o.Coordinates[i].Y] = null;
+                Debug.Log("GridManager: Clearing a GridObject into (" + o.Coordinates[i].X.ToString() + "," + o.Coordinates[i].Y.ToString() + ")");
+                m_grid[o.Coordinates[i].X, o.Coordinates[i].Y] = null;
 			}
 		}
 	}
