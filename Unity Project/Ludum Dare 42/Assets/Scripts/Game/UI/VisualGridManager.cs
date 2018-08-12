@@ -160,24 +160,24 @@ public class VisualGridManager : MonoBehaviour
             GUI.DrawTexture(new Rect(x, startPos.y, 4, endPos.y - startPos.y), line);
         }
     }
-        
-        /*
 
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 30;
+    /*
 
-        Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        GUI.Label(new Rect(0, 0, 300, 50), " Mouse Pos:" + mousePos, style);
+    GUIStyle style = new GUIStyle();
+    style.fontSize = 30;
+
+    Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+    GUI.Label(new Rect(0, 0, 300, 50), " Mouse Pos:" + mousePos, style);
 
 
-        GUI.Label(new Rect(0, 50, 300, 50), " Matrix Mouse Pos:" + uiCanvasFixer.ScreenPosToCanvas(mousePos), style);
+    GUI.Label(new Rect(0, 50, 300, 50), " Matrix Mouse Pos:" + uiCanvasFixer.ScreenPosToCanvas(mousePos), style);
 
-        Vector2Int oGrid = Vector2Int.zero;
+    Vector2Int oGrid = Vector2Int.zero;
 
-        if (GetGridCoordinates(mousePos, ref oGrid, true))
-        {
-            GUI.Label(new Rect(0, 100, 300, 50), " Grid Cell " + oGrid, style);
-        }
+    if (GetGridCoordinates(mousePos, ref oGrid, true))
+    {
+        GUI.Label(new Rect(0, 100, 300, 50), " Grid Cell " + oGrid, style);
+    }
 
-    }*/
+}*/
 }

@@ -25,7 +25,11 @@ public class GameplayManager : MonoBehaviour
     //UI Accessors (Cause Lazy)
     public Text timerText;
     public Text waveText;
-    public Text scoreText;
+
+    public Image background;
+
+    public GameObject gridModeIndicator;
+    private bool isGridModeIndicatorAnimating = false, isGridModeIndicatorHidden = false;
 
     public RectTransform gridParent, scrollViewParent;
     public GameObject inputCellPrefab, outputCellPrefab;
@@ -33,11 +37,18 @@ public class GameplayManager : MonoBehaviour
     //Components
     private GridManager gridManager;
     private WireVisualManager wireVisualManager;
+    private WireManager wireManager;
 
     private readonly Color solvedColour = new Color(0.423f, 0.858f, 0.612f);
     private readonly Color unsolvedColour = new Color(0.925f, 0.941f, 0.945f);
 
 	private Dictionary<string, LevelFile> m_levels;
+    public Color backgroundColour;
+
+    private Color actualBackgroundColour;
+    private Color orginalBackgroundColour;
+
+    private bool isBackgroundFading = false;
 
     // Use this for initialization
     void Start ()
@@ -47,15 +58,24 @@ public class GameplayManager : MonoBehaviour
         //Get Components
         gridManager = FindObjectOfType<GridManager>();
         wireVisualManager = FindObjectOfType<WireVisualManager>();
+        wireManager = FindObjectOfType<WireManager>();
 
         //Do Debug Logic
         if (debug_StartGameOnLoad)
         {
             StartGame();
-        }		
-	}
-	
-	void StartGame()
+        }
+
+        //Hide GridModeIndicator
+        Color startColour = gridModeIndicator.GetComponent<Text>().color;
+        startColour.a = 0.0f;
+        gridModeIndicator.GetComponent<Text>().color = startColour;
+
+        actualBackgroundColour = backgroundColour;
+        orginalBackgroundColour = backgroundColour;
+    }
+
+    void StartGame()
     {
         //Reset Values
         timeLeft = startTimeLeft;
@@ -202,11 +222,63 @@ public class GameplayManager : MonoBehaviour
                 waveText.text = "Wave " + (wave + 1);
             }
 
-            if(scoreText != null)
+            if(wireManager.IsInWireEditMode() != isGridModeIndicatorHidden && !isGridModeIndicatorAnimating)
             {
-                scoreText.text = score.ToString();
+                isGridModeIndicatorAnimating = true;
+                isGridModeIndicatorHidden = wireManager.IsInWireEditMode();
+
+                StartCoroutine(FadeInText(gridModeIndicator.GetComponent<Text>(), wireManager.IsInWireEditMode()));
+
+                if(isGridModeIndicatorHidden)
+                {
+                    backgroundColour = Color.Lerp(orginalBackgroundColour, Color.black, 0.5f);
+                }
+                else
+                {
+                    backgroundColour = orginalBackgroundColour;
+                }
             }
         }
+
+        if(actualBackgroundColour != backgroundColour && !isBackgroundFading)
+        {
+            isBackgroundFading = true;
+            StartCoroutine(FadeBackground(actualBackgroundColour, backgroundColour, background));
+        }
+    }
+
+    private IEnumerator FadeInText(Text _text, bool _show)
+    {
+        float startTime = Time.time, fadeTime = 0.25f;
+        Color startColour = _text.color;
+        float startAlpha = startColour.a;
+
+        while (Time.time - startTime < fadeTime)
+        {
+            startColour.a = Mathf.Lerp(startAlpha, _show ? 1.0f : 0.0f, (Time.time - startTime)/ fadeTime);
+            _text.color = startColour;
+            yield return null;
+        }
+
+        startColour.a = _show ? 1.0f : 0.0f;
+        _text.color = startColour;
+
+        isGridModeIndicatorAnimating = false;
+    }
+
+    private IEnumerator FadeBackground(Color _start, Color _end, Image _image)
+    {
+        float startTime = Time.time, fadeTime = 0.25f;
+        while (Time.time - startTime < fadeTime)
+        {
+            _image.color = Color.Lerp(_start, _end, (Time.time - startTime) / fadeTime);
+            yield return null;
+        }
+
+        _image.color = _end;
+
+        actualBackgroundColour = _end;
+        isBackgroundFading = false;
     }
 
     public void AddGate(GateType _type, CellCoordinates _coordinates, ObjectOrientation _orientation, GameObject _selfGameObject)
@@ -271,19 +343,28 @@ public class GameplayManager : MonoBehaviour
         foreach (CellCoordinates inputCoords in gate.Inputs)
         {
             GridObject inputGridObject = gridManager.GetCell(inputCoords);
-            if (inputGridObject != null && inputGridObject.ObjectType != GridObjectType.Wire)
+            if (inputGridObject != null)
             {
-                wireVisualManager.CreateWireAndLink(inputCoords, _coordinates, false);
+                if (inputGridObject.ObjectType != GridObjectType.Wire)
+                {
+                    wireVisualManager.CreateWireAndLink(inputCoords, _coordinates, false);
+                }
             }
         }
+
         foreach (CellCoordinates outputCoords in gate.Outputs)
         {
             GridObject outputGridObject = gridManager.GetCell(outputCoords);
-            if (outputGridObject != null && outputGridObject.ObjectType != GridObjectType.Wire)
+            if (outputGridObject != null)
             {
-                wireVisualManager.CreateWireAndLink(_coordinates, outputCoords, true);
+                if (outputGridObject.ObjectType != GridObjectType.Wire)
+                {
+                    wireVisualManager.CreateWireAndLink(_coordinates, outputCoords, true);
+                }
             }
         }
+
+        UpdateGiblets(_coordinates, true);
     }
 
     public void AddIncrementDecrementGate(CellCoordinates _coordinates, ObjectOrientation _orientation, int _value, GameObject _selfGameObject)
@@ -308,19 +389,28 @@ public class GameplayManager : MonoBehaviour
         foreach (CellCoordinates inputCoords in gate.Inputs)
         {
             GridObject inputGridObject = gridManager.GetCell(inputCoords);
-            if (inputGridObject != null && inputGridObject.ObjectType != GridObjectType.Wire)
+            if (inputGridObject != null)
             {
-                wireVisualManager.CreateWireAndLink(inputCoords, _coordinates, false);
+                if (inputGridObject.ObjectType != GridObjectType.Wire)
+                {
+                    wireVisualManager.CreateWireAndLink(inputCoords, _coordinates, false);
+                }
             }
         }
+
         foreach (CellCoordinates outputCoords in gate.Outputs)
         {
             GridObject outputGridObject = gridManager.GetCell(outputCoords);
-            if (outputGridObject != null && outputGridObject.ObjectType != GridObjectType.Wire)
+            if (outputGridObject != null)
             {
-                wireVisualManager.CreateWireAndLink(_coordinates, outputCoords, true);
+                if (outputGridObject.ObjectType != GridObjectType.Wire)
+                {
+                    wireVisualManager.CreateWireAndLink(_coordinates, outputCoords, true);
+                }
             }
         }
+
+        UpdateGiblets(_coordinates, true);
     }
 
     public void ClearCell(CellCoordinates _coordinates)
@@ -340,6 +430,59 @@ public class GameplayManager : MonoBehaviour
         }
 
         gridManager.ClearCell(_coordinates);
+    }
+
+    public void UpdateGiblets(CellCoordinates _coordinates, bool _updateNeighbour = false)
+    {
+        GridObject gridObject = gridManager.GetCell(_coordinates);
+        if (gridObject.ObjectType == GridObjectType.Gate)
+        {
+            Gate gate = (Gate)gridObject;
+
+            int count = 1;
+            foreach (CellCoordinates inputCoords in gate.Inputs)
+            {
+                GridObject inputGridObject = gridManager.GetCell(inputCoords);
+                if (inputGridObject != null)
+                {
+                    //Hide Giblets
+                    placedGridObjects[gridObject].transform.Find("InConnector_" + count).gameObject.SetActive(false);
+
+                    if (_updateNeighbour && inputGridObject.ObjectType == GridObjectType.Gate)
+                    {
+                        UpdateGiblets(inputCoords);
+                    }
+                }
+                else
+                {
+                    placedGridObjects[gridObject].transform.Find("InConnector_" + count).gameObject.SetActive(true);
+                }
+
+                count++;
+            }
+
+            count = 1;
+            foreach (CellCoordinates outputCoords in gate.Outputs)
+            {
+                GridObject outputGridObject = gridManager.GetCell(outputCoords);
+                if (outputGridObject != null)
+                {
+                    //Hide Giblets
+                    placedGridObjects[gridObject].transform.Find("OutConnector_" + count).gameObject.SetActive(false);
+
+                    if (_updateNeighbour && outputGridObject.ObjectType == GridObjectType.Gate)
+                    {
+                        UpdateGiblets(outputCoords);
+                    }
+                }
+                else
+                {
+                    placedGridObjects[gridObject].transform.Find("OutConnector_" + count).gameObject.SetActive(true);
+                }
+
+                count++;
+            }
+        }
     }
 
     struct GameInputOutput

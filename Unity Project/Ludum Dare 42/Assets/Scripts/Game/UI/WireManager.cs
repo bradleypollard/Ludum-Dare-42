@@ -8,14 +8,16 @@ public class WireManager : MonoBehaviour
 	private bool m_inWireEditMode;
 	private Stack<CellCoordinates> m_passedThrough;
 	private VisualGridManager m_visualGridManager;
-	private bool m_isDragging;
+    private GameplayManager m_gameplayManager;
+    private bool m_isDragging;
 
 	// Use this for initialization
 	void Start()
 	{
 		m_gridManager = FindObjectOfType<GridManager>();
 		m_visualGridManager = FindObjectOfType<VisualGridManager>();
-	}
+        m_gameplayManager = FindObjectOfType<GameplayManager>();
+    }
 
 	// Update is called once per frame
 	void Update()
@@ -220,8 +222,10 @@ public class WireManager : MonoBehaviour
 
 		// Insert wire into grid
 		m_gridManager.InsertObject( toCreate );
+        m_gameplayManager.UpdateGiblets(toCreate.Entry);
+        m_gameplayManager.UpdateGiblets(toCreate.Exit);
 
-		Debug.Log( "WireManager: Successfully committed at " + _end.ToString() );
+        Debug.Log( "WireManager: Successfully committed at " + _end.ToString() );
 		EndMode();
 	}
 

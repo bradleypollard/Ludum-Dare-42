@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 67579390}
   - component: {fileID: 67579389}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -351,12 +351,12 @@ GameObject:
   - component: {fileID: 117070783}
   - component: {fileID: 117070782}
   m_Layer: 5
-  m_Name: Score_Text
+  m_Name: WireMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &117070781
 RectTransform:
   m_ObjectHideFlags: 0
@@ -372,7 +372,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 514.63, y: -480.8}
+  m_AnchoredPosition: {x: 514.62, y: -523}
   m_SizeDelta: {x: 852.65, y: 118.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &117070782
@@ -396,7 +396,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: deef2c35312665d4bb81f17af5eb8c44, type: 3}
-    m_FontSize: 95
+    m_FontSize: 55
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 6
@@ -407,7 +407,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 0
-  m_Text: 999
+  m_Text: Wire_Mode_Enabled
 --- !u!222 &117070783
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1427,7 +1427,7 @@ GameObject:
   - component: {fileID: 444798461}
   - component: {fileID: 444798460}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1665,7 +1665,7 @@ GameObject:
   - component: {fileID: 467241519}
   - component: {fileID: 467241518}
   m_Layer: 5
-  m_Name: OutConnector
+  m_Name: OutConnector_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2023,7 +2023,7 @@ GameObject:
   - component: {fileID: 654226608}
   - component: {fileID: 654226607}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2106,7 +2106,7 @@ GameObject:
   - component: {fileID: 659752302}
   - component: {fileID: 659752301}
   m_Layer: 5
-  m_Name: OutConnector
+  m_Name: OutConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2189,7 +2189,7 @@ GameObject:
   - component: {fileID: 665531821}
   - component: {fileID: 665531820}
   m_Layer: 5
-  m_Name: OutConnector
+  m_Name: OutConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3199,7 +3199,7 @@ GameObject:
   - component: {fileID: 860191929}
   - component: {fileID: 860191928}
   m_Layer: 5
-  m_Name: OutConnector
+  m_Name: OutConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3426,7 +3426,7 @@ GameObject:
   - component: {fileID: 899981045}
   - component: {fileID: 899981044}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3914,8 +3914,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00024414062, y: 0}
-  m_SizeDelta: {x: 0.00024414062, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1034882225
 MonoBehaviour:
@@ -4230,7 +4230,7 @@ GameObject:
   - component: {fileID: 1220817058}
   - component: {fileID: 1220817057}
   m_Layer: 5
-  m_Name: OutConnector
+  m_Name: OutConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4313,7 +4313,7 @@ GameObject:
   - component: {fileID: 1221808341}
   - component: {fileID: 1221808340}
   m_Layer: 5
-  m_Name: OutConnector
+  m_Name: OutConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4396,7 +4396,7 @@ GameObject:
   - component: {fileID: 1272352660}
   - component: {fileID: 1272352659}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4822,7 +4822,7 @@ GameObject:
   - component: {fileID: 1387594408}
   - component: {fileID: 1387594407}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5336,7 +5336,7 @@ GameObject:
   - component: {fileID: 1490571010}
   - component: {fileID: 1490571009}
   m_Layer: 5
-  m_Name: OutConnector
+  m_Name: OutConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5419,7 +5419,7 @@ GameObject:
   - component: {fileID: 1493945963}
   - component: {fileID: 1493945962}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5502,7 +5502,7 @@ GameObject:
   - component: {fileID: 1499276952}
   - component: {fileID: 1499276951}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5585,7 +5585,7 @@ GameObject:
   - component: {fileID: 1503650524}
   - component: {fileID: 1503650523}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5668,7 +5668,7 @@ GameObject:
   - component: {fileID: 1554203540}
   - component: {fileID: 1554203539}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6128,7 +6128,7 @@ GameObject:
   - component: {fileID: 1600701510}
   - component: {fileID: 1600701509}
   m_Layer: 5
-  m_Name: OutConnector
+  m_Name: OutConnector_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6458,7 +6458,7 @@ GameObject:
   - component: {fileID: 1678529227}
   - component: {fileID: 1678529226}
   m_Layer: 5
-  m_Name: InConnector
+  m_Name: InConnector_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6847,7 +6847,7 @@ GameObject:
   - component: {fileID: 1910141280}
   - component: {fileID: 1910141279}
   m_Layer: 5
-  m_Name: InConnector (1)
+  m_Name: InConnector_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7558,13 +7558,15 @@ MonoBehaviour:
   debug_LevelToLoad: 
   timerText: {fileID: 1563739363}
   waveText: {fileID: 1413828829}
-  scoreText: {fileID: 117070782}
+  background: {fileID: 2119263371}
+  gridModeIndicator: {fileID: 117070780}
   gridParent: {fileID: 854337375}
   scrollViewParent: {fileID: 824871266}
   inputCellPrefab: {fileID: 1958581912674192, guid: fa0afe229422080478f012d73e7c78b6,
     type: 2}
   outputCellPrefab: {fileID: 1034236216428276, guid: c01e3fc2f131161449b0c098a1ee35b9,
     type: 2}
+  backgroundColour: {r: 0.49803922, g: 0.54901963, b: 0.5529412, a: 1}
 --- !u!114 &2060991415
 MonoBehaviour:
   m_ObjectHideFlags: 0
