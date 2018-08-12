@@ -8,6 +8,7 @@ public class GridManager : MonoBehaviour
 	public uint NumInputs = 3;
 	public uint NumStartingOutputs = 1;
 	public uint NumOutputsPerGeneration = 1;
+	public uint NumTotalOutputs = 5;
 	public int MaxInputValue = 10;
 	public int MaxOutputTarget = 10;
 	public bool IsSolved = false;
@@ -16,6 +17,7 @@ public class GridManager : MonoBehaviour
 	private uint m_generation;
 	private List<InputCell> m_inputs;
 	private List<OutputCell> m_outputs;
+	private List<OutputCell> m_futureOutputs;
 
 	// Use this for initialization
 	void Start()
@@ -25,15 +27,27 @@ public class GridManager : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		Solve();
+		if ( m_outputs != null && m_outputs.Count > 0 )
+		{
+			Solve();
+		}
 	}
 
 	///////////////////////// API /////////////////////////
-	public void Initialise()
+	public void Initialise( LevelFile _file = null )
 	{
 		ClearGrid();
-		GenerateInputs();
-		GenerateOutputs();
+		IsSolved = false;
+		if ( _file != null )
+		{
+			LoadInputs( _file.Inputs );
+			LoadOutputs( _file.Outputs, _file.NumStartingOutputs );
+		}
+		else
+		{
+			GenerateInputs();
+			GenerateOutputs();
+		}
 	}
 
 	public List<InputCell> GetInputs()
@@ -46,11 +60,12 @@ public class GridManager : MonoBehaviour
 		return m_outputs;
 	}
 
-	public void AdvanceGeneration()
+	public bool AdvanceGeneration()
 	{
 		m_generation++;
 		Debug.Log( "GridManager: Generation advanced - " + m_generation );
-		GenerateOutputs();
+		IsSolved = false;
+		return AddNextOutput();
 	}
 
 	public void InsertObject( GridObject _object )
@@ -76,8 +91,8 @@ public class GridManager : MonoBehaviour
 		{
 			for ( uint i = 0; i < o.Coordinates.Length; ++i )
 			{
-                Debug.Log("GridManager: Clearing a GridObject from (" + o.Coordinates[i].X.ToString() + "," + o.Coordinates[i].Y.ToString() + ")");
-                m_grid[o.Coordinates[i].X, o.Coordinates[i].Y] = null;
+				Debug.Log( "GridManager: Clearing a GridObject from (" + o.Coordinates[i].X.ToString() + "," + o.Coordinates[i].Y.ToString() + ")" );
+				m_grid[o.Coordinates[i].X, o.Coordinates[i].Y] = null;
 			}
 		}
 	}
@@ -112,7 +127,7 @@ public class GridManager : MonoBehaviour
 		uint x = 0;
 		uint y = (uint)Random.Range( 1, DimensionY );
 		int value = Random.Range( 1, MaxInputValue + 1 );
-		while( GetCell( new CellCoordinates( x, y ) ) != null )
+		while ( GetCell( new CellCoordinates( x, y ) ) != null )
 		{
 			y = (uint)Random.Range( 1, DimensionY );
 		}
@@ -121,28 +136,29 @@ public class GridManager : MonoBehaviour
 		m_inputs.Add( input );
 		InsertObject( input );
 		Debug.Log( "GridManager: Input added - (" + x + "," + y + ") value " + value );
+	}
 
+	private void LoadInputs( List<InputCell> _inputs )
+	{
+		foreach ( InputCell input in _inputs )
+		{
+			InsertObject( input );
+			Debug.Log( "GridManager: Input added - " + input.Coordinates[0].ToString() + " value " + input.InputValue );
+		}
+		m_inputs = _inputs;
 	}
 
 	private void GenerateOutputs()
 	{
-		// Generate outputs needed for the current generation, preserving existing outputs
-		// for the generation.
-		if ( m_generation == 0 )
+		// Generate the initial outputs and populate the future outputs list
+		for ( uint i = 0; i < NumTotalOutputs; ++i )
 		{
-			for ( uint i = 0; i < NumStartingOutputs; ++i )
-			{
-				GenerateOutput();
-			}
-		}
-		else
-		{
-			GenerateOutput();
+			GenerateOutput( i < NumStartingOutputs );
 		}
 		IsSolved = false;
 	}
 
-	private void GenerateOutput()
+	private void GenerateOutput( bool _insert )
 	{
 		uint x = DimensionX + 1;
 		uint y = (uint)Random.Range( 1, DimensionY );
@@ -153,9 +169,43 @@ public class GridManager : MonoBehaviour
 		}
 
 		OutputCell output = ( new OutputCell( new CellCoordinates( x, y ), ObjectOrientation.Or0, target ) );
-		m_outputs.Add( output );
-		InsertObject( output );
-		Debug.Log( "GridManager: Output added - (" + x + "," + y + ") target " + target );
+		if ( _insert )
+		{
+			m_outputs.Add( output );
+			InsertObject( output );
+			Debug.Log( "GridManager: Output added - " + output.Coordinates[0].ToString() + " target " + output.OutputTarget );
+		}
+		else
+		{
+			m_futureOutputs.Add( output );
+		}
+	}
+
+	private void LoadOutputs( List<OutputCell> _outputs, int _numStartingOutputs )
+	{
+		for ( int i = 0; i < _numStartingOutputs; ++i )
+		{
+			InsertObject( _outputs[i] );
+			Debug.Log( "GridManager: Output added - " + _outputs[i].Coordinates[0].ToString() + " target " + _outputs[i].OutputTarget );
+		}
+		m_outputs = _outputs.GetRange( 0, _numStartingOutputs );
+		m_futureOutputs = _outputs.GetRange( _numStartingOutputs, _outputs.Count - 1 );
+		NumTotalOutputs = (uint)_outputs.Count;
+		NumStartingOutputs = (uint)_numStartingOutputs;
+	}
+
+	private bool AddNextOutput()
+	{
+		if ( m_futureOutputs.Count > 0)
+		{
+			OutputCell output = m_futureOutputs[0];
+			InsertObject( output );
+			Debug.Log( "GridManager: Output added - " + output.Coordinates[0].ToString() + " target " + output.OutputTarget );
+			m_outputs.Add( output );
+			m_futureOutputs.RemoveAt( 0 );
+			return true;
+		}
+		return false;
 	}
 
 	private List<GridObject> SolveWire( Wire _wire, List<GridObject> _checkedObjects )

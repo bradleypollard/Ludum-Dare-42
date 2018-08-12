@@ -1,0 +1,28 @@
+<Level>
+	<Input> 
+		<X>0</X>
+		<Y>1</Y>
+		<Value>1</Value>
+	</Input>
+	<Input> 
+		<X>0</X>
+		<Y>2</Y>
+		<Value>2</Value>
+	</Input>
+	<Input> 
+		<X>0</X>
+		<Y>3</Y>
+		<Value>4</Value>
+	</Input>
+	<Output> 
+		<X>6</X>
+		<Y>1</Y>
+		<Target>1</Target>
+	</Output>
+	<Output> 
+		<X>6</X>
+		<Y>2</Y>
+		<Target>3</Target>
+	</Output>
+	<NumStartingOutputs>1</NumStartingOutputs>
+<Level>

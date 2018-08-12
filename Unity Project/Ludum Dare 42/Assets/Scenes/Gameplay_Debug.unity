@@ -328,6 +328,8 @@ MonoBehaviour:
   objectOrientation: 0
   gateType: 0
   value: 0
+  titleText: 
+  descriptionText: 
 --- !u!114 &150065056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,7 +366,6 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 150065053}
-  conformToGrid: 0
 --- !u!1 &165888785
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,6 +561,8 @@ MonoBehaviour:
   objectOrientation: 0
   gateType: 1
   value: 0
+  titleText: 
+  descriptionText: 
 --- !u!114 &243892458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -596,7 +599,6 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 243892455}
-  conformToGrid: 0
 --- !u!1 &307820685
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,6 +652,8 @@ MonoBehaviour:
   objectOrientation: 0
   gateType: 5
   value: 0
+  titleText: 
+  descriptionText: 
 --- !u!114 &307820688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -773,7 +777,6 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 307820689}
-  conformToGrid: 0
 --- !u!1 &340412578
 GameObject:
   m_ObjectHideFlags: 0
@@ -902,6 +905,8 @@ MonoBehaviour:
   objectOrientation: 0
   gateType: 3
   value: 0
+  titleText: 
+  descriptionText: 
 --- !u!114 &357762717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1025,7 +1030,6 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 357762718}
-  conformToGrid: 0
 --- !u!1 &517757934
 GameObject:
   m_ObjectHideFlags: 0
@@ -1328,6 +1332,8 @@ MonoBehaviour:
   objectOrientation: 0
   gateType: 2
   value: 1
+  titleText: 
+  descriptionText: 
 --- !u!114 &812877089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1451,7 +1457,6 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 812877090}
-  conformToGrid: 0
 --- !u!1 &891939175
 GameObject:
   m_ObjectHideFlags: 0
@@ -2161,6 +2166,8 @@ MonoBehaviour:
   objectOrientation: 0
   gateType: 2
   value: -1
+  titleText: 
+  descriptionText: 
 --- !u!114 &1819586705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2284,7 +2291,6 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1819586706}
-  conformToGrid: 0
 --- !u!1 &1929242842
 GameObject:
   m_ObjectHideFlags: 0
@@ -2507,6 +2513,8 @@ MonoBehaviour:
   objectOrientation: 0
   gateType: 4
   value: 0
+  titleText: 
+  descriptionText: 
 --- !u!114 &2009226141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2630,7 +2638,6 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 2009226142}
-  conformToGrid: 0
 --- !u!1 &2030285522
 GameObject:
   m_ObjectHideFlags: 0
@@ -2798,6 +2805,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug_StartGameOnLoad: 1
+  debug_LevelToLoad: one
   timerText: {fileID: 1563739363}
   waveText: {fileID: 1413828829}
   scoreText: {fileID: 117070782}
@@ -2823,6 +2831,7 @@ MonoBehaviour:
   NumInputs: 3
   NumStartingOutputs: 1
   NumOutputsPerGeneration: 1
+  NumTotalOutputs: 5
   MaxInputValue: 2
   MaxOutputTarget: 1
   IsSolved: 0
