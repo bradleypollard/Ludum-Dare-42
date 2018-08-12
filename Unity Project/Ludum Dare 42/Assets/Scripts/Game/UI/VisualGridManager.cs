@@ -52,6 +52,12 @@ public class VisualGridManager : MonoBehaviour
         return actualPos;
     }
 
+    public Vector2 GetLocalPos(Vector2 _position)
+    {
+        Vector2 actualPos = uiCanvasFixer.ScreenPosToCanvas(_position);
+        return actualPos;
+    }
+
     public bool GetGridCoordinates(Vector2 _position, ref Vector2Int o_position, bool _convertToCanvas, bool _careIsInGrid = true)
     {
         Vector2 actualPos = _convertToCanvas ? uiCanvasFixer.ScreenPosToCanvas(_position) : _position;
