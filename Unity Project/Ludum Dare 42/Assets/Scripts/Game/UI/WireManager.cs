@@ -8,16 +8,18 @@ public class WireManager : MonoBehaviour
 	private bool m_inWireEditMode;
 	private Stack<CellCoordinates> m_passedThrough;
 	private VisualGridManager m_visualGridManager;
-    private GameplayManager m_gameplayManager;
-    private bool m_isDragging;
+	private GameplayManager m_gameplayManager;
+	private WireVisualManager m_wireVisualManager;
+	private bool m_isDragging;
 
 	// Use this for initialization
 	void Start()
 	{
 		m_gridManager = FindObjectOfType<GridManager>();
 		m_visualGridManager = FindObjectOfType<VisualGridManager>();
-        m_gameplayManager = FindObjectOfType<GameplayManager>();
-    }
+		m_gameplayManager = FindObjectOfType<GameplayManager>();
+		m_wireVisualManager = FindObjectOfType<WireVisualManager>();
+	}
 
 	// Update is called once per frame
 	void Update()
@@ -86,8 +88,23 @@ public class WireManager : MonoBehaviour
 				}
 				else
 				{
-					// End point invalid, end mode
-					EndMode();
+					// End point invalid, reset path
+					ResetMode();
+				}
+			}
+
+			// Delete
+			if ( Input.GetMouseButtonUp( 1 ) && !m_isDragging )
+			{
+				if ( foundGrid )
+				{
+					CellCoordinates cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y ); ;
+					GridObject o = m_gridManager.GetCell( cell );
+					if ( o != null && o.ObjectType == GridObjectType.Wire )
+					{
+						m_wireVisualManager.ClearWire( cell );
+						m_gridManager.ClearCell( cell );
+					}
 				}
 			}
 		}
@@ -99,17 +116,17 @@ public class WireManager : MonoBehaviour
 		return m_inWireEditMode;
 	}
 
-    public void ToggleMode()
-    {
-        if(!m_inWireEditMode)
-        {
-            StartMode();
-        }
-        else
-        {
-            EndMode();
-        }
-    }
+	public void ToggleMode()
+	{
+		if ( !m_inWireEditMode )
+		{
+			StartMode();
+		}
+		else
+		{
+			EndMode();
+		}
+	}
 
 	public void StartMode()
 	{
@@ -121,6 +138,12 @@ public class WireManager : MonoBehaviour
 	public void EndMode()
 	{
 		m_inWireEditMode = false;
+	}
+
+	public void ResetMode()
+	{
+		m_passedThrough = new Stack<CellCoordinates>();
+		m_isDragging = false;
 	}
 
 	public List<CellCoordinates> GetCurrentPath()
@@ -150,70 +173,15 @@ public class WireManager : MonoBehaviour
 		if ( end == null )
 		{
 			Debug.Log( "WireManager: Commit attempted on an empty cell " + _end.ToString() + ", ending mode." );
-			EndMode();
+			ResetMode();
 			return;
 		}
 		if ( m_passedThrough.Count < 3 )
 		{
 			Debug.Log( "WireManager: Commit attempted with too few cells passed through." );
-			EndMode();
+			ResetMode();
 			return;
 		}
-
-		// Check if we arrived at a destination in a valid way
-		/*
-		CellCoordinates head = m_passedThrough.Peek();
-		switch ( end.ObjectType )
-		{
-			case GridObjectType.Gate:
-			{
-				Gate gate = (Gate)end;
-				bool isValid = false;
-				foreach ( CellCoordinates input in gate.Inputs )
-				{
-					if ( input == head )
-					{
-						isValid = true;
-						break;
-					}
-				}
-				if ( isValid )
-				{
-					// Head lines up with an input for this gate so add Gate as end point
-					m_passedThrough.Push( _end );
-				}
-				else
-				{
-					Debug.Log( "WireManager: Commit attempted on Gate at " + _end.ToString() + " but did not align with the Inputs." );
-					EndMode();
-					return;
-				}
-				break;
-			}
-			case GridObjectType.Output:
-			{
-				OutputCell output = (OutputCell)end;
-				if ( output.Entry == head )
-				{
-					// Entry of Output lines up with head, so add Output as end point
-					m_passedThrough.Push( _end );
-				}
-				else
-				{
-					Debug.Log( "WireManager: Commit attempted on Output at " + _end.ToString() + " but did not align with the Entry." );
-					EndMode();
-					return;
-				}
-				break;
-			}
-			default:
-			{
-				Debug.Log( "WireManager: Commit attempted on a cell that was neither a Gate, nor an Output, ending mode." );
-				EndMode();
-				return;
-			}
-		}
-		*/
 
 		// Generate wire objects
 		List<CellCoordinates> coordinates = new List<CellCoordinates>( m_passedThrough );
@@ -222,10 +190,10 @@ public class WireManager : MonoBehaviour
 
 		// Insert wire into grid
 		m_gridManager.InsertObject( toCreate );
-        m_gameplayManager.UpdateGiblets(toCreate.Entry);
-        m_gameplayManager.UpdateGiblets(toCreate.Exit);
+		m_gameplayManager.UpdateGiblets( toCreate.Entry );
+		m_gameplayManager.UpdateGiblets( toCreate.Exit );
 
-        Debug.Log( "WireManager: Successfully committed at " + _end.ToString() );
+		Debug.Log( "WireManager: Successfully committed at " + _end.ToString() );
 		EndMode();
 	}
 
@@ -342,7 +310,8 @@ public class WireManager : MonoBehaviour
 									m_passedThrough.Push( _cell );
 								}
 								else
-								{;
+								{
+									;
 									return;
 								}
 								break;
