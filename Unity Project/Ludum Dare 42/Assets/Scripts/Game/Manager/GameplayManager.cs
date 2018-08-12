@@ -235,26 +235,6 @@ public class GameplayManager : MonoBehaviour
         gridManager.InsertObject(gridObject);
     }
 
-    public void AddWire(Wire.WireType _type, CellCoordinates _coordinates, ObjectOrientation _orientation)
-    {
-        GridObject gridObject = null;
-        switch (_type)
-        {
-            case Wire.WireType.Straight:
-            {
-                gridObject = new StraightWire(_coordinates, _orientation);
-                break;
-            }
-            case Wire.WireType.Turn:
-            {
-                gridObject = new TurnWire(_coordinates, _orientation);
-                break;
-            }
-        }
-
-        gridManager.InsertObject(gridObject);
-    }
-
     public void AddIncrementDecrementGate(CellCoordinates _coordinates, ObjectOrientation _orientation, int _value)
     {
         GridObject gridObject = new IncrementDecrementGate(_coordinates, _orientation, _value);

@@ -82,12 +82,12 @@ public class GridManager : MonoBehaviour
 		}
 	}
 
-	///////////////////////// Helpers /////////////////////////
-	private GridObject GetCell( CellCoordinates _coordinates )
+	public GridObject GetCell( CellCoordinates _coordinates )
 	{
 		return m_grid[_coordinates.X, _coordinates.Y];
 	}
 
+	///////////////////////// Helpers /////////////////////////
 	private void ClearGrid()
 	{
 		// Generate grid 2 cells larger than required for inputs and outputs.

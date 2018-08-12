@@ -12,4 +12,27 @@ public struct CellCoordinates
         X = _x;
         Y = _y;
     }
+
+	public static bool operator ==( CellCoordinates lhs, CellCoordinates rhs )
+	{
+		return lhs.Equals( rhs );
+	}
+
+	public static bool operator !=( CellCoordinates lhs, CellCoordinates rhs )
+	{
+		return !lhs.Equals( rhs );
+	}
+
+	public override bool Equals( object obj )
+	{
+		if ( obj is CellCoordinates )
+		{
+			return ( ( (CellCoordinates)obj ).X == this.X &&
+					   ( (CellCoordinates)obj ).Y == this.Y );
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
