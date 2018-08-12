@@ -23,13 +23,35 @@ public class WireManager : MonoBehaviour
 		if ( IsInWireEditMode() )
 		{
 			Vector2 mousePosition = m_visualGridManager.GetSnapPoint( new Vector2( Input.mousePosition.x, Input.mousePosition.y ) );
+			Vector2Int oGridoob = Vector2Int.zero;
 			Vector2Int oGrid = Vector2Int.zero;
+
 			bool foundGrid = m_visualGridManager.GetGridCoordinates( mousePosition, ref oGrid, false, true ); // In bounds for dragging
+			bool foundGridOOB = m_visualGridManager.GetGridCoordinates( mousePosition, ref oGridoob, false, false )
+				&& oGridoob.x >= 0 && oGridoob.x < m_gridManager.DimensionX + 2 && oGridoob.y >= 0 && oGridoob.y < m_gridManager.DimensionY + 2; // Allow oob for start/end
+
 			if ( m_isDragging )
 			{
-				if ( foundGrid )
+				CellCoordinates cell = new CellCoordinates();
+				bool found = false;
+				if ( foundGridOOB )
 				{
-					CellCoordinates cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y );
+					CellCoordinates oobCell = new CellCoordinates( (uint)oGridoob.x, (uint)oGridoob.y );
+					GridObject o = m_gridManager.GetCell( oobCell );
+					if ( o != null )
+					{
+						cell = oobCell;
+						found = true;
+					}
+				}
+				if ( !found && foundGrid )
+				{
+					cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y );
+					found = true;
+				}
+
+				if ( found )
+				{
 					PassThroughCell( cell );
 					string log = "WireManager: Current path - ";
 					foreach ( CellCoordinates x in m_passedThrough.ToArray() )
@@ -40,14 +62,12 @@ public class WireManager : MonoBehaviour
 				}
 			}
 
-			foundGrid = m_visualGridManager.GetGridCoordinates( mousePosition, ref oGrid, false, false )
-				&& oGrid.x >= 0 && oGrid.x < m_gridManager.DimensionX + 2 && oGrid.y >= 0 && oGrid.y < m_gridManager.DimensionY + 2; // Allow oob for start/end
 			// Start drag
 			if ( Input.GetMouseButtonDown( 0 ) && !m_isDragging )
 			{
-				if ( foundGrid )
+				if ( foundGridOOB )
 				{
-					CellCoordinates cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y );
+					CellCoordinates cell = new CellCoordinates( (uint)oGridoob.x, (uint)oGridoob.y );
 					// Valid start point, begin
 					StartDragging( cell );
 				}
@@ -56,9 +76,9 @@ public class WireManager : MonoBehaviour
 			// End Drag/Mode
 			if ( Input.GetMouseButtonUp( 0 ) && m_isDragging )
 			{
-				if ( foundGrid )
+				if ( foundGridOOB )
 				{
-					CellCoordinates cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y );
+					CellCoordinates cell = new CellCoordinates( (uint)oGridoob.x, (uint)oGridoob.y );
 					// Valid end point, try to commit it (will succed if it is Output or Gate)
 					TryCommit( cell );
 				}
@@ -68,14 +88,6 @@ public class WireManager : MonoBehaviour
 					EndMode();
 				}
 			}
-
-
-			if ( Input.GetMouseButtonUp( 1 ) )
-			{
-				// Right click, exit mode
-				EndMode();
-			}
-
 		}
 	}
 
@@ -117,8 +129,9 @@ public class WireManager : MonoBehaviour
 		}
 	}
 
-	private void TryCommit( CellCoordinates _end )
+	private void TryCommit( CellCoordinates _otjer )
 	{
+		CellCoordinates _end = m_passedThrough.Peek();
 		GridObject end = m_gridManager.GetCell( _end );
 		if ( end == null )
 		{
@@ -128,6 +141,7 @@ public class WireManager : MonoBehaviour
 		}
 
 		// Check if we arrived at a destination in a valid way
+		/*
 		CellCoordinates head = m_passedThrough.Peek();
 		switch ( end.ObjectType )
 		{
@@ -179,6 +193,7 @@ public class WireManager : MonoBehaviour
 				return;
 			}
 		}
+		*/
 
 		// Generate wire objects
 		List<Wire> wiresToCreate = new List<Wire>();
@@ -257,12 +272,66 @@ public class WireManager : MonoBehaviour
 				}
 				m_passedThrough.Push( head ); // Put the head back on, moving forwards
 
-				GridObject cellObject = m_gridManager.GetCell( _cell );
-				if ( cellObject == null )
+				if ( !m_passedThrough.Contains( _cell ) )
 				{
-					Debug.Log( "WireManager: Passing through " + _cell.ToString() );
-					// Only add this cell if it is unoccupied
-					m_passedThrough.Push( _cell );
+					// Check we haven't been here before on this path
+					GridObject cellObject = m_gridManager.GetCell( _cell );
+					if ( cellObject == null )
+					{
+						// Cell is unoccupied, add it
+						Debug.Log( "WireManager: Passing through " + _cell.ToString() );
+						m_passedThrough.Push( _cell );
+					}
+					else
+					{
+						// Need to check it's a valid goal and we arrived in an acceptable way
+						switch ( cellObject.ObjectType )
+						{
+							case GridObjectType.Gate:
+							{
+								Gate gate = (Gate)cellObject;
+								bool isValid = false;
+								foreach ( CellCoordinates input in gate.Inputs )
+								{
+									if ( input == head )
+									{
+										isValid = true;
+										break;
+									}
+								}
+								if ( isValid )
+								{
+									// Head lines up with an input for this gate so add Gate as end point
+									Debug.Log( "WireManager: Passing through " + _cell.ToString() );
+									m_passedThrough.Push( _cell );
+								}
+								else
+								{
+									return;
+								}
+								break;
+							}
+							case GridObjectType.Output:
+							{
+								OutputCell output = (OutputCell)cellObject;
+								if ( output.Entry == head )
+								{
+									// Entry of Output lines up with head, so add Output as end point
+									Debug.Log( "WireManager: Passing through " + _cell.ToString() );
+									m_passedThrough.Push( _cell );
+								}
+								else
+								{;
+									return;
+								}
+								break;
+							}
+							default:
+							{
+								return;
+							}
+						}
+					}
 				}
 				return;
 			}
