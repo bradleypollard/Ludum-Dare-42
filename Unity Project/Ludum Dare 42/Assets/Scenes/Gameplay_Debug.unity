@@ -308,9 +308,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 898cba19c1c721b4d97532f442707c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectOrientation: 0
   gateType: 0
   value: 0
-  objectOrientation: 0
 --- !u!1 &165888785
 GameObject:
   m_ObjectHideFlags: 0
@@ -486,9 +486,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 898cba19c1c721b4d97532f442707c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectOrientation: 0
   gateType: 1
   value: 0
-  objectOrientation: 0
 --- !u!1 &307820685
 GameObject:
   m_ObjectHideFlags: 0
@@ -538,9 +538,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 898cba19c1c721b4d97532f442707c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectOrientation: 0
   gateType: 5
   value: 0
-  objectOrientation: 0
 --- !u!114 &307820688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -736,9 +736,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 898cba19c1c721b4d97532f442707c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectOrientation: 0
   gateType: 3
   value: 0
-  objectOrientation: 0
 --- !u!114 &357762717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1004,7 +1004,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -1108,9 +1108,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 898cba19c1c721b4d97532f442707c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectOrientation: 0
   gateType: 2
   value: 1
-  objectOrientation: 0
 --- !u!114 &812877089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1342,8 +1342,8 @@ GameObject:
   - component: {fileID: 1186885131}
   - component: {fileID: 1186885135}
   - component: {fileID: 1186885134}
-  - component: {fileID: 1186885133}
   - component: {fileID: 1186885132}
+  - component: {fileID: 1186885133}
   m_Layer: 5
   m_Name: Wire_Button
   m_TagString: Untagged
@@ -1381,6 +1381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f40d01cbf06b4f546a506daf71a794ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectOrientation: 0
   wireType: 0
 --- !u!114 &1186885133
 MonoBehaviour:
@@ -1390,7 +1391,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1186885130}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ef3a04c44ea21449b19ac9526b9ae47, type: 3}
+  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -1418,7 +1419,22 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1186885134}
-  conformToGrid: 0
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2060991416}
+        m_MethodName: StartMode
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1186885134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1873,6 +1889,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f40d01cbf06b4f546a506daf71a794ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectOrientation: 0
   wireType: 1
 --- !u!114 &1810310486
 MonoBehaviour:
@@ -1994,9 +2011,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 898cba19c1c721b4d97532f442707c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectOrientation: 0
   gateType: 2
   value: -1
-  objectOrientation: 0
 --- !u!114 &1819586705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2362,9 +2379,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 898cba19c1c721b4d97532f442707c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectOrientation: 0
   gateType: 4
   value: 0
-  objectOrientation: 0
 --- !u!114 &2009226141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2523,6 +2540,7 @@ GameObject:
   - component: {fileID: 2060991411}
   - component: {fileID: 2060991414}
   - component: {fileID: 2060991415}
+  - component: {fileID: 2060991416}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2629,6 +2647,17 @@ MonoBehaviour:
   MaxInputValue: 2
   MaxOutputTarget: 1
   IsSolved: 0
+--- !u!114 &2060991416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2060991410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec71e2f7f5f0c2e448d983127aaf26d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2110602833
 GameObject:
   m_ObjectHideFlags: 0

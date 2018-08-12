@@ -23,6 +23,7 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
 	public bool conformToGrid;
 	private VisualGridManager m_visualGridManager;
 	private GameplayManager m_gameplayManager;
+	private WireManager m_wireManager;
 
 	// Methods
 	public virtual new void OnPointerDown( PointerEventData _eventData )
@@ -30,19 +31,30 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
 		//Check for null Transform
 		if ( _eventData.button == PointerEventData.InputButton.Left )
 		{
-			if ( m_rectTransform == null || m_canvas == null || ( conformToGrid && m_visualGridManager == null ) || m_gameplayManager == null )
+			if ( m_rectTransform == null || m_canvas == null || ( conformToGrid && m_visualGridManager == null ) || m_gameplayManager == null || m_wireManager == null )
 			{
 				m_rectTransform = GetComponent<RectTransform>();
 				m_canvas = FindObjectOfType<Canvas>();
 				m_visualGridManager = FindObjectOfType<VisualGridManager>();
 				m_gameplayManager = FindObjectOfType<GameplayManager>();
+				m_wireManager = FindObjectOfType<WireManager>();
 			}
 
-			if ( m_rectTransform != null && m_canvas != null && ( !conformToGrid || m_visualGridManager != null ) && m_gameplayManager != null )
+			if ( m_rectTransform != null && m_canvas != null && ( !conformToGrid || m_visualGridManager != null ) && m_gameplayManager != null && m_wireManager != null )
 			{
-				DoStateTransition( SelectionState.Pressed, false );
-				m_isBeingDragged = true;
-				StartCoroutine( OnDrag() );
+				if ( m_wireManager.IsInWireEditMode() )
+				{
+					DoStateTransition( SelectionState.Pressed, false );
+					m_isBeingDragged = true;
+					StartCoroutine( OnDrag() );
+				}
+				else
+				{
+					DoStateTransition( SelectionState.Pressed, false );
+					m_isBeingDragged = true;
+					StartCoroutine( OnDrag() );
+				}
+
 			}
 		}
 	}
@@ -120,6 +132,26 @@ public class DragDrop : Selectable, IPointerDownHandler, IPointerUpHandler
 			//Drag Logic
 			Vector2 mousePosition = m_visualGridManager.GetSnapPoint( new Vector2( Input.mousePosition.x, Input.mousePosition.y ) );
 			m_rectTransform.anchoredPosition = mousePosition;
+			yield return null;
+		}
+	}
+
+	private IEnumerator OnDragWire()
+	{
+		while ( m_isBeingDragged )
+		{
+			//Drag Logic
+			Vector2 mousePosition = m_visualGridManager.GetSnapPoint( new Vector2( Input.mousePosition.x, Input.mousePosition.y ) );
+
+			Vector2Int oGrid = Vector2Int.zero;
+			if ( m_visualGridManager.GetGridCoordinates( mousePosition, ref oGrid, false ) )
+			{
+				CellCoordinates cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y );
+			}
+			else
+			{
+
+			}
 			yield return null;
 		}
 	}
