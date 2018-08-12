@@ -14,8 +14,8 @@ public class VisualGridManager : MonoBehaviour
 	private UICanvasFixer uiCanvasFixer;
     private Texture2D line;
 
-    private void Start()
-	{
+    void OnEnable()
+    {
 		//Get Components
 		gridManager = FindObjectOfType<GridManager>();
 
@@ -159,15 +159,18 @@ public class VisualGridManager : MonoBehaviour
         Vector2 gridSize = new Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
         Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
 
-        //Draw HoriLines
-        for (float y = startPos.y; y <= endPos.y; y += squareSize.y)
+        if (isDebug)
         {
-            GUI.DrawTexture(new Rect(startPos.x, y, endPos.x - startPos.x, 4), line);
-        }
+            //Draw HoriLines
+            for (float y = startPos.y; y <= endPos.y; y += squareSize.y)
+            {
+                GUI.DrawTexture(new Rect(startPos.x, y, endPos.x - startPos.x, 4), line);
+            }
 
-        for (float x = startPos.x; x <= endPos.x; x += squareSize.x)
-        {
-            GUI.DrawTexture(new Rect(x, startPos.y, 4, endPos.y - startPos.y), line);
+            for (float x = startPos.x; x <= endPos.x; x += squareSize.x)
+            {
+                GUI.DrawTexture(new Rect(x, startPos.y, 4, endPos.y - startPos.y), line);
+            }
         }
     }
 
