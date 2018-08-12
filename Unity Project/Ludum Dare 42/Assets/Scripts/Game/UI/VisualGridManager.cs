@@ -52,11 +52,11 @@ public class VisualGridManager : MonoBehaviour
         return actualPos;
     }
 
-    public bool GetGridCoordinates(Vector2 _position, ref Vector2Int o_position, bool _convertToCanvas)
+    public bool GetGridCoordinates(Vector2 _position, ref Vector2Int o_position, bool _convertToCanvas, bool _careIsInGrid = true)
     {
         Vector2 actualPos = _convertToCanvas ? uiCanvasFixer.ScreenPosToCanvas(_position) : _position;
 
-        if (actualPos.x > startPos.x && actualPos.y > startPos.y && actualPos.x < endPos.x && actualPos.y < endPos.y)
+        if (!_careIsInGrid || (actualPos.x > startPos.x && actualPos.y > startPos.y && actualPos.x < endPos.x && actualPos.y < endPos.y))
         {
             actualPos -= startPos;
 
