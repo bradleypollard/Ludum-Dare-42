@@ -7,41 +7,62 @@ public class InfoPopup : MonoBehaviour
 {
     public Text titleText, descriptionText;
 
-    public bool isShowing = false;
+    private bool isShowing;
     private bool isAnimating = false, currentShowing = false;
     private const float animTime = 0.5f, overSize = 0.2f, overSizePecent = 0.8f, fadePercent = 0.4f, overSizeTime = animTime * overSizePecent, fadeTime = animTime * fadePercent;
 
     private Vector2 desiredPos;
-    private string desiredTitle, desiredDescription;
+    private Queue<string> desiredTitle, desiredDescription;
+
+    private WireManager wireManager;
+
+    public bool locked;
 
     private void Start()
     {
         GetComponent<RectTransform>().localScale = isShowing ? Vector3.one : Vector3.zero;
         SetFade(isShowing ? 1.0f : 0.0f);
         desiredPos = GetComponent<RectTransform>().anchoredPosition;
+        desiredTitle = new Queue<string>();
+        desiredDescription = new Queue<string>();
     }
 
     private void Update()
     {
         //Update Text
-        if (GetComponent<RectTransform>().localScale.x == 0.0f)
+        if (GetComponent<RectTransform>().localScale.x == 0.0f && desiredTitle.Count > 0)
         {
-            titleText.text = desiredTitle;
-            descriptionText.text = desiredDescription;
+            titleText.text = desiredTitle.Peek();
+            descriptionText.text = desiredDescription.Peek();
         }
 
-        if (isShowing != currentShowing && !isAnimating)
-        {
-            isAnimating = true;
-            currentShowing = isShowing;
+        bool showWindow = desiredTitle.Count > 0;
 
-            if (isShowing)
+        if (!isAnimating)
+        {
+            if (showWindow)
             {
-                StartCoroutine(ScaleToSize(1.0f));
+                if (isShowing)
+                {
+                    if (desiredTitle.Peek() != titleText.text)
+                    {
+                        isAnimating = true;
+                        StartCoroutine(Swap());
+                    }
+                }
+                else
+                {
+                    isAnimating = true;
+                    StartCoroutine(Show());
+                }
             }
             else
             {
-                StartCoroutine(ScaleToSize(0.0f));
+                if (isShowing)
+                {
+                    isAnimating = true;
+                    StartCoroutine(Hide());
+                }
             }
         }
 
@@ -54,13 +75,53 @@ public class InfoPopup : MonoBehaviour
         desiredPos = new Vector2(GetComponent<RectTransform>().anchoredPosition.x, _newPositionY);
     }
 
-    public void SetText(string _title, string _description)
+    public bool SetText(string _title, string _description)
     {
-        desiredTitle = _title;
-        desiredDescription = _description;
+        if (!locked)
+        {
+            desiredTitle.Enqueue(_title);
+            desiredDescription.Enqueue(_description);
+
+            return true;
+        }
+
+        return false;
     }
 
-    private IEnumerator ScaleToSize(float _size)
+    public void PopText()
+    {
+        desiredTitle.Dequeue();
+        desiredDescription.Dequeue();
+    }
+
+    private IEnumerator Swap()
+    {
+        yield return ScaleToSize(0.0f);
+
+        yield return null;
+        yield return null;
+
+        yield return ScaleToSize(1.0f);
+
+        isAnimating = false;
+        isShowing = true;
+    }
+
+    private IEnumerator Show()
+    {
+        yield return ScaleToSize(1.0f);
+        isAnimating = false;
+        isShowing = true;
+    }
+
+    private IEnumerator Hide()
+    {
+        yield return ScaleToSize(0.0f);
+        isAnimating = false;
+        isShowing = false;
+    }
+
+private IEnumerator ScaleToSize(float _size)
     {
         float startTime = Time.time, startScale = GetComponent<RectTransform>().localScale.x;
 
@@ -107,8 +168,6 @@ public class InfoPopup : MonoBehaviour
         //Snap Scale at End
         GetComponent<RectTransform>().localScale = Vector3.one * _size;
         SetFade(_size > startScale ? 1.0f : 0.0f);
-
-        isAnimating = false;
     }
 
     private void SetFade(float _alpha)

@@ -6,107 +6,108 @@ using UnityEngine.UI;
 
 public class GameplayManager : MonoBehaviour
 {
-	//Debug Variables
-	public bool debug_StartGameOnLoad = false;
+    //Debug Variables
+    public bool debug_StartGameOnLoad = false;
 	public string debug_LevelToLoad = "";
 
-	//Game Constants
-	const float startTimeLeft = 100;
+    //Game Constants
+    const float startTimeLeft = 100;
 
-	//Game Variables
-	private float timeLeft;
-	private int score, wave;
-	private bool isPlaying;
+    //Game Variables
+    private float timeLeft;
+    private int score, wave;
+    private bool isPlaying;
 
-	private Dictionary<InputCell, GameObject> inputs;
-	private Dictionary<OutputCell, GameObject> outputs;
-	private Dictionary<GridObject, GameObject> placedGridObjects;
+    private Dictionary<InputCell, GameObject> inputs;
+    private Dictionary<OutputCell, GameObject> outputs;
+    private Dictionary<GridObject, GameObject> placedGridObjects;
 
-	//UI Accessors (Cause Lazy)
-	public Text timerText;
-	public Text waveText;
+    //UI Accessors (Cause Lazy)
+    public Text timerText;
+    public Text waveText;
 
-	public Image background, fadeLayer;
-	public GameObject mainMenu, gameInterface;
+    public Image background, fadeLayer;
+    public GameObject mainMenu, gameInterface;
 
-	public GameObject gridModeIndicator;
-	private bool isGridModeIndicatorAnimating = false, isGridModeIndicatorHidden = false;
+    public GameObject gridModeIndicator;
+    private bool isGridModeIndicatorAnimating = false, isGridModeIndicatorHidden = false;
 
-	public RectTransform gridParent, scrollViewParent;
-	public GameObject inputCellPrefab, outputCellPrefab;
+    public RectTransform gridParent, scrollViewParent;
+    public GameObject inputCellPrefab, outputCellPrefab;
 
-	//Components
-	private GridManager gridManager;
-	private WireVisualManager wireVisualManager;
-	private WireManager wireManager;
+    //Components
+    private GridManager gridManager;
+    private WireVisualManager wireVisualManager;
+    private WireManager wireManager;
 	VisualGridManager visualGridManager;
 
-	private readonly Color solvedColour = new Color( 0.423f, 0.858f, 0.612f );
-	private readonly Color unsolvedColour = new Color( 0.925f, 0.941f, 0.945f );
+    private readonly Color solvedColour = new Color(0.423f, 0.858f, 0.612f);
+    private readonly Color unsolvedColour = new Color(0.925f, 0.941f, 0.945f);
+    private readonly Color unsolvedWireColour = new Color(0.745f, 0.098f, 0.0f);
 
-	private Dictionary<string, LevelFile> m_levels;
-	public Color backgroundColour;
+    private Dictionary<string, LevelFile> m_levels;
+    public Color backgroundColour;
 
-	private Color actualBackgroundColour;
-	private Color orginalBackgroundColour;
+    private Color actualBackgroundColour;
+    private Color orginalBackgroundColour;
 
-	private bool isBackgroundFading = false;
+    private bool isBackgroundFading = false;
 
-	// Use this for initialization
-	void Start()
-	{
+    // Use this for initialization
+    void Start ()
+    {
 		SetupStartingLevels();
 
-		//Get Components
-		gridManager = FindObjectOfType<GridManager>();
-		wireVisualManager = FindObjectOfType<WireVisualManager>();
-		wireManager = FindObjectOfType<WireManager>();
+        //Get Components
+        gridManager = FindObjectOfType<GridManager>();
+        wireVisualManager = FindObjectOfType<WireVisualManager>();
+        wireManager = FindObjectOfType<WireManager>();
 		visualGridManager = FindObjectOfType<VisualGridManager>();
 
-		//Do Debug Logic
-		if ( debug_StartGameOnLoad )
-		{
-			StartGame( "" );
-		}
+        //Do Debug Logic
+        if (debug_StartGameOnLoad)
+        {
+            StartGame("");
+        }
 
-		//Hide GridModeIndicator
-		Color startColour = gridModeIndicator.GetComponent<Text>().color;
-		startColour.a = 0.0f;
-		gridModeIndicator.GetComponent<Text>().color = startColour;
+        //Hide GridModeIndicator
+        Color startColour = gridModeIndicator.GetComponent<Text>().color;
+        startColour.a = 0.0f;
+        gridModeIndicator.GetComponent<Text>().color = startColour;
 
-		actualBackgroundColour = backgroundColour;
-		orginalBackgroundColour = backgroundColour;
-	}
+        actualBackgroundColour = backgroundColour;
+        orginalBackgroundColour = backgroundColour;
+    }
 
-	public void StartGame( string levelName )
-	{
-		//Reset Values
-		timeLeft = startTimeLeft;
-		score = 0;
-		wave = -1;
-		isPlaying = true;
-		inputs = new Dictionary<InputCell, GameObject>();
-		outputs = new Dictionary<OutputCell, GameObject>();
-		placedGridObjects = new Dictionary<GridObject, GameObject>();
+    public void StartGame(string levelName)
+    {
+        //Reset Values
+        timeLeft = startTimeLeft;
+        score = 0;
+        wave = -1;
+        isPlaying = true;
+        inputs = new Dictionary<InputCell, GameObject>();
+        outputs = new Dictionary<OutputCell, GameObject>();
+        placedGridObjects = new Dictionary<GridObject, GameObject>();
 
-		StartCoroutine( LoadLevel( levelName ) );
-	}
+        StartCoroutine(LoadLevel(levelName));
+    }
 
-	private IEnumerator LoadLevel( string _levelName )
-	{
-		//Deactive Menu Input
+    private IEnumerator LoadLevel(string _levelName)
+    {
+        //Deactive Menu Input
 
-		//Transition
-		Color clearedBackground = backgroundColour;
-		clearedBackground.a = 0.0f;
-		yield return FadeBackground( clearedBackground, backgroundColour, fadeLayer, 1.0f );
-		fadeLayer.raycastTarget = true;
+        //Transition
+        Color clearedBackground = backgroundColour;
+        clearedBackground.a = 0.0f;
+        yield return FadeBackground(clearedBackground, backgroundColour, fadeLayer, 1.0f);
+        fadeLayer.raycastTarget = true;
 
-		gameInterface.SetActive( true );
-		mainMenu.SetActive( false );
+        gameInterface.SetActive(true);
+        mainMenu.SetActive(false);
 
-		//Load Inputs / Outputs
-		LevelFile file = null;
+        //Load Inputs / Outputs
+        LevelFile file = null;
 		if ( debug_LevelToLoad != "" )
 		{
 			file = m_levels[debug_LevelToLoad];
@@ -117,45 +118,51 @@ public class GameplayManager : MonoBehaviour
 		}
 		yield return null; // yield here because in the future this will parse XML...
 
-		//Setup Grid Manager
+        //Setup Grid Manager
 		gridManager.Initialise( file );
 		yield return null;
 
-		//Setup Visual Grid Manager
+        //Setup Visual Grid Manager
 		visualGridManager.Initialise();
 		wireVisualManager.Initialise();
 
-		//Transition
+        //Transition
 		if ( file != null )
 		{
 			orginalBackgroundColour = file.BGColour;
 			backgroundColour = file.BGColour;
 		}
 
-		UpdateCells();
+        UpdateCells();
 
-		yield return FadeBackground( fadeLayer.color, clearedBackground, fadeLayer, 1.0f );
-		fadeLayer.raycastTarget = false;
-		yield return null;
+        yield return FadeBackground(fadeLayer.color, clearedBackground, fadeLayer, 1.0f);
+        fadeLayer.raycastTarget = false;
+        yield return null;
 
-		//Activate Player Input
+        //Activate Player Input
 
-		yield return StartCoroutine( GameLoop() );
+        yield return StartCoroutine(GameLoop());
 
-		//Transition back
-		clearedBackground = backgroundColour;
+        //Stop Player from inputing
+        fadeLayer.raycastTarget = true;
+        wireManager.EndMode();
+
+        yield return new WaitForSeconds(4f);
+
+        //Transition back
+        clearedBackground = backgroundColour;
 		clearedBackground.a = 0.0f;
 		yield return FadeBackground( clearedBackground, backgroundColour, fadeLayer, 1.0f );
-		fadeLayer.raycastTarget = true;
+		
 
 		gameInterface.SetActive( false );
 		mainMenu.SetActive( true );
 
 		yield return FadeBackground( fadeLayer.color, clearedBackground, fadeLayer, 1.0f );
-		fadeLayer.raycastTarget = false;
+        fadeLayer.raycastTarget = false;
 
-		//Clear visual grid
-		foreach ( GameObject input in inputs.Values )
+        //Clear visual grid
+        foreach ( GameObject input in inputs.Values )
 		{
 			Destroy( input );
 		}
@@ -172,412 +179,438 @@ public class GameplayManager : MonoBehaviour
 			foreach ( GameObject wire in wireList )
 			{
 				Destroy( wire );
-			}
+}
 		}
 	}
 
-	private IEnumerator GameLoop()
-	{
-		while ( isPlaying )
-		{
-			while ( isPlaying && !IsWaveBeaten() )
-			{
-				timeLeft -= Time.deltaTime;
+    private IEnumerator GameLoop()
+    {
+        while (isPlaying)
+        {
+            while(isPlaying && !IsWaveBeaten())
+            {
+                timeLeft -= Time.deltaTime;
 
-				if ( timeLeft <= 0.0f )
-				{
-					isPlaying = false;
-				}
+                if(timeLeft <= 0.0f)
+                {
+                    isPlaying = false;
+                }
 
-				//Update Outputs
-				foreach ( KeyValuePair<OutputCell, GameObject> output in outputs )
-				{
-					foreach ( Image image in output.Value.GetComponentsInChildren<Image>() )
-					{
-						//Colour wires if complete
-						if ( output.Key.IsCurrentlySatisfied() )
-						{
-							image.color = solvedColour;
-						}
-						else
-						{
-							image.color = unsolvedColour;
-						}
-					}
+                ColourCells(false, true);
 
-					if ( output.Key.IsCurrentlySatisfied() )
-					{
-						output.Value.GetComponentInChildren<Text>().color = solvedColour;
-					}
-					else
-					{
-						output.Value.GetComponentInChildren<Text>().color = unsolvedColour;
-					}
-				}
+                yield return null;
+            }
 
-				yield return null;
-			}
+            ColourCells(true, false);
 
-			bool isGameOver = !GenerateWave();
-			if ( isGameOver )
-			{
-				isPlaying = false;
-			}
+            bool isGameOver = !GenerateWave();
+            if(isGameOver)
+            {
+                isPlaying = false;
+            }
+            else
+            {
+                yield return new WaitForSeconds(1.0f);
+            }
 
-			score += GetWaveClearScore();
-			timeLeft += GetWaveClearTime();
-		}
+            score += GetWaveClearScore();
+            timeLeft += GetWaveClearTime();
+        }
 
-		Debug.Log( "GAME OVER" );
-	}
+        ColourCells(true, false);
+        Debug.Log("GAME OVER");
+    }
 
-	private bool GenerateWave()
-	{
-		bool canAdvance = true;
+    private bool GenerateWave()
+    {
+        bool canAdvance = true;
 
-		//Increment Wave
-		wave++;
+        //Increment Wave
+        wave++;
 
 		canAdvance = gridManager.AdvanceGeneration(); // TODO: Use for victory screen
-		UpdateCells();
+        UpdateCells();
 
-		return canAdvance;
-	}
+        return canAdvance;
+    }
 
-	private void UpdateCells()
-	{
-		//Update Visual Inputs / Outputs
-		foreach ( InputCell input in gridManager.GetInputs() )
-		{
-			if ( !inputs.ContainsKey( input ) )
-			{
-				//Generate Prefab at position
-				GameObject prefab = Instantiate( inputCellPrefab, gridParent );
-				prefab.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid( input.Coordinates[0] );
-				prefab.GetComponentInChildren<Text>().text = input.InputValue.ToString();
+    private void UpdateCells()
+    {
+        //Update Visual Inputs / Outputs
+        foreach (InputCell input in gridManager.GetInputs())
+        {
+            if (!inputs.ContainsKey(input))
+            {
+                //Generate Prefab at position
+                GameObject prefab = Instantiate(inputCellPrefab, gridParent);
+                prefab.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(input.Coordinates[0]);
+                prefab.GetComponentInChildren<Text>().text = input.InputValue.ToString();
 
-				inputs.Add( input, prefab );
-			}
-		}
+                inputs.Add(input, prefab);
+            }
+        }
 
-		foreach ( OutputCell output in gridManager.GetOutputs() )
-		{
-			if ( !outputs.ContainsKey( output ) )
-			{
-				//Generate Prefab at position
-				GameObject prefab = Instantiate( outputCellPrefab, gridParent );
-				prefab.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid( output.Coordinates[0] );
-				prefab.GetComponentInChildren<Text>().text = output.OutputTarget.ToString();
+        foreach (OutputCell output in gridManager.GetOutputs())
+        {
+            if (!outputs.ContainsKey(output))
+            {
+                //Generate Prefab at position
+                GameObject prefab = Instantiate(outputCellPrefab, gridParent);
+                prefab.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(output.Coordinates[0]);
+                prefab.GetComponentInChildren<Text>().text = output.OutputTarget.ToString();
 
-				outputs.Add( output, prefab );
-			}
-		}
-	}
+                outputs.Add(output, prefab);
+            }
+        }
+    }
 
-	private bool IsWaveBeaten()
-	{
-		return gridManager.IsSolved;
-	}
+    private void ColourCells(bool _doWiresSolved = false, bool _doWiresUnSolved = false)
+    {
+        //Update Outputs
+        foreach (KeyValuePair<OutputCell, GameObject> output in outputs)
+        {
+            foreach (Image image in output.Value.GetComponentsInChildren<Image>())
+            {
+                //Colour wires if complete
+                if (output.Key.IsCurrentlySatisfied())
+                {
+                    image.color = solvedColour;
+                }
+                else
+                {
+                    image.color = unsolvedColour;
+                }
+            }
 
-	private int GetWaveClearScore()
-	{
-		return 0;
-	}
+            if (output.Key.IsCurrentlySatisfied())
+            {
+                output.Value.GetComponentInChildren<Text>().color = solvedColour;
+            }
+            else
+            {
+                output.Value.GetComponentInChildren<Text>().color = unsolvedColour;
+            }
+        }
 
-	private float GetWaveClearTime()
-	{
-		return 0.0f;
-	}
+        //Colour Wires
+        if (_doWiresSolved)
+        {
+            wireVisualManager.ColourWires(solvedColour);
+        }
+        if (_doWiresUnSolved)
+        {
+            wireVisualManager.ColourWires(unsolvedWireColour);
+        }
+    }
 
-	private void Update()
-	{
-		//Update UI Elements
-		if ( isPlaying )
-		{
-			if ( timerText != null )
-			{
-				timerText.text = ( timeLeft > 0 ? Mathf.Floor( timeLeft ) + 1 : 0 ).ToString();
-			}
+    private bool IsWaveBeaten()
+    {
+        return gridManager.IsSolved;
+    }
 
-			if ( wave >= 0 && waveText != null )
-			{
-				waveText.text = "Wave " + ( wave + 1 );
-			}
+    private int GetWaveClearScore()
+    {
+        return 0;
+    }
 
-			if ( wireManager.IsInWireEditMode() != isGridModeIndicatorHidden && !isGridModeIndicatorAnimating )
-			{
-				isGridModeIndicatorAnimating = true;
-				isGridModeIndicatorHidden = wireManager.IsInWireEditMode();
+    private float GetWaveClearTime()
+    {
+        return 0.0f;
+    }
 
-				StartCoroutine( FadeInText( gridModeIndicator.GetComponent<Text>(), wireManager.IsInWireEditMode() ) );
+    private void Update()
+    {
+        //Update UI Elements
+        if (isPlaying)
+        {
+            if (timerText != null)
+            {
+                timerText.text = (timeLeft > 0 ? Mathf.Floor(timeLeft) + 1 : 0).ToString();
+            }
 
-				if ( isGridModeIndicatorHidden )
-				{
-					backgroundColour = Color.Lerp( orginalBackgroundColour, Color.black, 0.5f );
-				}
-				else
-				{
-					backgroundColour = orginalBackgroundColour;
-				}
-			}
-		}
+            if (wave >= 0 && waveText != null)
+            {
+                waveText.text = "Wave " + (wave + 1);
+            }
+        }
 
-		if ( actualBackgroundColour != backgroundColour && !isBackgroundFading )
-		{
-			isBackgroundFading = true;
-			StartCoroutine( FadeBackground( actualBackgroundColour, backgroundColour, background ) );
-			StartCoroutine( TurnOffAfterFade( backgroundColour ) );
-		}
-	}
+        if(wireManager.IsInWireEditMode() != isGridModeIndicatorHidden && !isGridModeIndicatorAnimating)
+        {
+            isGridModeIndicatorAnimating = true;
+            isGridModeIndicatorHidden = wireManager.IsInWireEditMode();
 
-	private IEnumerator FadeInText( Text _text, bool _show )
-	{
-		float startTime = Time.time, fadeTime = 0.25f;
-		Color startColour = _text.color;
-		float startAlpha = startColour.a;
+            StartCoroutine(FadeInText(gridModeIndicator.GetComponent<Text>(), wireManager.IsInWireEditMode()));
 
-		while ( Time.time - startTime < fadeTime )
-		{
-			startColour.a = Mathf.Lerp( startAlpha, _show ? 1.0f : 0.0f, ( Time.time - startTime ) / fadeTime );
-			_text.color = startColour;
-			yield return null;
-		}
+            if(isGridModeIndicatorHidden)
+            {
+                backgroundColour = Color.Lerp(orginalBackgroundColour, Color.black, 0.5f);
+            }
+            else
+            {
+                backgroundColour = orginalBackgroundColour;
+            }
+        }
 
-		startColour.a = _show ? 1.0f : 0.0f;
-		_text.color = startColour;
+        if(actualBackgroundColour != backgroundColour && !isBackgroundFading)
+        {
+            isBackgroundFading = true;
+            StartCoroutine(FadeBackground(actualBackgroundColour, backgroundColour, background));
+            StartCoroutine(TurnOffAfterFade(backgroundColour));
+        }
+    }
 
-		isGridModeIndicatorAnimating = false;
-	}
+    private IEnumerator FadeInText(Text _text, bool _show)
+    {
+        float startTime = Time.time, fadeTime = 0.25f;
+        Color startColour = _text.color;
+        float startAlpha = startColour.a;
 
-	private IEnumerator TurnOffAfterFade( Color _end )
-	{
-		yield return new WaitForSeconds( 0.25f );
+        while (Time.time - startTime < fadeTime)
+        {
+            startColour.a = Mathf.Lerp(startAlpha, _show ? 1.0f : 0.0f, (Time.time - startTime)/ fadeTime);
+            _text.color = startColour;
+            yield return null;
+        }
 
-		isBackgroundFading = false;
-		actualBackgroundColour = _end;
-	}
+        startColour.a = _show ? 1.0f : 0.0f;
+        _text.color = startColour;
 
-	private IEnumerator FadeBackground( Color _start, Color _end, Image _image, float _fadeTime = 0.25f )
-	{
-		float startTime = Time.time;
-		while ( Time.time - startTime < _fadeTime )
-		{
-			_image.color = Color.Lerp( _start, _end, ( Time.time - startTime ) / _fadeTime );
-			yield return null;
-		}
+        isGridModeIndicatorAnimating = false;
+    }
 
-		_image.color = _end;
-	}
+    private IEnumerator TurnOffAfterFade(Color _end)
+    {
+        yield return new WaitForSeconds(0.25f);
 
-	public void AddGate( GateType _type, CellCoordinates _coordinates, ObjectOrientation _orientation, GameObject _selfGameObject )
-	{
-		//Check if an object is already there
-		GridObject gridObject = gridManager.GetCell( _coordinates );
-		if ( gridObject != null )
-		{
-			if ( gridObject.ObjectType != GridObjectType.Wire )
-			{
-				Destroy( placedGridObjects[gridObject] );
-				placedGridObjects.Remove( gridObject );
-			}
-			else
-			{
-				wireVisualManager.ClearWire( _coordinates );
-			}
+        isBackgroundFading = false;
+        actualBackgroundColour = _end;
+    }
 
-			gridManager.ClearCell( _coordinates );
-			gridObject = null;
-		}
+    private IEnumerator FadeBackground(Color _start, Color _end, Image _image, float _fadeTime = 0.25f)
+    {
+        float startTime = Time.time;
+        while (Time.time - startTime < _fadeTime)
+        {
+            _image.color = Color.Lerp(_start, _end, (Time.time - startTime) / _fadeTime);
+            yield return null;
+        }
 
-		switch ( _type )
-		{
-			case GateType.Add:
-			{
-				gridObject = new AddGate( _coordinates, _orientation );
-				break;
-			}
-			case GateType.Subtract:
-			{
-				gridObject = new SubtractGate( _coordinates, _orientation );
-				break;
-			}
-			case GateType.Multiply:
-			{
-				gridObject = new MultiplyGate( _coordinates, _orientation );
-				break;
-			}
-			case GateType.Divide:
-			{
-				gridObject = new DivideGate( _coordinates, _orientation );
-				break;
-			}
-			case GateType.IncrementDecrement:
-			{
-				gridObject = new IncrementDecrementGate( _coordinates, _orientation );
-				break;
-			}
-			case GateType.Cross:
-			{
-				gridObject = new CrossGate( _coordinates, _orientation );
-				break;
-			}
-		}
+        _image.color = _end;
+    }
 
-		gridManager.InsertObject( gridObject );
-		placedGridObjects.Add( gridObject, _selfGameObject );
+    public void AddGate(GateType _type, CellCoordinates _coordinates, ObjectOrientation _orientation, GameObject _selfGameObject)
+    {
+        //Check if an object is already there
+        GridObject gridObject = gridManager.GetCell(_coordinates);
+        if(gridObject != null)
+        {
+            if (gridObject.ObjectType != GridObjectType.Wire)
+            {
+                Destroy(placedGridObjects[gridObject]);
+                placedGridObjects.Remove(gridObject);           
+            }
+            else
+            {
+                wireVisualManager.ClearWire(_coordinates);
+            }
 
-		//Create Visual Wire
-		Gate gate = (Gate)gridObject;
-		foreach ( CellCoordinates inputCoords in gate.Inputs )
-		{
-			GridObject inputGridObject = gridManager.GetCell( inputCoords );
-			if ( inputGridObject != null )
-			{
-				if ( inputGridObject.ObjectType != GridObjectType.Wire )
-				{
-					wireVisualManager.CreateWireAndLink( inputCoords, _coordinates, false );
-				}
-			}
-		}
+            gridManager.ClearCell(_coordinates);
+            gridObject = null;
+        }
 
-		foreach ( CellCoordinates outputCoords in gate.Outputs )
-		{
-			GridObject outputGridObject = gridManager.GetCell( outputCoords );
-			if ( outputGridObject != null )
-			{
-				if ( outputGridObject.ObjectType != GridObjectType.Wire )
-				{
-					wireVisualManager.CreateWireAndLink( _coordinates, outputCoords, true );
-				}
-			}
-		}
+       switch(_type)
+        {
+            case GateType.Add:
+            {
+                gridObject = new AddGate(_coordinates, _orientation);
+                break;
+            }
+            case GateType.Subtract:
+            {
+                gridObject = new SubtractGate(_coordinates, _orientation);
+                break;
+            }
+            case GateType.Multiply:
+            {
+                gridObject = new MultiplyGate(_coordinates, _orientation);
+                break;
+            }
+            case GateType.Divide:
+            {
+                gridObject = new DivideGate(_coordinates, _orientation);
+                break;
+            }
+            case GateType.IncrementDecrement:
+            {
+                gridObject = new IncrementDecrementGate(_coordinates, _orientation);
+                break;
+            }
+            case GateType.Cross:
+            {
+                gridObject = new CrossGate(_coordinates, _orientation);
+                break;
+            }
+        }
 
-		UpdateGiblets( _coordinates, true );
-	}
+        gridManager.InsertObject(gridObject);
+        placedGridObjects.Add(gridObject, _selfGameObject);
 
-	public void AddIncrementDecrementGate( CellCoordinates _coordinates, ObjectOrientation _orientation, int _value, GameObject _selfGameObject )
-	{
-		//Check if an object is already there
-		GridObject gridObject = gridManager.GetCell( _coordinates );
-		if ( gridObject != null )
-		{
-			gridManager.ClearCell( _coordinates );
+        //Create Visual Wire
+        Gate gate = (Gate)gridObject;
+        uint index = 0;
+        foreach (CellCoordinates inputCoords in gate.Inputs)
+        {
+            GridObject inputGridObject = gridManager.GetCell(inputCoords);
+            if (inputGridObject != null)
+            {
+                if (inputGridObject.ObjectType != GridObjectType.Wire)
+                {
+                    wireVisualManager.CreateWireAndLink(inputCoords, gate.GetCoordinateForInput(index), false);
+                }
+            }
+            index++;
+        }
 
-			Destroy( placedGridObjects[gridObject] );
-			placedGridObjects.Remove( gridObject );
-			gridObject = null;
-		}
+        index = 0;
+        foreach (CellCoordinates outputCoords in gate.Outputs)
+        {
+            GridObject outputGridObject = gridManager.GetCell(outputCoords);
+            if (outputGridObject != null)
+            {
+                if (outputGridObject.ObjectType != GridObjectType.Wire)
+                {
+                    wireVisualManager.CreateWireAndLink(_coordinates, gate.GetCoordinateForInput(index), true);
+                }
+            }
+            index++;
+        }
 
-		gridObject = new IncrementDecrementGate( _coordinates, _orientation, _value );
-		gridManager.InsertObject( gridObject );
-		placedGridObjects.Add( gridObject, _selfGameObject );
+        UpdateGiblets(_coordinates, true);
+    }
 
-		//Create Visual Wire
-		Gate gate = (Gate)gridObject;
-		foreach ( CellCoordinates inputCoords in gate.Inputs )
-		{
-			GridObject inputGridObject = gridManager.GetCell( inputCoords );
-			if ( inputGridObject != null )
-			{
-				if ( inputGridObject.ObjectType != GridObjectType.Wire )
-				{
-					wireVisualManager.CreateWireAndLink( inputCoords, _coordinates, false );
-				}
-			}
-		}
+    public void AddIncrementDecrementGate(CellCoordinates _coordinates, ObjectOrientation _orientation, int _value, GameObject _selfGameObject)
+    {
+        //Check if an object is already there
+        GridObject gridObject = gridManager.GetCell(_coordinates);
+        if (gridObject != null)
+        {
+            gridManager.ClearCell(_coordinates);
 
-		foreach ( CellCoordinates outputCoords in gate.Outputs )
-		{
-			GridObject outputGridObject = gridManager.GetCell( outputCoords );
-			if ( outputGridObject != null )
-			{
-				if ( outputGridObject.ObjectType != GridObjectType.Wire )
-				{
-					wireVisualManager.CreateWireAndLink( _coordinates, outputCoords, true );
-				}
-			}
-		}
+            Destroy(placedGridObjects[gridObject]);
+            placedGridObjects.Remove(gridObject);
+            gridObject = null;
+        }
 
-		UpdateGiblets( _coordinates, true );
-	}
+        gridObject = new IncrementDecrementGate(_coordinates, _orientation, _value);
+        gridManager.InsertObject(gridObject);
+        placedGridObjects.Add(gridObject, _selfGameObject);
 
-	public void ClearCell( CellCoordinates _coordinates )
-	{
-		GridObject gridObject = gridManager.GetCell( _coordinates );
-		if ( gridObject != null && gridObject.ObjectType == GridObjectType.Gate )
-		{
-			Gate gate = (Gate)gridObject;
-			foreach ( CellCoordinates inputCoords in gate.Inputs )
-			{
-				wireVisualManager.ClearWire( inputCoords );
-			}
-			foreach ( CellCoordinates outputCoords in gate.Outputs )
-			{
-				wireVisualManager.ClearWire( outputCoords );
-			}
-		}
+        //Create Visual Wire
+        Gate gate = (Gate)gridObject;
+        foreach (CellCoordinates inputCoords in gate.Inputs)
+        {
+            GridObject inputGridObject = gridManager.GetCell(inputCoords);
+            if (inputGridObject != null)
+            {
+                if (inputGridObject.ObjectType != GridObjectType.Wire)
+                {
+                    wireVisualManager.CreateWireAndLink(inputCoords, _coordinates, false);
+                }
+            }
+        }
 
-		gridManager.ClearCell( _coordinates );
-	}
+        foreach (CellCoordinates outputCoords in gate.Outputs)
+        {
+            GridObject outputGridObject = gridManager.GetCell(outputCoords);
+            if (outputGridObject != null)
+            {
+                if (outputGridObject.ObjectType != GridObjectType.Wire)
+                {
+                    wireVisualManager.CreateWireAndLink(_coordinates, outputCoords, true);
+                }
+            }
+        }
 
-	public void UpdateGiblets( CellCoordinates _coordinates, bool _updateNeighbour = false )
-	{
-		GridObject gridObject = gridManager.GetCell( _coordinates );
-		if ( gridObject.ObjectType == GridObjectType.Gate )
-		{
-			Gate gate = (Gate)gridObject;
+        UpdateGiblets(_coordinates, true);
+    }
 
-			int count = 1;
-			foreach ( CellCoordinates inputCoords in gate.Inputs )
-			{
-				GridObject inputGridObject = gridManager.GetCell( inputCoords );
-				if ( inputGridObject != null )
-				{
-					//Hide Giblets
-					placedGridObjects[gridObject].transform.Find( "InConnector_" + count ).gameObject.SetActive( false );
+    public void ClearCell(CellCoordinates _coordinates)
+    {
+        GridObject gridObject = gridManager.GetCell(_coordinates);
+        if (gridObject != null && gridObject.ObjectType == GridObjectType.Gate)
+        {
+            Gate gate = (Gate)gridObject;
+            foreach (CellCoordinates inputCoords in gate.Inputs)
+            {
+                wireVisualManager.ClearWire(inputCoords);
+            }
+            foreach (CellCoordinates outputCoords in gate.Outputs)
+            {
+                wireVisualManager.ClearWire(outputCoords);
+            }
+        }
 
-					if ( _updateNeighbour && inputGridObject.ObjectType == GridObjectType.Gate )
-					{
-						UpdateGiblets( inputCoords );
-					}
-				}
-				else
-				{
-					placedGridObjects[gridObject].transform.Find( "InConnector_" + count ).gameObject.SetActive( true );
-				}
+        gridManager.ClearCell(_coordinates);
+    }
 
-				count++;
-			}
+    public void UpdateGiblets(CellCoordinates _coordinates, bool _updateNeighbour = false)
+    {
+        GridObject gridObject = gridManager.GetCell(_coordinates);
+        if (gridObject.ObjectType == GridObjectType.Gate)
+        {
+            Gate gate = (Gate)gridObject;
 
-			count = 1;
-			foreach ( CellCoordinates outputCoords in gate.Outputs )
-			{
-				GridObject outputGridObject = gridManager.GetCell( outputCoords );
-				if ( outputGridObject != null )
-				{
-					//Hide Giblets
-					placedGridObjects[gridObject].transform.Find( "OutConnector_" + count ).gameObject.SetActive( false );
+            int count = 1;
+            foreach (CellCoordinates inputCoords in gate.Inputs)
+            {
+                GridObject inputGridObject = gridManager.GetCell(inputCoords);
+                if (inputGridObject != null)
+                {
+                    //Hide Giblets
+                    placedGridObjects[gridObject].transform.Find("InConnector_" + count).gameObject.SetActive(false);
 
-					if ( _updateNeighbour && outputGridObject.ObjectType == GridObjectType.Gate )
-					{
-						UpdateGiblets( outputCoords );
-					}
-				}
-				else
-				{
-					placedGridObjects[gridObject].transform.Find( "OutConnector_" + count ).gameObject.SetActive( true );
-				}
+                    if (_updateNeighbour && inputGridObject.ObjectType == GridObjectType.Gate)
+                    {
+                        UpdateGiblets(inputCoords);
+                    }
+                }
+                else
+                {
+                    placedGridObjects[gridObject].transform.Find("InConnector_" + count).gameObject.SetActive(true);
+                }
 
-				count++;
-			}
-		}
-	}
+                count++;
+            }
 
-	struct GameInputOutput
-	{
-		Vector2Int m_position;
-		int m_value;
-	}
+            count = 1;
+            foreach (CellCoordinates outputCoords in gate.Outputs)
+            {
+                GridObject outputGridObject = gridManager.GetCell(outputCoords);
+                if (outputGridObject != null)
+                {
+                    //Hide Giblets
+                    placedGridObjects[gridObject].transform.Find("OutConnector_" + count).gameObject.SetActive(false);
+
+                    if (_updateNeighbour && outputGridObject.ObjectType == GridObjectType.Gate)
+                    {
+                        UpdateGiblets(outputCoords);
+                    }
+                }
+                else
+                {
+                    placedGridObjects[gridObject].transform.Find("OutConnector_" + count).gameObject.SetActive(true);
+                }
+
+                count++;
+            }
+        }
+    }
+
+    struct GameInputOutput
+    {
+        Vector2Int m_position;
+        int m_value;
+    }
 
 	// This will be XML one day, honest.
 	private void SetupStartingLevels()

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WireVisualManager : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class WireVisualManager : MonoBehaviour
     GridManager gridManager;
     VisualGridManager visualGridManager;
 
-    public GameObject wirePrefab, wireParent;
+    public GameObject wirePrefab, wireParent, gridParent;
 
     private bool isShowingLocalWire = false;
     private Dictionary<CellCoordinates, List<GameObject>> completedWires;
@@ -79,7 +80,24 @@ public class WireVisualManager : MonoBehaviour
 		return completedWires;
 	}
 
-	public void Reset()
+    public void ColourWires(Color _colour)
+    {
+        foreach (KeyValuePair<CellCoordinates, List<GameObject>> rows in completedWires)
+        {
+            foreach (GameObject wire in rows.Value)
+            {
+                wire.GetComponent<Image>().color = _colour;
+
+                foreach (Image child in wire.GetComponentsInChildren<Image>())
+                {
+                    child.color = _colour;
+                }
+            }
+        }
+    }
+
+
+    public void Reset()
     {
         bool fail = true;
 
@@ -178,12 +196,13 @@ public class WireVisualManager : MonoBehaviour
 
     GameObject CreateWire(CellCoordinates _currentStart, CellCoordinates _currentEnd, Vector2Int _direction)
     {
-        GameObject currentWire = Instantiate(wirePrefab, wireParent.transform);
+        GameObject currentWire = Instantiate(wirePrefab, gridParent.transform);
         Debug.Log("Visual Wire Manager:Creating Wire at Start point:" + _currentStart + " & End point:" + _currentEnd);
         currentWire.transform.SetAsFirstSibling();
         currentWire.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(_currentStart) + new Vector2(-5, 0);
         currentWire.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 90) * Quaternion.LookRotation(Vector3.forward, new Vector3(_direction.x, _direction.y, 0.0f));
         currentWire.GetComponent<RectTransform>().sizeDelta = new Vector2((visualGridManager.GetScreenFromGrid(_currentStart) - visualGridManager.GetScreenFromGrid(_currentEnd)).magnitude + 5, 10.0f);
+        currentWire.transform.SetParent(wireParent.transform);
 
         return currentWire;
     }

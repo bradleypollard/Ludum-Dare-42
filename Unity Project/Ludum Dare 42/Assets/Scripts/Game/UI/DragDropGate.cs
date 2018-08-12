@@ -72,10 +72,10 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
 				DoStateTransition(currentSelectionState, false);
 				m_isBeingDragged = false;
 
-                if (m_infoPopup != null)
+                if (m_infoPopup != null && m_isHighlighted)
                 {
-                    m_infoPopup.isShowing = false;
                     m_isHighlighted = false;
+                    m_infoPopup.PopText();
                 }
 
                 //If we were on a space clear it
@@ -169,14 +169,13 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
             m_visualGate = GetComponent<VisualGate>();
         }
 
-        if (m_infoPopup != null && m_infoPopup != null)
+        if (m_infoPopup != null)
         {
-            m_infoPopup.SetText(m_visualGate.titleText, m_visualGate.descriptionText);
-            m_infoPopup.isShowing = true;            
-
-            m_isHighlighted = true;
-
-            StartCoroutine(OnHighlight());
+            if (m_infoPopup.SetText(m_visualGate.titleText, m_visualGate.descriptionText))
+            {
+                m_isHighlighted = true;
+                StartCoroutine(OnHighlight());
+            }
         }
     }
 
@@ -184,11 +183,11 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
     {
         base.OnPointerExit(eventData);
 
-        if (!m_isBeingDragged)
+        if (!m_isBeingDragged && m_isHighlighted)
         {
             if (m_infoPopup != null)
             {
-                m_infoPopup.isShowing = false;
+                m_infoPopup.PopText();
                 m_isHighlighted = false;
             }
         }
