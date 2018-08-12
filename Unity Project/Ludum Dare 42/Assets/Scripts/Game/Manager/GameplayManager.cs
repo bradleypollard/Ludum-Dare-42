@@ -26,7 +26,8 @@ public class GameplayManager : MonoBehaviour
     public Text timerText;
     public Text waveText;
 
-    public Image background;
+    public Image background, fadeLayer;
+    public GameObject mainMenu, gameInterface;
 
     public GameObject gridModeIndicator;
     private bool isGridModeIndicatorAnimating = false, isGridModeIndicatorHidden = false;
@@ -40,7 +41,7 @@ public class GameplayManager : MonoBehaviour
     private WireManager wireManager;
 	VisualGridManager visualGridManager;
 
-	private readonly Color solvedColour = new Color(0.423f, 0.858f, 0.612f);
+    private readonly Color solvedColour = new Color(0.423f, 0.858f, 0.612f);
     private readonly Color unsolvedColour = new Color(0.925f, 0.941f, 0.945f);
 
 	private Dictionary<string, LevelFile> m_levels;
@@ -62,8 +63,8 @@ public class GameplayManager : MonoBehaviour
         wireManager = FindObjectOfType<WireManager>();
 		visualGridManager = FindObjectOfType<VisualGridManager>();
 
-		//Do Debug Logic
-		if (debug_StartGameOnLoad)
+        //Do Debug Logic
+        if (debug_StartGameOnLoad)
         {
             StartGame("");
         }
@@ -95,10 +96,19 @@ public class GameplayManager : MonoBehaviour
 
     private IEnumerator LoadLevel(string _levelName)
     {
-		//Deactive Menu Input
+        //Deactive Menu Input
 
-		//Load Inputs / Outputs
-		LevelFile file = null;
+        //Transition
+        Color clearedBackground = backgroundColour;
+        clearedBackground.a = 0.0f;
+        yield return FadeBackground(clearedBackground, backgroundColour, fadeLayer, 1.0f);
+        fadeLayer.raycastTarget = true;
+
+        gameInterface.SetActive(true);
+        mainMenu.SetActive(false);
+
+        //Load Inputs / Outputs
+        LevelFile file = null;
 		if ( debug_LevelToLoad != "" )
 		{
 			file = m_levels[debug_LevelToLoad];
@@ -109,20 +119,23 @@ public class GameplayManager : MonoBehaviour
 		}
 		yield return null; // yield here because in the future this will parse XML...
 
-		//Setup Grid Manager
+        //Setup Grid Manager
 		gridManager.Initialise( file );
 		yield return null;
 
-		//Setup Visual Grid Manager
+        //Setup Visual Grid Manager
 		visualGridManager.Initialise();
 
-		//Transition
+        //Transition
 		if ( file != null )
 		{
 			orginalBackgroundColour = file.BGColour;
 			backgroundColour = file.BGColour;
 		}
-		yield return null;
+
+        yield return FadeBackground(fadeLayer.color, clearedBackground, fadeLayer, 1.0f);
+        fadeLayer.raycastTarget = false;
+        yield return null;
 
         //Activate Player Input
 
@@ -133,13 +146,13 @@ public class GameplayManager : MonoBehaviour
     {
         while (isPlaying)
         {
-            GenerateWave();
+            bool isGameOver = !GenerateWave();
 
             while(isPlaying && !IsWaveBeaten())
             {
                 timeLeft -= Time.deltaTime;
 
-                if(timeLeft <= 0.0f)
+                if(timeLeft <= 0.0f || isGameOver)
                 {
                     isPlaying = false;
                 }
@@ -176,14 +189,18 @@ public class GameplayManager : MonoBehaviour
             score += GetWaveClearScore();
             timeLeft += GetWaveClearTime();
         }
+
+        Debug.Log("GAME OVER");
     }
 
-    private void GenerateWave()
+    private bool GenerateWave()
     {
+        bool canAdvance = true;
+
         //Increment Wave
         wave++;
-		
-		bool canAdvance = gridManager.AdvanceGeneration(); // TODO: Use for victory screen
+
+			canAdvance = gridManager.AdvanceGeneration(); // TODO: Use for victory screen
 
         //Update Visual Grid
         visualGridManager.gridWidth = gridWidth;
@@ -215,6 +232,8 @@ public class GameplayManager : MonoBehaviour
                 outputs.Add(output, prefab);
             }
         }
+
+        return canAdvance;
     }
 
     private bool IsWaveBeaten()
@@ -269,6 +288,7 @@ public class GameplayManager : MonoBehaviour
         {
             isBackgroundFading = true;
             StartCoroutine(FadeBackground(actualBackgroundColour, backgroundColour, background));
+            StartCoroutine(TurnOffAfterFade(backgroundColour));
         }
     }
 
@@ -291,19 +311,24 @@ public class GameplayManager : MonoBehaviour
         isGridModeIndicatorAnimating = false;
     }
 
-    private IEnumerator FadeBackground(Color _start, Color _end, Image _image)
+    private IEnumerator TurnOffAfterFade(Color _end)
     {
-        float startTime = Time.time, fadeTime = 0.25f;
-        while (Time.time - startTime < fadeTime)
+        yield return new WaitForSeconds(0.25f);
+
+        isBackgroundFading = false;
+        actualBackgroundColour = _end;
+    }
+
+    private IEnumerator FadeBackground(Color _start, Color _end, Image _image, float _fadeTime = 0.25f)
+    {
+        float startTime = Time.time;
+        while (Time.time - startTime < _fadeTime)
         {
-            _image.color = Color.Lerp(_start, _end, (Time.time - startTime) / fadeTime);
+            _image.color = Color.Lerp(_start, _end, (Time.time - startTime) / _fadeTime);
             yield return null;
         }
 
         _image.color = _end;
-
-        actualBackgroundColour = _end;
-        isBackgroundFading = false;
     }
 
     public void AddGate(GateType _type, CellCoordinates _coordinates, ObjectOrientation _orientation, GameObject _selfGameObject)
@@ -531,7 +556,7 @@ public class GameplayManager : MonoBehaviour
 		int dimensionX = 5;
 		int dimensionY = 5;
 		Color color;
-		ColorUtility.TryParseHtmlString( "7F8C8D", out color );
+		ColorUtility.TryParseHtmlString( "#7F8C8D", out color );
 
 		inputs.Add( new InputCell( new CellCoordinates( 0, 1 ), ObjectOrientation.Or0, 2 ) );
 		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 3 ) );
