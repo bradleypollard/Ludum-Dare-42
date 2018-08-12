@@ -22,12 +22,21 @@ public class VisualGridManager : MonoBehaviour
         line.Apply();
     }
 
-    public Vector2 GetSnapPoint(Vector2 _position)
+    public Vector2 GetSnapPoint(Vector2 _position, VisualGate _visualGate = null)
     {
         Vector2 actualPos = uiCanvasFixer.ScreenPosToCanvas(_position);
 
         if (actualPos.x > startPos.x && actualPos.y > startPos.y && actualPos.x < endPos.x && actualPos.y < endPos.y)
         {
+            if(_visualGate != null)
+            {
+                //Check that this gridObject won't overlap anything
+                if(!IsGridObjectValid(actualPos, _visualGate, false))
+                {
+                    return actualPos;
+                }
+            }
+
             Vector2 gridSize = new Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
             Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
 
@@ -70,7 +79,64 @@ public class VisualGridManager : MonoBehaviour
         return startPos + (new Vector2((int)_coordinates.X - 1, (int)_coordinates.Y - 1) * squareSize) + (squareSize * 0.5f);
     }
 
-    public void OnGUI()
+    public bool IsGridObjectValid(Vector2 _position, VisualGate _gate, bool _convertToCanvas)
+    {
+        GridObject gridObject = null;
+        Vector2Int oGrid = Vector2Int.zero;
+
+        if (GetGridCoordinates(_position, ref oGrid, _convertToCanvas))
+        {
+            CellCoordinates cell = new CellCoordinates((uint)oGrid.x, (uint)oGrid.y);
+
+            switch (_gate.gateType)
+            {
+                case GateType.Add:
+                    {
+                        gridObject = new AddGate(cell, _gate.objectOrientation);
+                        break;
+                    }
+                case GateType.Subtract:
+                    {
+                        gridObject = new SubtractGate(cell, _gate.objectOrientation);
+                        break;
+                    }
+                case GateType.Multiply:
+                    {
+                        gridObject = new MultiplyGate(cell, _gate.objectOrientation);
+                        break;
+                    }
+                case GateType.Divide:
+                    {
+                        gridObject = new DivideGate(cell, _gate.objectOrientation);
+                        break;
+                    }
+                case GateType.IncrementDecrement:
+                    {
+                        gridObject = new IncrementDecrementGate(cell, _gate.objectOrientation);
+                        break;
+                    }
+                case GateType.Cross:
+                    {
+                        gridObject = new CrossGate(cell, _gate.objectOrientation);
+                        break;
+                    }
+            }
+
+            foreach(CellCoordinates coordinates in gridObject.Coordinates)
+            {
+                if(coordinates.X < 1 || coordinates.Y < 1 || coordinates.X > gridWidth || coordinates.Y > gridHeight)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /*public void OnGUI()
     {
         GUI.matrix = uiCanvasFixer.GetGUIMatrix();
 
@@ -104,5 +170,5 @@ public class VisualGridManager : MonoBehaviour
             GUI.Label(new Rect(0, 100, 300, 50), " Grid Cell " + oGrid, style);
         }
 
-    }
+    }*/
 }
