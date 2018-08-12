@@ -10,11 +10,13 @@ public class Wire_Visualiser : MonoBehaviour
     public GameObject pulsePrefab;
     public float pulseSpeed = 5.0f;
 
+	public bool Pulsing = false;
+
     private List<GameObject> pulses;
     private RectTransform m_rectTransform;
 
 
-    private void Start()
+	private void Start()
     {
         pulses = new List<GameObject>();
         pulseTimer = 0.001f;
@@ -24,38 +26,46 @@ public class Wire_Visualiser : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
-        //Slide Pulses along Wire
-		foreach(GameObject pulse in pulses.ToArray())
-        {
-            RectTransform rectTransform = pulse.GetComponent<RectTransform>();
-            rectTransform.anchoredPosition += new Vector2(pulseSpeed * Time.deltaTime, 0.0f);
+		if ( Pulsing )
+		{
+			//Slide Pulses along Wire
+			foreach ( GameObject pulse in pulses.ToArray() )
+			{
+				RectTransform rectTransform = pulse.GetComponent<RectTransform>();
+				rectTransform.anchoredPosition += new Vector2( pulseSpeed * Time.deltaTime, 0.0f );
 
-            bool grow = rectTransform.anchoredPosition.x < m_rectTransform.sizeDelta.x - 40;
+				bool grow = rectTransform.anchoredPosition.x < m_rectTransform.sizeDelta.x - 40;
 
-            rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, Vector2.one * (grow ? 30.0f : 9.5f), Time.deltaTime * 5.0f);
+				rectTransform.sizeDelta = Vector2.Lerp( rectTransform.sizeDelta, Vector2.one * ( grow ? 30.0f : 9.5f ), Time.deltaTime * 5.0f );
 
-            if (rectTransform.anchoredPosition.x > m_rectTransform.sizeDelta.x - 10)
-            {
-                pulses.Remove(pulse);
-                Destroy(pulse);
-            }
-        }
+				if ( rectTransform.anchoredPosition.x > m_rectTransform.sizeDelta.x - 10 )
+				{
+					pulses.Remove( pulse );
+					Destroy( pulse );
+				}
+			}
 
-        //Generate New Pulses
-        if(pulses.Count > 0 && pulseTimer <= 0.0f)
-        {
-            pulseTimer = pulseWait;
-        }
+			//Generate New Pulses
+			if ( pulses.Count > 0 && pulseTimer <= 0.0f )
+			{
+				pulseTimer = pulseWait;
+			}
 
-        if(pulseTimer > 0.0)
-        {
-            pulseTimer -= Time.deltaTime;
+			if ( pulseTimer > 0.0 )
+			{
+				pulseTimer -= Time.deltaTime;
 
-            if(pulseTimer <= 0.0f)
-            {
-                //Spawn Pulses
-                pulses.Add(Instantiate(pulsePrefab, pulsePrefab.transform.position, pulsePrefab.transform.rotation, pulsePrefab.transform.parent));
-            }
-        }
+				if ( pulseTimer <= 0.0f )
+				{
+					//Spawn Pulses
+					pulses.Add( Instantiate( pulsePrefab, pulsePrefab.transform.position, pulsePrefab.transform.rotation, pulsePrefab.transform.parent ) );
+				}
+			}
+		}
+	}
+
+	public void StartPulsing()
+	{
+		Pulsing = true;
 	}
 }

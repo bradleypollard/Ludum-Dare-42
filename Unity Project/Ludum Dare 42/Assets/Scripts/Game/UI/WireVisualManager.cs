@@ -84,6 +84,11 @@ public class WireVisualManager : MonoBehaviour
                 GridObjectType endPointType = endPoint.ObjectType;
                 if (endPointType == GridObjectType.Gate || endPointType == GridObjectType.Output)
                 {
+					foreach ( GameObject o in localGameObjects )
+					{
+						Wire_Visualiser v = o.GetComponent<Wire_Visualiser>();
+						v.StartPulsing();
+					}
                     completedWires.Add(localWire[1], localGameObjects);
                     fail = false;
                 }
