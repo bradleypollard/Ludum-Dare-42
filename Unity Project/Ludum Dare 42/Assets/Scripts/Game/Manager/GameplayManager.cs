@@ -75,7 +75,7 @@ public class GameplayManager : MonoBehaviour
         orginalBackgroundColour = backgroundColour;
     }
 
-    void StartGame()
+    public void StartGame(string levelName)
     {
         //Reset Values
         timeLeft = startTimeLeft;
@@ -88,7 +88,26 @@ public class GameplayManager : MonoBehaviour
         outputs = new Dictionary<OutputCell, GameObject>();
         placedGridObjects = new Dictionary<GridObject, GameObject>();
 
-        StartCoroutine(GameLoop());
+        StartCoroutine(LoadLevel(levelName));
+    }
+
+    private IEnumerator LoadLevel(string _levelName)
+    {
+        //Deactive Menu Input
+
+        //Load Inputs / Outputs
+
+        //Setup Grid Manager
+
+        //Setup Visual Grid Manager
+
+
+        //Transition
+        yield return null;
+
+        //Activate Player Input
+
+        yield return StartCoroutine(GameLoop());
     }
 
     private IEnumerator GameLoop()
