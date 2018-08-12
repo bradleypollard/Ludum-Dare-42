@@ -44,7 +44,7 @@ public class WireVisualManager : MonoBehaviour
                 bool fail = true;
 
                 //Clear Local Wire
-                if (localWire.Count >= 2)
+                if (localWire.Count >= 3)
                 {               
                     GridObject endPoint = gridManager.GetCell(localWire[localWire.Count - 1]);
                     if (endPoint != null)
@@ -52,7 +52,7 @@ public class WireVisualManager : MonoBehaviour
                         GridObjectType endPointType = endPoint.ObjectType;
                         if (endPointType == GridObjectType.Gate || endPointType == GridObjectType.Output)
                         {
-                            completedWires.Add(localWire[0], localGameObjects);
+                            completedWires.Add(localWire[1], localGameObjects);
                             fail = false;
                         }
                     }
@@ -170,6 +170,14 @@ public class WireVisualManager : MonoBehaviour
         return currentWire;
     }
 
+    public void CreateWireAndLink(CellCoordinates _currentStart, CellCoordinates _currentEnd, bool _useEnd)
+    {
+        Vector2Int direction = new Vector2Int((int)_currentEnd.X - (int)_currentStart.X, (int)_currentEnd.Y - (int)_currentStart.Y);
+        GameObject wire = CreateWire(_currentStart, _currentEnd, direction);
+
+        completedWires.Add(_useEnd ? _currentEnd : _currentStart, new List<GameObject>() { wire });
+    }
+
     void ClearLocalPath()
     {
         if (localGameObjects != null)
@@ -182,5 +190,35 @@ public class WireVisualManager : MonoBehaviour
 
         localWire = new List<CellCoordinates>();
         localGameObjects = new List<GameObject>();
+    }
+
+    public void ClearWire(CellCoordinates _cellCoordinates)
+    {
+        if(completedWires.ContainsKey(_cellCoordinates))
+        {
+            foreach(GameObject gameObjectToKill in completedWires[_cellCoordinates])
+            {
+                Destroy(gameObjectToKill);
+            }
+            completedWires.Remove(_cellCoordinates);
+        }
+
+        GridObject gridPoint = gridManager.GetCell(_cellCoordinates);
+        
+        if(gridPoint != null)
+        {
+            foreach (CellCoordinates connection in gridPoint.Coordinates)
+            {
+                if (completedWires.ContainsKey(connection))
+                {
+                    foreach (GameObject gameObjectToKill in completedWires[connection])
+                    {
+                        Destroy(gameObjectToKill);
+                    }
+                    completedWires.Remove(connection);
+                    return;
+                }
+            }
+        }
     }
 }

@@ -103,11 +103,11 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                         {
                             if (visualGate.gateType != GateType.IncrementDecrement)
                             {
-                                m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation);
+                                m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject);
                             }
                             else
                             {
-                                m_gameplayManager.AddIncrementDecrementGate(cell, visualGate.objectOrientation, visualGate.value);
+                                m_gameplayManager.AddIncrementDecrementGate(cell, visualGate.objectOrientation, visualGate.value, gameObject);
                             }
 
                             copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
