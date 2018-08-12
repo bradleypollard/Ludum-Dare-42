@@ -4033,7 +4033,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Created by Rob & Brad
+  m_Text: Created by Robo_chiz & Bollard
 --- !u!222 &1191448329
 CanvasRenderer:
   m_ObjectHideFlags: 0

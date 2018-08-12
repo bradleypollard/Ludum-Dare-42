@@ -629,7 +629,7 @@ public class GameplayManager : MonoBehaviour
 		numStartingOutputs = 1;
 		dimensionX = 5;
 		dimensionY = 5;
-		ColorUtility.TryParseHtmlString( "#7F8C8D", out color );
+		ColorUtility.TryParseHtmlString( "#439C89", out color );
 
 		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 1 ) );
 
@@ -644,7 +644,7 @@ public class GameplayManager : MonoBehaviour
 		numStartingOutputs = 1;
 		dimensionX = 5;
 		dimensionY = 5;
-		ColorUtility.TryParseHtmlString( "#7F8C8D", out color );
+		ColorUtility.TryParseHtmlString( "#9D8844", out color );
 
 		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 1 ) );
 		inputs.Add( new InputCell( new CellCoordinates( 0, 3 ), ObjectOrientation.Or0, 1 ) );
@@ -660,7 +660,7 @@ public class GameplayManager : MonoBehaviour
 		numStartingOutputs = 1;
 		dimensionX = 5;
 		dimensionY = 5;
-		ColorUtility.TryParseHtmlString( "#7F8C8D", out color );
+		ColorUtility.TryParseHtmlString( "#571007", out color );
 
 		inputs.Add( new InputCell( new CellCoordinates( 0, 1 ), ObjectOrientation.Or0, 2 ) );
 		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 3 ) );
