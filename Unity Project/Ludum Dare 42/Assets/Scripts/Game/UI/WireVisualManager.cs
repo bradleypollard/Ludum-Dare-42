@@ -5,6 +5,7 @@ using UnityEngine;
 public class WireVisualManager : MonoBehaviour
 {
     WireManager wireManager;
+    GridManager gridManager;
     VisualGridManager visualGridManager;
 
     public GameObject wirePrefab, wireParent;
@@ -20,6 +21,7 @@ public class WireVisualManager : MonoBehaviour
     {
         wireManager = FindObjectOfType<WireManager>();
         visualGridManager = FindObjectOfType<VisualGridManager>();
+        gridManager = FindObjectOfType<GridManager>();
 
         completedWires = new Dictionary<CellCoordinates, List<GameObject>>();
     }
@@ -39,10 +41,26 @@ public class WireVisualManager : MonoBehaviour
         {
             if (isShowingLocalWire)
             {
+                bool fail = true;
+
                 //Clear Local Wire
                 if (localWire.Count >= 2)
+                {               
+                    GridObject endPoint = gridManager.GetCell(localWire[localWire.Count - 1]);
+                    if (endPoint != null)
+                    {
+                        GridObjectType endPointType = endPoint.ObjectType;
+                        if (endPointType == GridObjectType.Gate || endPointType == GridObjectType.Output)
+                        {
+                            completedWires.Add(localWire[0], localGameObjects);
+                            fail = false;
+                        }
+                    }
+                }
+
+                if(fail)
                 {
-                    completedWires.Add(localWire[0], localGameObjects);
+                    ClearLocalPath();
                 }
 
                 localWire = null;
@@ -113,7 +131,7 @@ public class WireVisualManager : MonoBehaviour
                     if(testDirection == direction)
                     {
                         currentEnd = _wirePath[i];
-                        currentWire.GetComponent<RectTransform>().sizeDelta = new Vector2((visualGridManager.GetScreenFromGrid(currentStart) - visualGridManager.GetScreenFromGrid(currentEnd)).magnitude, 10.0f);
+                        currentWire.GetComponent<RectTransform>().sizeDelta = new Vector2((visualGridManager.GetScreenFromGrid(currentStart) - visualGridManager.GetScreenFromGrid(currentEnd)).magnitude + 5, 10.0f);
                         Debug.Log("Visual Wire Manager: Direction continues at " + currentEnd);
                     }
                     else
@@ -144,9 +162,10 @@ public class WireVisualManager : MonoBehaviour
     {
         GameObject currentWire = Instantiate(wirePrefab, wireParent.transform);
         Debug.Log("Visual Wire Manager:Creating Wire at Start point:" + _currentStart + " & End point:" + _currentEnd);
-        currentWire.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(_currentStart);
+        currentWire.transform.SetAsFirstSibling();
+        currentWire.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(_currentStart) + new Vector2(-5, 0);
         currentWire.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 90) * Quaternion.LookRotation(Vector3.forward, new Vector3(_direction.x, _direction.y, 0.0f));
-        currentWire.GetComponent<RectTransform>().sizeDelta = new Vector2((visualGridManager.GetScreenFromGrid(_currentStart) - visualGridManager.GetScreenFromGrid(_currentEnd)).magnitude, 10.0f);
+        currentWire.GetComponent<RectTransform>().sizeDelta = new Vector2((visualGridManager.GetScreenFromGrid(_currentStart) - visualGridManager.GetScreenFromGrid(_currentEnd)).magnitude + 5, 10.0f);
 
         return currentWire;
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Wire_Visualiser : MonoBehaviour
 {
-    private const float pulseWait = 2.0f;
+    private const float pulseWait = 4.0f;
     private float pulseTimer;
 
     public GameObject pulsePrefab;
@@ -30,11 +30,11 @@ public class Wire_Visualiser : MonoBehaviour
             RectTransform rectTransform = pulse.GetComponent<RectTransform>();
             rectTransform.anchoredPosition += new Vector2(pulseSpeed * Time.deltaTime, 0.0f);
 
-            bool grow = rectTransform.anchoredPosition.x < m_rectTransform.sizeDelta.x - 50;
+            bool grow = rectTransform.anchoredPosition.x < m_rectTransform.sizeDelta.x - 40;
 
             rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, Vector2.one * (grow ? 30.0f : 9.5f), Time.deltaTime * 5.0f);
 
-            if (rectTransform.anchoredPosition.x > m_rectTransform.sizeDelta.x)
+            if (rectTransform.anchoredPosition.x > m_rectTransform.sizeDelta.x - 10)
             {
                 pulses.Remove(pulse);
                 Destroy(pulse);
