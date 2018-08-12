@@ -101,6 +101,14 @@ public class GridManager : MonoBehaviour
 						ClearCell( input.Coordinates[0] );
 					}
 				}
+				foreach ( CellCoordinates outputCoords in gate.Outputs )
+				{
+					GridObject output = GetCell( outputCoords );
+					if ( output != null && output.ObjectType == GridObjectType.Wire )
+					{
+						ClearCell( output.Coordinates[0] );
+					}
+				}
 			}
 
 			// Delete self
