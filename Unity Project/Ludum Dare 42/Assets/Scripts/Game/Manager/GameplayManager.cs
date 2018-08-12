@@ -63,7 +63,7 @@ public class GameplayManager : MonoBehaviour
         //Do Debug Logic
         if (debug_StartGameOnLoad)
         {
-            StartGame();
+            StartGame("");
         }
 
         //Hide GridModeIndicator
