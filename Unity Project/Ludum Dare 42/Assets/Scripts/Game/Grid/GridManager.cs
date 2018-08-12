@@ -187,7 +187,6 @@ public class GridManager : MonoBehaviour
 			inputs[i] = GetCell( _gate.Inputs[i] );
 			if ( !_checkedObjects.Contains( inputs[i] ) )
 			{
-				Debug.Log( "GridManager: Input for gate not yet solved, skipping gate." );
 				ready = false;
 				break;
 			}
