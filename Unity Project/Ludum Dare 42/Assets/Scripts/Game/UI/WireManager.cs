@@ -129,13 +129,19 @@ public class WireManager : MonoBehaviour
 		}
 	}
 
-	private void TryCommit( CellCoordinates _otjer )
+	private void TryCommit( CellCoordinates _unused )
 	{
 		CellCoordinates _end = m_passedThrough.Peek();
 		GridObject end = m_gridManager.GetCell( _end );
 		if ( end == null )
 		{
 			Debug.Log( "WireManager: Commit attempted on an empty cell " + _end.ToString() + ", ending mode." );
+			EndMode();
+			return;
+		}
+		if ( m_passedThrough.Count <= 1 )
+		{
+			Debug.Log( "WireManager: Commit attempted on starting cell " + _end.ToString() + ", ending mode." );
 			EndMode();
 			return;
 		}
