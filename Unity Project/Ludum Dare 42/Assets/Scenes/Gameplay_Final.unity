@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3725,7 +3725,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1773799775}
   m_HandleRect: {fileID: 1773799774}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7744,6 +7744,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wirePrefab: {fileID: 1554733539451246, guid: b0c32cdee8b29704d8f4e78ac9c0edc8, type: 2}
   wireParent: {fileID: 854337374}
+  gridParent: {fileID: 854337374}
 --- !u!114 &2060991418
 MonoBehaviour:
   m_ObjectHideFlags: 0

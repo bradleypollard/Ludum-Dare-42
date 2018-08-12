@@ -95,17 +95,7 @@ public class WireManager : MonoBehaviour
 			// End Drag/Mode
 			if ( Input.GetMouseButtonUp( 0 ) && m_isDragging )
 			{
-				if ( foundGridOOB )
-				{
-					CellCoordinates cell = new CellCoordinates( (uint)oGridoob.x, (uint)oGridoob.y );
-					// Valid end point, try to commit it (will succed if it is Output or Gate)
-					TryCommit( cell );
-				}
-				else
-				{
-					// End point invalid, reset path
-					ResetMode();
-				}
+				TryCommit();
 			}
 
 			// Delete
@@ -194,7 +184,7 @@ public class WireManager : MonoBehaviour
 		}
 	}
 
-	private void TryCommit( CellCoordinates _unused )
+	private void TryCommit()
 	{
 		CellCoordinates _end = m_passedThrough.Peek();
 		GridObject end = m_gridManager.GetCell( _end );
