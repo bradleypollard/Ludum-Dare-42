@@ -744,7 +744,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Game Title
+  m_Text: GRIDLOCKED
 --- !u!222 &229045382
 CanvasRenderer:
   m_ObjectHideFlags: 0
