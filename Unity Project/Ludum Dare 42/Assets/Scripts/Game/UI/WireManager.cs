@@ -24,9 +24,7 @@ public class WireManager : MonoBehaviour
 		{
 			Vector2 mousePosition = m_visualGridManager.GetSnapPoint( new Vector2( Input.mousePosition.x, Input.mousePosition.y ) );
 			Vector2Int oGrid = Vector2Int.zero;
-			bool foundGrid = m_visualGridManager.GetGridCoordinates( mousePosition, ref oGrid, false, false )
-				&& oGrid.x >= 0 && oGrid.x < m_gridManager.DimensionX + 2 && oGrid.y >= 0 && oGrid.y < m_gridManager.DimensionY + 2;
-
+			bool foundGrid = m_visualGridManager.GetGridCoordinates( mousePosition, ref oGrid, false, true ); // In bounds for dragging
 			if ( m_isDragging )
 			{
 				if ( foundGrid )
@@ -42,6 +40,8 @@ public class WireManager : MonoBehaviour
 				}
 			}
 
+			foundGrid = m_visualGridManager.GetGridCoordinates( mousePosition, ref oGrid, false, false )
+				&& oGrid.x >= 0 && oGrid.x < m_gridManager.DimensionX + 2 && oGrid.y >= 0 && oGrid.y < m_gridManager.DimensionY + 2; // Allow oob for start/end
 			// Start drag
 			if ( Input.GetMouseButtonDown( 0 ) && !m_isDragging )
 			{
