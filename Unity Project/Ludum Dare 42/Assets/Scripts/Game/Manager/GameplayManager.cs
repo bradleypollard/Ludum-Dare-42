@@ -38,8 +38,9 @@ public class GameplayManager : MonoBehaviour
     private GridManager gridManager;
     private WireVisualManager wireVisualManager;
     private WireManager wireManager;
+	VisualGridManager visualGridManager;
 
-    private readonly Color solvedColour = new Color(0.423f, 0.858f, 0.612f);
+	private readonly Color solvedColour = new Color(0.423f, 0.858f, 0.612f);
     private readonly Color unsolvedColour = new Color(0.925f, 0.941f, 0.945f);
 
 	private Dictionary<string, LevelFile> m_levels;
@@ -59,9 +60,10 @@ public class GameplayManager : MonoBehaviour
         gridManager = FindObjectOfType<GridManager>();
         wireVisualManager = FindObjectOfType<WireVisualManager>();
         wireManager = FindObjectOfType<WireManager>();
+		visualGridManager = FindObjectOfType<VisualGridManager>();
 
-        //Do Debug Logic
-        if (debug_StartGameOnLoad)
+		//Do Debug Logic
+		if (debug_StartGameOnLoad)
         {
             StartGame("");
         }
@@ -93,17 +95,34 @@ public class GameplayManager : MonoBehaviour
 
     private IEnumerator LoadLevel(string _levelName)
     {
-        //Deactive Menu Input
+		//Deactive Menu Input
 
-        //Load Inputs / Outputs
+		//Load Inputs / Outputs
+		LevelFile file = null;
+		if ( debug_LevelToLoad != "" )
+		{
+			file = m_levels[debug_LevelToLoad];
+		}
+		else if ( _levelName != "" )
+		{
+			file = m_levels[_levelName];
+		}
+		yield return null; // yield here because in the future this will parse XML...
 
-        //Setup Grid Manager
+		//Setup Grid Manager
+		gridManager.Initialise( file );
+		yield return null;
 
-        //Setup Visual Grid Manager
+		//Setup Visual Grid Manager
+		visualGridManager.Initialise();
 
-
-        //Transition
-        yield return null;
+		//Transition
+		if ( file != null )
+		{
+			orginalBackgroundColour = file.BGColour;
+			backgroundColour = file.BGColour;
+		}
+		yield return null;
 
         //Activate Player Input
 
@@ -163,23 +182,10 @@ public class GameplayManager : MonoBehaviour
     {
         //Increment Wave
         wave++;
-
-        if(wave == 0)
-        {
-			LevelFile file = null;
-			if ( debug_LevelToLoad != "" )
-			{
-				file = m_levels[debug_LevelToLoad];
-        }
-			gridManager.Initialise( file );
-		}
-        else
-        {
-			bool canAdvance = gridManager.AdvanceGeneration(); // TODO: Use for victory screen
-        }
+		
+		bool canAdvance = gridManager.AdvanceGeneration(); // TODO: Use for victory screen
 
         //Update Visual Grid
-        VisualGridManager visualGridManager = FindObjectOfType<VisualGridManager>();
         visualGridManager.gridWidth = gridWidth;
         visualGridManager.gridHeight = gridHeight;
 
@@ -510,9 +516,7 @@ public class GameplayManager : MonoBehaviour
         int m_value;
     }
 
-	/// <summary>
-	///  Ignore this.
-	/// </summary>
+	// This will be XML one day, honest.
 	private void SetupStartingLevels()
 	{
 		m_levels = new Dictionary<string, LevelFile>();
@@ -524,6 +528,10 @@ public class GameplayManager : MonoBehaviour
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
 		numStartingOutputs = 1;
+		int dimensionX = 5;
+		int dimensionY = 5;
+		Color color;
+		ColorUtility.TryParseHtmlString( "7F8C8D", out color );
 
 		inputs.Add( new InputCell( new CellCoordinates( 0, 1 ), ObjectOrientation.Or0, 2 ) );
 		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 3 ) );
@@ -534,6 +542,6 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 4 ), ObjectOrientation.Or0, 6 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 5 ), ObjectOrientation.Or0, 2 ) );
 
-		m_levels.Add( "one", new LevelFile( inputs, outputs, numStartingOutputs ) );
+		m_levels.Add( "one", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 }
 }

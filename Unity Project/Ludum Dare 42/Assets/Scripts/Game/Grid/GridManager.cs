@@ -7,7 +7,6 @@ public class GridManager : MonoBehaviour
 	public uint DimensionX, DimensionY;
 	public uint NumInputs = 3;
 	public uint NumStartingOutputs = 1;
-	public uint NumOutputsPerGeneration = 1;
 	public uint NumTotalOutputs = 5;
 	public int MaxInputValue = 10;
 	public int MaxOutputTarget = 10;
@@ -36,6 +35,15 @@ public class GridManager : MonoBehaviour
 	///////////////////////// API /////////////////////////
 	public void Initialise( LevelFile _file = null )
 	{
+		if ( _file != null )
+		{
+			DimensionX = (uint)_file.DimensionX;
+			DimensionY = (uint)_file.DimensionY;
+		}
+		else
+		{
+			// TODO Random dimensions
+		}
 		ClearGrid();
 		IsSolved = false;
 		if ( _file != null )

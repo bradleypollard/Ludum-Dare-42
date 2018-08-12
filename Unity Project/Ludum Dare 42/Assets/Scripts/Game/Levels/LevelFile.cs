@@ -7,14 +7,19 @@ using System.IO;
 
 public class LevelFile
 {
-	public LevelFile( List<InputCell> _inputs, List<OutputCell> outputs, int _numStartingOutputs )
+	public LevelFile( List<InputCell> _inputs, List<OutputCell> outputs, int _numStartingOutputs, int _dimensionX, int _dimensionY, Color _BGColour )
 	{
 		Inputs = _inputs;
 		Outputs = outputs;
 		NumStartingOutputs = _numStartingOutputs;
+		DimensionX = _dimensionX;
+		DimensionY = _dimensionY;
+		BGColour = _BGColour;
 	}
 
 	public List<InputCell> Inputs;
 	public List<OutputCell> Outputs;
 	public int NumStartingOutputs;
+	public int DimensionX, DimensionY;
+	public Color BGColour;
 }

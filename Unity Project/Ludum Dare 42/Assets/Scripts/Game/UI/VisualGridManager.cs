@@ -10,17 +10,27 @@ public class VisualGridManager : MonoBehaviour
     public int gridWidth, gridHeight;
     public bool isDebug;
 
-    private UICanvasFixer uiCanvasFixer;
+	private GridManager gridManager;
+	private UICanvasFixer uiCanvasFixer;
     private Texture2D line;
 
     private void Start()
-    {
-        uiCanvasFixer = FindObjectOfType<UICanvasFixer>();
+	{
+		//Get Components
+		gridManager = FindObjectOfType<GridManager>();
+
+		uiCanvasFixer = FindObjectOfType<UICanvasFixer>();
 
         line = new Texture2D(1, 1);
         line.SetPixel(0, 0, Color.white);
         line.Apply();
     }
+
+	public void Initialise()
+	{
+		gridWidth = (int)gridManager.DimensionX;
+		gridHeight = (int)gridManager.DimensionY;
+	}
 
     public Vector2 GetSnapPoint(Vector2 _position, VisualGate _visualGate = null)
     {
