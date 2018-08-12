@@ -11,7 +11,8 @@ public class GameplayManager : MonoBehaviour
 	public string debug_LevelToLoad = "";
 
     //Game Constants
-    const float startTimeLeft = 100;
+    public float StartTimeLeft = 100;
+	public float WaveClearTime = 30.0f;
 
     //Game Variables
     private float timeLeft;
@@ -25,6 +26,9 @@ public class GameplayManager : MonoBehaviour
     //UI Accessors (Cause Lazy)
     public Text timerText;
     public Text waveText;
+	public Text TimeUpText;
+	public Text LevelCompleteText;
+	public Text ScoreText;
 
     public Image background, fadeLayer;
     public GameObject mainMenu, gameInterface;
@@ -82,15 +86,17 @@ public class GameplayManager : MonoBehaviour
     public void StartGame(string levelName)
     {
         //Reset Values
-        timeLeft = startTimeLeft;
+        timeLeft = StartTimeLeft;
         score = 0;
         wave = -1;
         isPlaying = true;
         inputs = new Dictionary<InputCell, GameObject>();
         outputs = new Dictionary<OutputCell, GameObject>();
         placedGridObjects = new Dictionary<GridObject, GameObject>();
+		TimeUpText.gameObject.SetActive( false );
+		LevelCompleteText.gameObject.SetActive( false );
 
-        StartCoroutine(LoadLevel(levelName));
+		StartCoroutine(LoadLevel(levelName));
     }
 
     private IEnumerator LoadLevel(string _levelName)
@@ -187,6 +193,7 @@ public class GameplayManager : MonoBehaviour
     {
         while (isPlaying)
         {
+			bool completedAllWaves = false;
             while(isPlaying && !IsWaveBeaten())
             {
                 timeLeft -= Time.deltaTime;
@@ -202,19 +209,35 @@ public class GameplayManager : MonoBehaviour
             }
 
             ColourCells(true, false);
+			
+			if ( isPlaying )
+			{
+				isPlaying = GenerateWave();
+				if ( !isPlaying )
+				{
+					completedAllWaves = true;
+				}
+			}
 
-            bool isGameOver = !GenerateWave();
-            if(isGameOver)
+            if( !isPlaying )
             {
-                isPlaying = false;
+				if ( completedAllWaves )
+				{
+					// TODO: Rob make pretty
+					ScoreText.text = gridManager.GetEmptyCells() + " EMPTY CELLS";
+					LevelCompleteText.gameObject.SetActive( true );
+				}
+				else
+				{
+					TimeUpText.gameObject.SetActive( true );
+				}
+				yield return new WaitForSeconds(1.0f);
             }
-            else
-            {
-                yield return new WaitForSeconds(1.0f);
-            }
-
-            score += GetWaveClearScore();
-            timeLeft += GetWaveClearTime();
+			else
+			{
+				score += GetWaveClearScore();
+				timeLeft += GetWaveClearTime();
+			}
         }
 
         ColourCells(true, false);
@@ -228,7 +251,7 @@ public class GameplayManager : MonoBehaviour
         //Increment Wave
         wave++;
 
-		canAdvance = gridManager.AdvanceGeneration(); // TODO: Use for victory screen
+		canAdvance = gridManager.AdvanceGeneration();
         UpdateCells();
 
         return canAdvance;
@@ -315,7 +338,7 @@ public class GameplayManager : MonoBehaviour
 
     private float GetWaveClearTime()
     {
-        return 0.0f;
+        return WaveClearTime;
     }
 
     private void Update()

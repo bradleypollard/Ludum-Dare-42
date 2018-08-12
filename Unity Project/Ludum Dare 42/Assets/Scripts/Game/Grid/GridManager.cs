@@ -58,6 +58,22 @@ public class GridManager : MonoBehaviour
 		}
 	}
 
+	public int GetEmptyCells()
+	{
+		int count = 0;
+		for ( int i = 0; i < DimensionX; ++i )
+		{
+			for ( int j = 0; j < DimensionY; ++j )
+			{
+				if ( m_grid[i,j] == null  )
+				{
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
 	public List<InputCell> GetInputs()
 	{
 		return m_inputs;
