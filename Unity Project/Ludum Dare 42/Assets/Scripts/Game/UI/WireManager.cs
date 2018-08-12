@@ -6,22 +6,67 @@ public class WireManager : MonoBehaviour
 {
 	private GridManager m_gridManager;
 	private bool m_inWireEditMode;
-	private CellCoordinates m_previous;
-	private CellCoordinates m_current;
-	private List<Wire> m_wiresToCreate;
+	private Stack<CellCoordinates> m_passedThrough;
+	private VisualGridManager m_visualGridManager;
+	private bool m_isDragging;
 
 	// Use this for initialization
 	void Start()
 	{
 		m_gridManager = FindObjectOfType<GridManager>();
+		m_visualGridManager = FindObjectOfType<VisualGridManager>();
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
-		if ( Input.GetMouseButtonUp( 1 ) )
+		if ( IsInWireEditMode() )
 		{
-			EndMode();
+			Vector2 mousePosition = m_visualGridManager.GetSnapPoint( new Vector2( Input.mousePosition.x, Input.mousePosition.y ) );
+			Vector2Int oGrid = Vector2Int.zero;
+			bool foundGrid = m_visualGridManager.GetGridCoordinates( mousePosition, ref oGrid, false );
+
+			if ( m_isDragging )
+			{
+				if ( foundGrid )
+				{
+					CellCoordinates cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y );
+					PassThroughCell( cell );
+				}
+			}
+
+			// Start drag
+			if ( Input.GetMouseButtonDown( 0 ) && !m_isDragging )
+			{
+				if ( foundGrid )
+				{
+					CellCoordinates cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y );
+					// Valid start point, begin
+					StartDragging( cell );
+				}
+			}
+
+			// End Drag/Mode
+			if ( Input.GetMouseButtonUp( 0 ) && m_isDragging )
+			{
+				if ( foundGrid )
+				{
+					CellCoordinates cell = new CellCoordinates( (uint)oGrid.x, (uint)oGrid.y );
+					// Valid end point, try to commit it (will succed if it is Output or Gate)
+					TryCommit( cell );
+				}
+				else
+				{
+					// End point invalid, end mode
+					EndMode();
+				}
+			}
+			else if ( Input.GetMouseButtonUp( 0 ) )
+			{
+				// Click invalid, end mode
+				EndMode();
+			}
+
 		}
 	}
 
@@ -31,12 +76,11 @@ public class WireManager : MonoBehaviour
 		return m_inWireEditMode;
 	}
 
-	public void StartMode( CellCoordinates _cell )
+	public void StartMode()
 	{
 		m_inWireEditMode = true;
-		m_current = _cell;
-		m_previous = _cell;
-		m_wiresToCreate = new List<Wire>();
+		m_passedThrough = new Stack<CellCoordinates>();
+		m_isDragging = false;
 	}
 
 	public void EndMode()
@@ -44,38 +88,80 @@ public class WireManager : MonoBehaviour
 		m_inWireEditMode = false;
 	}
 
-	public void Commit()
+	///////////////////////// Helpers /////////////////////////
+	private void StartDragging( CellCoordinates _start )
 	{
-		foreach ( Wire wire in m_wiresToCreate )
+
+		GridObject gridObject = m_gridManager.GetCell( _start );
+		if ( gridObject.ObjectType == GridObjectType.Gate || gridObject.ObjectType == GridObjectType.Input )
+		{
+			m_passedThrough.Push( _start );
+			m_isDragging = true;
+		}
+	}
+
+	private void TryCommit( CellCoordinates _end )
+	{
+		GridObject end = m_gridManager.GetCell( _end );
+
+		switch ( end.ObjectType )
+		{
+			case GridObjectType.Gate:
+			{
+				break;
+			}
+			case GridObjectType.Output:
+			{
+				break;
+			}
+			default:
+			{
+				Debug.Log( "WireManager: Commit attempted on a cell that was neither a Gate, nor an Output, ending mode." );
+				EndMode();
+				return;
+			}
+		}
+
+		List<Wire> wiresToCreate = new List<Wire>();
+		foreach ( Wire wire in wiresToCreate )
 		{
 			m_gridManager.InsertObject( wire );
 		}
 		EndMode();
 	}
 
-	public void PassThroughCell( CellCoordinates _cell )
+	private void PassThroughCell( CellCoordinates _cell )
 	{
-		if ( m_current != _cell )
+		if ( m_passedThrough.Peek() != _cell )
 		{
-			if ( m_previous != m_current )
+			CellCoordinates head = m_passedThrough.Pop();
+			if ( _cell != head && IsAdjacentTo( _cell, head ) )
 			{
-				AddWire( m_previous, m_current, _cell );
+				// Wait till we move, and only consider if it is adjacent
+				if ( m_passedThrough.Count >= 1 )
+				{
+					CellCoordinates prev = m_passedThrough.Pop();
+					if ( _cell == prev )
+					{
+						// Early out if we went backwards
+						m_passedThrough.Push( prev );
+						return;
+					}
+				}
+				m_passedThrough.Push( head ); // Put the head back on, moving forwards
+
+				GridObject cellObject = m_gridManager.GetCell( _cell );
+				if ( cellObject == null )
+				{
+					// Only add this cell if it is unoccupied
+					m_passedThrough.Push( _cell );
+				}
 			}
-			m_previous = m_current;
-			m_current = _cell;
 		}
 	}
 
-	///////////////////////// Helpers /////////////////////////
-	private void AddWire( CellCoordinates _prev, CellCoordinates _current, CellCoordinates _next )
+	private bool IsAdjacentTo( CellCoordinates _cell, CellCoordinates _other )
 	{
-		// GridObject nextObj = m_gridManager.GetCell( _next );
-		GridObject currentObj = m_gridManager.GetCell( _current );
-
-		if ( currentObj == null )  
-		{
-			m_wiresToCreate.Add( new Wire( new CellCoordinates[] { _current }, _prev, _next ) );
-		}
-		// Is this an error otherwise? Handle cross!
+		return ( Mathf.Abs( _cell.X - _other.X ) <= 1 && Mathf.Abs( _cell.Y - _other.Y ) <= 1 );
 	}
 }
