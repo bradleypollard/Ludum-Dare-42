@@ -134,7 +134,9 @@ public class GridManager : MonoBehaviour
 		m_generation = 0;
 		m_inputs = new List<InputCell>();
 		m_outputs = new List<OutputCell>();
-	}
+        m_futureOutputs = new List<OutputCell>();
+
+    }
 
 	private void GenerateInputs()
 	{

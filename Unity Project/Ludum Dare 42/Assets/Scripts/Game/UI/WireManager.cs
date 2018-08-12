@@ -97,6 +97,18 @@ public class WireManager : MonoBehaviour
 		return m_inWireEditMode;
 	}
 
+    public void ToggleMode()
+    {
+        if(!m_inWireEditMode)
+        {
+            StartMode();
+        }
+        else
+        {
+            EndMode();
+        }
+    }
+
 	public void StartMode()
 	{
 		m_inWireEditMode = true;
