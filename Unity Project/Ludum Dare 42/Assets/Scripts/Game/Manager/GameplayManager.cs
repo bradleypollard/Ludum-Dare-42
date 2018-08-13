@@ -43,7 +43,8 @@ public class GameplayManager : MonoBehaviour
     private GridManager gridManager;
     private WireVisualManager wireVisualManager;
     private WireManager wireManager;
-	VisualGridManager visualGridManager;
+    private VisualGridManager visualGridManager;
+    private LevelSelectButtonsGenerator levelSelectButtonsGenerator;
 
     private readonly Color solvedColour = new Color(0.423f, 0.858f, 0.612f);
     private readonly Color unsolvedColour = new Color(0.925f, 0.941f, 0.945f);
@@ -67,6 +68,7 @@ public class GameplayManager : MonoBehaviour
         wireVisualManager = FindObjectOfType<WireVisualManager>();
         wireManager = FindObjectOfType<WireManager>();
 		visualGridManager = FindObjectOfType<VisualGridManager>();
+        levelSelectButtonsGenerator = FindObjectOfType<LevelSelectButtonsGenerator>();
 
         //Do Debug Logic
         if (debug_StartGameOnLoad)
@@ -174,9 +176,12 @@ public class GameplayManager : MonoBehaviour
 
         //Stop Player from inputing
         fadeLayer.raycastTarget = true;
-        wireManager.EndMode();
 
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(2f);
+    
+        levelSelectButtonsGenerator.RegenerateLevels();
+
+        yield return new WaitForSeconds(2f);
 
         //Transition back
         clearedBackground = backgroundColour;
@@ -244,7 +249,9 @@ public class GameplayManager : MonoBehaviour
 
             if( !isPlaying )
             {
-				if ( completedAllWaves )
+                wireManager.EndMode();
+
+                if ( completedAllWaves )
 				{
 					int score = gridManager.GetEmptyCells();
 					ScoreText.text = score + " EMPTY CELLS";
@@ -256,7 +263,10 @@ public class GameplayManager : MonoBehaviour
 						{
 							PlayerPrefs.SetInt( _file.Name + "Score", score );
 						}
-					}
+
+                        //Set Max Levels
+                        PlayerPrefs.SetInt(_file.Name + "Complete", 1);
+                    }
 					yield return FadeInText( LevelCompleteText, ScoreText, 0.5f );
 				}
 				else
@@ -959,4 +969,10 @@ public class GameplayManager : MonoBehaviour
 
 		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 	}
+
+    public void ResetSave()
+    {
+        PlayerPrefs.DeleteAll();
+        levelSelectButtonsGenerator.RegenerateLevels();
+    }
 }
