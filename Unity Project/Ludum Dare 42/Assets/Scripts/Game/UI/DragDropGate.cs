@@ -92,23 +92,20 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                         VisualGate visualGate = GetComponent<VisualGate>();
                         if (visualGate != null)
                         {
-                            if (m_cellCoordinates != oldCoordinates)
+                            if (visualGate.gateType != GateType.IncrementDecrement)
                             {
-                                if (visualGate.gateType != GateType.IncrementDecrement)
-                                {
-                                    m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject, 0, m_isPlaced);
-                                }
-                                else
-                                {
-                                    m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject, visualGate.value, m_isPlaced);
-                                }
+                                m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject, 0, m_isPlaced);
+                            }
+                            else
+                            {
+                                m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject, visualGate.value, m_isPlaced);
+                            }
 
-                                if (!m_isPlaced)
-                                {
-                                    GameObject copy = Instantiate(gameObject, m_gameplayManager.scrollViewParent);
-                                    copy.GetComponent<VisualBase>().ResetBase();
-                                    copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
-                                }
+                            if (!m_isPlaced)
+                            {
+                                GameObject copy = Instantiate(gameObject, m_gameplayManager.scrollViewParent);
+                                copy.GetComponent<VisualBase>().ResetBase();
+                                copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
                             }
                         }
                     }
