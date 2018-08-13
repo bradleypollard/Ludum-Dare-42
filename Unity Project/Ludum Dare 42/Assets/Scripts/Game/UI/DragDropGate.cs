@@ -25,7 +25,7 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
 	private GameplayManager m_gameplayManager;
 	private WireManager m_wireManager;
 
-	private bool m_isPlaced;
+    private bool m_isPlaced;
 	private CellCoordinates m_cellCoordinates;
 
     private InfoPopup m_infoPopup;
@@ -46,7 +46,6 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                 m_gameplayManager = FindObjectOfType<GameplayManager>();
 				m_wireManager = FindObjectOfType<WireManager>();
                 m_infoPopup = FindObjectOfType<InfoPopup>();
-
             }
             if (m_rectTransform != null && m_canvas != null && m_visualGate != null && m_visualGridManager != null && m_gameplayManager != null && m_wireManager != null )
             {

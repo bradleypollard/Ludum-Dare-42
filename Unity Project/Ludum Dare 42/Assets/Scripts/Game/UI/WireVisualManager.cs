@@ -13,7 +13,19 @@ public class WireVisualManager : MonoBehaviour
 	public bool DebugLog = false;
 
     private bool isShowingLocalWire = false;
-    private Dictionary<CellCoordinates, List<GameObject>> completedWires;
+    private List<VisualWire> completedWires;
+
+    public struct VisualWire
+    {
+        public CellCoordinates cellCoordinates;
+        public List<GameObject> wireObjects;
+
+        public VisualWire(CellCoordinates _cellCoordinates, List<GameObject> _wireObjects)
+        {
+            cellCoordinates = _cellCoordinates;
+            wireObjects = _wireObjects;
+        }
+    }
 
     private List<CellCoordinates> localWire;
     private List<GameObject> localGameObjects;
@@ -73,19 +85,19 @@ public class WireVisualManager : MonoBehaviour
 
 	public void Initialise()
 	{
-		completedWires = new Dictionary<CellCoordinates, List<GameObject>>();
+        completedWires = new List<VisualWire>();
 	}
 
-	public Dictionary<CellCoordinates, List<GameObject>> GetCompletedWires()
+	public List<VisualWire> GetCompletedWires()
 	{
 		return completedWires;
 	}
 
     public void ColourWires(Color _colour)
     {
-        foreach (KeyValuePair<CellCoordinates, List<GameObject>> rows in completedWires)
+        foreach (VisualWire rows in completedWires)
         {
-            foreach (GameObject wire in rows.Value)
+            foreach (GameObject wire in rows.wireObjects)
             {
                 wire.GetComponent<Image>().color = _colour;
 
@@ -116,7 +128,7 @@ public class WireVisualManager : MonoBehaviour
 						Wire_Visualiser v = o.GetComponent<Wire_Visualiser>();
 						v.StartPulsing();
 					}
-                    completedWires.Add(localWire[1], localGameObjects);
+                    completedWires.Add(new VisualWire(localWire[1], localGameObjects));
                     fail = false;
                 }
             }
@@ -213,7 +225,7 @@ public class WireVisualManager : MonoBehaviour
         Vector2Int direction = new Vector2Int((int)_currentEnd.X - (int)_currentStart.X, (int)_currentEnd.Y - (int)_currentStart.Y);
         GameObject wire = CreateWire(_currentStart, _currentEnd, direction);
 
-        completedWires.Add(_currentEnd, new List<GameObject>() { wire });
+        completedWires.Add(new VisualWire(_currentEnd, new List<GameObject>() { wire }));
     }
 
     void ClearLocalPath()
@@ -232,13 +244,16 @@ public class WireVisualManager : MonoBehaviour
 
     public void ClearWire(CellCoordinates _cellCoordinates)
     {
-        if(completedWires.ContainsKey(_cellCoordinates))
+        foreach (VisualWire visualWire in completedWires.ToArray())
         {
-            foreach(GameObject gameObjectToKill in completedWires[_cellCoordinates])
+            if (visualWire.cellCoordinates == _cellCoordinates)
             {
-                Destroy(gameObjectToKill);
-            }
-            completedWires.Remove(_cellCoordinates);
+                foreach (GameObject gameObjectToKill in visualWire.wireObjects)
+                {
+                    Destroy(gameObjectToKill);
+                }
+                completedWires.Remove(visualWire);
+            }        
         }
 
         GridObject gridPoint = gridManager.GetCell(_cellCoordinates);
@@ -247,14 +262,16 @@ public class WireVisualManager : MonoBehaviour
         {
             foreach (CellCoordinates connection in gridPoint.Coordinates)
             {
-                if (completedWires.ContainsKey(connection))
+                foreach (VisualWire visualWire in completedWires.ToArray())
                 {
-                    foreach (GameObject gameObjectToKill in completedWires[connection])
+                    if (visualWire.cellCoordinates == _cellCoordinates)
                     {
-                        Destroy(gameObjectToKill);
+                        foreach (GameObject gameObjectToKill in visualWire.wireObjects)
+                        {
+                            Destroy(gameObjectToKill);
+                        }
+                        completedWires.Remove(visualWire);
                     }
-                    completedWires.Remove(connection);
-                    return;
                 }
             }
         }
