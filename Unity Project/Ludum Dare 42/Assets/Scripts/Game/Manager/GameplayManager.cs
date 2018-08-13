@@ -576,7 +576,7 @@ public class GameplayManager : MonoBehaviour
             {
                 if (inputGridObject.ObjectType != GridObjectType.Wire)
                 {
-					if ( IsConnected( false, inputCoords , _coordinates) )
+					if ( IsConnected( false, inputCoords , gridObject) )
 					{
 						wireVisualManager.CreateWireAndLink( inputCoords, gate.GetCoordinateForInput( index ), false );
 					}
@@ -593,7 +593,7 @@ public class GameplayManager : MonoBehaviour
             {
                 if (outputGridObject.ObjectType != GridObjectType.Wire)
                 {
-					if ( IsConnected( true, outputCoords , _coordinates) )
+					if ( IsConnected( true, outputCoords , gridObject) )
 					{
 						wireVisualManager.CreateWireAndLink( _coordinates, outputCoords, true );
 					}
@@ -690,7 +690,7 @@ public class GameplayManager : MonoBehaviour
             int count = 1;
             foreach (CellCoordinates inputCoords in gate.Inputs)
 			{
-				if ( IsConnected( false, inputCoords , _coordinates) )
+				if ( IsConnected( false, inputCoords , gridObject) )
 				{
 					//Hide Giblets
 					placedGridObjects[gridObject].transform.Find( "InConnector_" + count ).gameObject.SetActive( false );
@@ -713,7 +713,7 @@ public class GameplayManager : MonoBehaviour
             count = 1;
             foreach (CellCoordinates outputCoords in gate.Outputs)
             {
-                if ( IsConnected( true, outputCoords , _coordinates) )
+                if ( IsConnected( true, outputCoords , gridObject) )
 				{
 					//Hide Giblets
 					placedGridObjects[gridObject].transform.Find( "OutConnector_" + count ).gameObject.SetActive( false );
@@ -738,36 +738,34 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
-	private bool IsConnected( bool _isOutput, CellCoordinates _coords, CellCoordinates _coordsOther)
-	{
+    private bool IsConnected(bool _isOutput, CellCoordinates _coords, GridObject _startObject)
+    {
         //Check Us
 		GridObject gridObject = gridManager.GetCell( _coords );
-        //Check Them
-        GridObject theirGridObject = gridManager.GetCell(_coordsOther);
 
         if ( gridObject != null )
 		{
 			switch ( gridObject.ObjectType )
 			{
-				case GridObjectType.Wire:
-				{
-					Wire wire = (Wire)gridObject;
-					for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-					{
-						CellCoordinates toCompare = _isOutput ? wire.Entry : wire.Exit;
-						if ( gridObject.Coordinates[i] == toCompare )
-						{
-							return true;
-						}
-					}
-					break;
-				}
+                case GridObjectType.Wire:
+                {
+                    Wire wire = (Wire)gridObject;
+                    for (uint i = 0; i < _startObject.Coordinates.Length; ++i)
+                    {
+                        CellCoordinates toCompare = _isOutput ? wire.Entry : wire.Exit;
+                        if (_startObject.Coordinates[i] == toCompare)
+                        {
+                            return true;
+                        }
+                    }
+                    break;
+                }
                 case GridObjectType.Input:
                 {
                     InputCell cell = (InputCell)gridObject;
-                    for (uint i = 0; i < gridObject.Coordinates.Length; ++i)
+                    for (uint i = 0; i < _startObject.Coordinates.Length; ++i)
                     {
-                        if (_coordsOther == cell.Exit)
+                        if (_startObject.Coordinates[i] == cell.Exit)
                         {
                             return true;
                         }
@@ -777,9 +775,9 @@ public class GameplayManager : MonoBehaviour
                 case GridObjectType.Output:
 				{
 					OutputCell cell = (OutputCell)gridObject;
-					for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-					{
-						if (_coordsOther == cell.Entry )
+                    for (uint i = 0; i < _startObject.Coordinates.Length; ++i)
+                    {
+						if (_startObject.Coordinates[i] == cell.Entry )
 						{
 
 							return true;
@@ -789,69 +787,21 @@ public class GameplayManager : MonoBehaviour
 				}
 				case GridObjectType.Gate:
 				{
-                        for (uint i = 0; i < gridObject.Coordinates.Length; ++i)
+                    Gate gateCell = (Gate)gridObject;
+                    for (uint i = 0; i < _startObject.Coordinates.Length; ++i)
+                    {
+                        for (uint j = 0; j < (_isOutput? gateCell.Inputs.Length : gateCell.Outputs.Length); ++j)
                         {
-                            //Check Us
-                            Gate thisGate = (Gate)gridManager.GetCell(gridObject.Coordinates[i]);
-
-                            //Gate to Gate Check
-                            if (theirGridObject.ObjectType == GridObjectType.Gate)
+                            CellCoordinates[] toCompare = _isOutput ? gateCell.Inputs : gateCell.Outputs;
+                            if (_startObject.Coordinates[i] == toCompare[j])
                             {
-                                Gate theirGate = (Gate)theirGridObject;
-
-                                //Check if one of our inputs matches is them and one of their outputs is us
-                                {
-                                    bool weToThem = false, themToUs = false;
-                                    foreach (CellCoordinates input in thisGate.Inputs)
-                                    {
-                                        if(input == _coordsOther)
-                                        {
-                                            weToThem = true;
-                                        }
-                                    }
-                                    foreach (CellCoordinates theirOutput in theirGate.Outputs)
-                                    {
-                                        if (theirOutput == _coords)
-                                        {
-                                            themToUs = true;
-                                        }
-                                    }
-
-                                    if(weToThem && themToUs)
-                                    {
-                                        return true;
-                                    }
-                                }
-
-                                //Check if one of our ouputs matches is them and one of their inputs is us
-                                {
-                                    bool weToThem = false, themToUs = false;
-                                    foreach (CellCoordinates output in thisGate.Outputs)
-                                    {
-                                        if (output == _coordsOther)
-                                        {
-                                            weToThem = true;
-                                        }
-                                    }
-                                    foreach (CellCoordinates theirInput in theirGate.Inputs)
-                                    {
-                                        if (theirInput == _coords)
-                                        {
-                                            themToUs = true;
-                                        }
-                                    }
-
-                                    if (weToThem && themToUs)
-                                    {
-                                        return true;
-                                    }
-                                }
-
-                                return false;
+                                return true;
                             }
                         }
-					break;
-				}
+                    }
+
+                    break;
+                }
 			}
 		}
 		return false;
