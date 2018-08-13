@@ -171,8 +171,8 @@ public class GameplayManager : MonoBehaviour
 		}
 		else
 		{
-			orginalBackgroundColour = new Color( Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ) );
-			backgroundColour = new Color( Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ) );
+			orginalBackgroundColour = new Color( Random.Range( 0.0f, 0.5f ), Random.Range( 0.0f, 0.5f ), Random.Range( 0.0f, 0.5f ) );
+			backgroundColour = orginalBackgroundColour;
 			levelButtonGenerator.RegenerateButtons(
 				new List<GateType> { GateType.Add, GateType.Subtract, GateType.IncrementDecrement, GateType.Multiply, GateType.Divide, GateType.Cross, GateType.Replicate },
 				new List<int> { 2, 1, -1, -2 }
@@ -192,11 +192,11 @@ public class GameplayManager : MonoBehaviour
         //Stop Player from inputing
         fadeLayer.raycastTarget = true;
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
     
         levelSelectButtonsGenerator.RegenerateLevels();
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
 
         //Transition back
         clearedBackground = backgroundColour;
