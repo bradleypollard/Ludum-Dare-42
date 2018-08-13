@@ -723,19 +723,40 @@ public class GameplayManager : MonoBehaviour
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
 		numStartingOutputs = 1;
-		dimensionX = 5;
-		dimensionY = 5;
+		dimensionX = 3;
+		dimensionY = 3;
 		ColorUtility.TryParseHtmlString( "#9D8844", out color );
 
-		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 1 ) );
-		inputs.Add( new InputCell( new CellCoordinates( 0, 3 ), ObjectOrientation.Or0, 1 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 0, 1 ), ObjectOrientation.Or0, 3 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 7 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 0, 3 ), ObjectOrientation.Or0, 2 ) );
 
-		outputs.Add( new OutputCell( new CellCoordinates( 6, 2 ), ObjectOrientation.Or0, 1 ) );
-		outputs.Add( new OutputCell( new CellCoordinates( 3, 6 ), ObjectOrientation.Or270, 1 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 4, 2 ), ObjectOrientation.Or0, 10 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 4, 3 ), ObjectOrientation.Or0, 3 ) );
 
 		m_levels.Add( "two", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 
+
 		// Level Three
+		inputs = new List<InputCell>();
+		outputs = new List<OutputCell>();
+		numStartingOutputs = 1;
+		dimensionX = 3;
+		dimensionY = 3;
+		ColorUtility.TryParseHtmlString( "#9D8844", out color );
+
+		inputs.Add( new InputCell( new CellCoordinates( 2, 4 ), ObjectOrientation.Or90, 3 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 2 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 0, 1 ), ObjectOrientation.Or0, 1 ) );
+
+		outputs.Add( new OutputCell( new CellCoordinates( 4, 1 ), ObjectOrientation.Or0, 2 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 4, 2 ), ObjectOrientation.Or0, 5 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 4, 3 ), ObjectOrientation.Or0, 3 ) );
+
+		m_levels.Add( "three", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+
+
+		// Level Four
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
 		numStartingOutputs = 1;
@@ -752,6 +773,6 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 4 ), ObjectOrientation.Or0, 6 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 5 ), ObjectOrientation.Or0, 2 ) );
 
-		m_levels.Add( "three", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( "four", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 	}
 }
