@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RoboTools.Helpers;
 using UnityEngine.UI;
+using System.Linq;
 
 public class GameplayManager : MonoBehaviour
 {
@@ -615,7 +616,9 @@ public class GameplayManager : MonoBehaviour
     public void ClearCell(CellCoordinates _coordinates, bool _isSwap)
     {
         GridObject gridObject = gridManager.GetCell(_coordinates);
-        
+
+        List<CellCoordinates> neighboursToInformOfDeath = new List<CellCoordinates>();
+
         //Clear Wires
         if (gridObject != null && gridObject.ObjectType == GridObjectType.Gate)
         {
@@ -642,7 +645,9 @@ public class GameplayManager : MonoBehaviour
                     {
                         wireVisualManager.ClearWire(inputCoords);
                     }
-				}
+
+                    neighboursToInformOfDeath.Add(inputCoords);
+                }
             }
             foreach (CellCoordinates outputCoords in gate.Outputs)
             {
@@ -666,7 +671,9 @@ public class GameplayManager : MonoBehaviour
                     {
                         wireVisualManager.ClearWire(outputCoords);
                     }
-				}
+
+                    neighboursToInformOfDeath.Add(outputCoords);
+                }
 			}
         }
 
@@ -685,6 +692,11 @@ public class GameplayManager : MonoBehaviour
         }
 
         gridManager.ClearCell(_coordinates);
+
+        foreach(CellCoordinates cell in neighboursToInformOfDeath)
+        {
+            UpdateGiblets(cell, false);
+        }
     }
 
     public void UpdateGiblets(CellCoordinates _coordinates, bool _updateNeighbour = false)
