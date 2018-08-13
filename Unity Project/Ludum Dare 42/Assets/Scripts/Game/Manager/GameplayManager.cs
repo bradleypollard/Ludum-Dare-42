@@ -223,9 +223,9 @@ public class GameplayManager : MonoBehaviour
 		{
 			Destroy( grid );
 		}
-		foreach ( List<GameObject> wireList in wireVisualManager.GetCompletedWires().Values )
+		foreach (WireVisualManager.VisualWire visualWire in wireVisualManager.GetCompletedWires() )
 		{
-			foreach ( GameObject wire in wireList )
+			foreach ( GameObject wire in visualWire.wireObjects)
 			{
 				Destroy( wire );
 }
@@ -648,10 +648,6 @@ public class GameplayManager : MonoBehaviour
                                     break;
                                 }
                             }
-                        }
-                        else
-                        {
-                            wireVisualManager.ClearWire(inputCoords);
                         }
 
                         neighboursToInformOfDeath.Add(inputCoords);
