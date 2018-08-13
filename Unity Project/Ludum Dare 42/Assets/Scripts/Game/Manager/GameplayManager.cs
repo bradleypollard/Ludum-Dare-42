@@ -166,9 +166,16 @@ public class GameplayManager : MonoBehaviour
 		{
 			orginalBackgroundColour = file.BGColour;
 			backgroundColour = file.BGColour;
+			levelButtonGenerator.RegenerateButtons( file.Buttons, file.IncDecValues );
+		}
+		else
+		{
+			levelButtonGenerator.RegenerateButtons(
+				new List<GateType> { GateType.Add, GateType.Subtract, GateType.IncrementDecrement, GateType.Multiply, GateType.Divide, GateType.Cross, GateType.Replicate },
+				new List<int> { 2, 1, -1, -2 }
+			);
 		}
 
-        levelButtonGenerator.RegenerateButtons(file.Buttons, file.IncDecValues);
         UpdateCells();
 
         yield return FadeBackground(fadeLayer.color, clearedBackground, fadeLayer, 1.0f);
@@ -734,7 +741,6 @@ public class GameplayManager : MonoBehaviour
 					placedGridObjects[gridObject].transform.Find( "InConnector_" + count ).gameObject.SetActive( true );
 				}
 
-
 				count++;
 			}
 
@@ -757,16 +763,10 @@ public class GameplayManager : MonoBehaviour
 					placedGridObjects[gridObject].transform.Find( "OutConnector_" + count ).gameObject.SetActive( true );
 				}
 
-				
-
-
-
 				count++;
             }
         }
     }
-
-
 
 	private bool IsConnected( bool _isOutput, CellCoordinates _coords )
 	{

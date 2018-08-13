@@ -43,6 +43,8 @@ public class GridManager : MonoBehaviour
 		else
 		{
 			// TODO Random dimensions
+			DimensionX = 7;
+			DimensionY = 7;
 		}
 		ClearGrid();
 		IsSolved = false;
@@ -191,7 +193,9 @@ public class GridManager : MonoBehaviour
 
 	private void GenerateInput()
 	{
-		uint x = 0;
+		bool clampX = Random.Range( 0, 1) < 0.5f;
+		bool highOrLow = Random.Range(0,1) < 0.5f;
+		uint x = (uint)Random.Range( 1, DimensionY );
 		uint y = (uint)Random.Range( 1, DimensionY );
 		int value = Random.Range( 1, MaxInputValue + 1 );
 		while ( GetCell( new CellCoordinates( x, y ) ) != null )
