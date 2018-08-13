@@ -278,9 +278,10 @@ public class WireManager : MonoBehaviour
 					}
 				}
 				m_passedThrough.Push( head ); // Put the head back on, moving forwards
-				
+
 				GridObject headObject = m_gridManager.GetCell( head );
-				if ( ( headObject == null || ( headObject.ObjectType != GridObjectType.Gate && headObject.ObjectType != GridObjectType.Output ) ) &&  !m_passedThrough.Contains( _cell ) )
+				if ( ( m_passedThrough.Count == 1 || headObject == null || ( headObject.ObjectType != GridObjectType.Gate && headObject.ObjectType != GridObjectType.Output ) ) 
+						&& !m_passedThrough.Contains( _cell ) )
 				{
 					// Check we haven't been here before on this path, and that we haven't already arrived at a destination
 					GridObject cellObject = m_gridManager.GetCell( _cell );

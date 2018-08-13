@@ -16,7 +16,7 @@ public class GameplayManager : MonoBehaviour
 
     //Game Variables
     private float timeLeft;
-    private int score, wave;
+    private int wave;
     private bool isPlaying;
 
     private Dictionary<InputCell, GameObject> inputs;
@@ -103,7 +103,6 @@ public class GameplayManager : MonoBehaviour
     {
         //Reset Values
         timeLeft = StartTimeLeft;
-        score = 0;
         wave = -1;
         isPlaying = true;
         inputs = new Dictionary<InputCell, GameObject>();
@@ -171,7 +170,7 @@ public class GameplayManager : MonoBehaviour
 
         //Activate Player Input
 
-        yield return StartCoroutine(GameLoop());
+        yield return StartCoroutine(GameLoop( file ) );
 
         //Stop Player from inputing
         fadeLayer.raycastTarget = true;
@@ -213,7 +212,7 @@ public class GameplayManager : MonoBehaviour
 		}
 	}
 
-    private IEnumerator GameLoop()
+    private IEnumerator GameLoop( LevelFile _file )
     {
         while (isPlaying)
         {
@@ -247,8 +246,17 @@ public class GameplayManager : MonoBehaviour
             {
 				if ( completedAllWaves )
 				{
-					ScoreText.text = gridManager.GetEmptyCells() + " EMPTY CELLS";
+					int score = gridManager.GetEmptyCells();
+					ScoreText.text = score + " EMPTY CELLS";
 					LevelCompleteText.gameObject.SetActive( true );
+					if ( _file != null )
+					{
+						int highScore = PlayerPrefs.GetInt( _file.Name + "Score", -1 );
+						if ( score > highScore )
+						{
+							PlayerPrefs.SetInt( _file.Name + "Score", score );
+						}
+					}
 					yield return FadeInText( LevelCompleteText, ScoreText, 0.5f );
 				}
 				else
@@ -261,7 +269,6 @@ public class GameplayManager : MonoBehaviour
             }
 			else
 			{
-				score += GetWaveClearScore();
 				timeLeft += GetWaveClearTime();
 			}
         }
@@ -355,11 +362,6 @@ public class GameplayManager : MonoBehaviour
     private bool IsWaveBeaten()
     {
         return gridManager.IsSolved;
-    }
-
-    private int GetWaveClearScore()
-    {
-        return 0;
     }
 
     private float GetWaveClearTime()
@@ -711,6 +713,9 @@ public class GameplayManager : MonoBehaviour
 	private void SetupStartingLevels()
 	{
 		m_levels = new Dictionary<string, LevelFile>();
+
+		// Values
+		string name = "";
 		List<InputCell> inputs = new List<InputCell>();
 		List<OutputCell> outputs = new List<OutputCell>();
 		int numStartingOutputs = 1;
@@ -719,6 +724,7 @@ public class GameplayManager : MonoBehaviour
 		Color color;
 
 		// Level One
+		name = "one";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
 		numStartingOutputs = 1;
@@ -732,10 +738,11 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 3 ), ObjectOrientation.Or0, 1 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 1 ), ObjectOrientation.Or0, 2 ) );
 
-		m_levels.Add( "one", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 
 
 		// Level Two
+		name = "two";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
 		numStartingOutputs = 1;
@@ -750,10 +757,11 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 2 ), ObjectOrientation.Or0, 10 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 3 ), ObjectOrientation.Or0, 3 ) );
 
-		m_levels.Add( "two", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 
 
 		// Level Three
+		name = "three";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
 		numStartingOutputs = 1;
@@ -769,10 +777,11 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 2 ), ObjectOrientation.Or0, 5 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 3 ), ObjectOrientation.Or0, 3 ) );
 
-		m_levels.Add( "three", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 
 
 		// Level Four
+		name = "four";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
 		numStartingOutputs = 1;
@@ -789,6 +798,6 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 4 ), ObjectOrientation.Or0, 6 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 5 ), ObjectOrientation.Or0, 2 ) );
 
-		m_levels.Add( "four", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 	}
 }
