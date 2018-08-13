@@ -171,6 +171,8 @@ public class GameplayManager : MonoBehaviour
 		}
 		else
 		{
+			orginalBackgroundColour = new Color( Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ) );
+			backgroundColour = new Color( Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ) );
 			levelButtonGenerator.RegenerateButtons(
 				new List<GateType> { GateType.Add, GateType.Subtract, GateType.IncrementDecrement, GateType.Multiply, GateType.Divide, GateType.Cross, GateType.Replicate },
 				new List<int> { 2, 1, -1, -2 }
@@ -899,7 +901,7 @@ public class GameplayManager : MonoBehaviour
 		name = "three";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
-		buttons = new List<GateType> { GateType.IncrementDecrement, GateType.Add, GateType.Subtract };
+		buttons = new List<GateType> { GateType.IncrementDecrement, GateType.Add, GateType.Subtract, GateType.Replicate };
 		incrementDecrementValues = new List<int> { 1, -1 };
 		numStartingOutputs = 1;
 		dimensionX = 3;

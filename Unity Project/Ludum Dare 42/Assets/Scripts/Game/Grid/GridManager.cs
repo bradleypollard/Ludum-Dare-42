@@ -199,8 +199,8 @@ public class GridManager : MonoBehaviour
 
 		while ( !success )
 		{
-			bool clampX = Random.Range( 0, 1 ) < 0.5f;
-			bool clampHigh = Random.Range( 0, 1 ) < 0.5f;
+			bool clampX = Random.Range( 0.0f, 1.0f ) < 0.5f;
+			bool clampHigh = Random.Range( 0.0f, 1.0f ) < 0.5f;
 			uint x = 0;
 			uint y = 0;
 			ObjectOrientation or = ObjectOrientation.Or0;
