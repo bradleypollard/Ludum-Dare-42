@@ -42,7 +42,14 @@ public class LevelScore : MonoBehaviour
             else
             {
                 int score = PlayerPrefs.GetInt("InfiniteScore", 0);
-                ScoreText.text = score.ToString() + " Waves";
+                if (score >= 0)
+                {
+                    ScoreText.text = score.ToString() + " Waves";
+                }
+                else
+                {
+                    ScoreText.text = "";
+                }
             }
         }
 	}

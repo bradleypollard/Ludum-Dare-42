@@ -79,6 +79,7 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                 }
 
                 Vector2Int oGrid = Vector2Int.zero;
+                CellCoordinates oldCoordinates = m_cellCoordinates;
 
                 if (m_visualGridManager.GetGridCoordinates(m_rectTransform.anchoredPosition, ref oGrid, false)
                     && m_visualGridManager.IsGridObjectValid(m_rectTransform.anchoredPosition, m_visualGate, false))
@@ -86,11 +87,8 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                     CellCoordinates cell = new CellCoordinates((uint)oGrid.x, (uint)oGrid.y);
                     m_cellCoordinates = cell;
 
-                    if (m_visualGate != null && !m_isPlaced)
+                    if (m_visualGate != null)
                     {
-                        GameObject copy = Instantiate(gameObject, m_gameplayManager.scrollViewParent);
-                        copy.GetComponent<VisualBase>().ResetBase();
-
                         VisualGate visualGate = GetComponent<VisualGate>();
                         if (visualGate != null)
                         {
@@ -100,17 +98,23 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                             }
                             else
                             {
-                                m_gameplayManager.AddIncrementDecrementGate(cell, visualGate.objectOrientation, visualGate.value, gameObject);
+                                m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject, visualGate.value);
                             }
 
-                            copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
+                            if (!m_isPlaced)
+                            {
+                                GameObject copy = Instantiate(gameObject, m_gameplayManager.scrollViewParent);
+                                copy.GetComponent<VisualBase>().ResetBase();
+                                copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
+                            }
                         }
                     }
 
                     //If we were on a space clear it
                     if (m_isPlaced)
                     {
-                        m_gameplayManager.ClearCell(m_cellCoordinates);
+                        m_gameplayManager.ClearCell(oldCoordinates, true);
+                        m_gameplayManager.UpdateGiblets(m_cellCoordinates, true);
                     }
 
                     m_isPlaced = true;
@@ -129,6 +133,7 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                     else
                     {
                         //If we have already been placed. Kill yourself
+                        m_gameplayManager.ClearCell(oldCoordinates, true);
                         Destroy(gameObject);
                     }
                 }
