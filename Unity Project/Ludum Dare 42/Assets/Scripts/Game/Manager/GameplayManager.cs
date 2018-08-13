@@ -332,6 +332,8 @@ public class GameplayManager : MonoBehaviour
                 //Generate Prefab at position
                 GameObject prefab = Instantiate(inputCellPrefab, gridParent);
                 prefab.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(input.Coordinates[0]);
+                prefab.GetComponent<RectTransform>().localScale = Vector3.one * (5.0f / (Mathf.Min(visualGridManager.gridWidth, visualGridManager.gridHeight)));
+
                 prefab.GetComponentInChildren<Text>().text = input.InputValue.ToString();
 
                 inputs.Add(input, prefab);
@@ -345,6 +347,8 @@ public class GameplayManager : MonoBehaviour
                 //Generate Prefab at position
                 GameObject prefab = Instantiate(outputCellPrefab, gridParent);
                 prefab.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(output.Coordinates[0]);
+                prefab.GetComponent<RectTransform>().localScale = Vector3.one * (5.0f / (Mathf.Min(visualGridManager.gridWidth, visualGridManager.gridHeight)));
+
                 prefab.GetComponentInChildren<Text>().text = output.OutputTarget.ToString();
 
                 outputs.Add(output, prefab);

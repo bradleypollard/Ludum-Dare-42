@@ -56,7 +56,7 @@ public class VisualGridManager : MonoBehaviour
         Vector2 squareSize = new Vector2(gridSize.x / gridWidth, gridSize.y / gridHeight);
 
         //Draw HoriLines
-        for (float y = localStartPos.y; y <= localEndPos.y; y += squareSize.y)
+        for (float y = localStartPos.y; y <= localEndPos.y + 5.0f; y += squareSize.y)
         {
             Vector2 localPos = new Vector2(localStartPos.x + offset, y);
 
@@ -68,7 +68,7 @@ public class VisualGridManager : MonoBehaviour
         }
 
         //Draw VerticalLines
-        for (float x = localStartPos.x; x <= localEndPos.x; x += squareSize.x)
+        for (float x = localStartPos.x; x <= localEndPos.x + 5.0f; x += squareSize.x)
         {
             Vector2 localPos = new Vector2(x, localStartPos.y + offset);
 
