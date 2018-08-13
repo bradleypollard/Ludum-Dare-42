@@ -241,7 +241,7 @@ public class GameplayManager : MonoBehaviour
             {
                 timeLeft -= Time.deltaTime;
 
-                timerImage.Rotate(new Vector3(0, 0, 180.0f * Time.deltaTime));
+                timerImage.Rotate(new Vector3(0, 0, -180.0f * Time.deltaTime));
 
                 if (timeLeft <= 0.0f)
                 {
