@@ -47,6 +47,7 @@ public class GameplayManager : MonoBehaviour
     private WireManager wireManager;
     private VisualGridManager visualGridManager;
     private LevelSelectButtonsGenerator levelSelectButtonsGenerator;
+    private LevelButtonGenerator levelButtonGenerator;
 
     private readonly Color solvedColour = new Color(0.423f, 0.858f, 0.612f);
     private readonly Color unsolvedColour = new Color(0.925f, 0.941f, 0.945f);
@@ -71,6 +72,7 @@ public class GameplayManager : MonoBehaviour
         wireManager = FindObjectOfType<WireManager>();
 		visualGridManager = FindObjectOfType<VisualGridManager>();
         levelSelectButtonsGenerator = FindObjectOfType<LevelSelectButtonsGenerator>();
+        levelButtonGenerator = FindObjectOfType<LevelButtonGenerator>();
 
         //Do Debug Logic
         if (debug_StartGameOnLoad)
@@ -157,7 +159,7 @@ public class GameplayManager : MonoBehaviour
 
         //Setup Visual Grid Manager
 		visualGridManager.Initialise();
-		wireVisualManager.Initialise();
+		wireVisualManager.Initialise();   
 
         //Transition
 		if ( file != null )
@@ -166,6 +168,7 @@ public class GameplayManager : MonoBehaviour
 			backgroundColour = file.BGColour;
 		}
 
+        levelButtonGenerator.RegenerateButtons(file.Buttons, file.IncDecValues);
         UpdateCells();
 
         yield return FadeBackground(fadeLayer.color, clearedBackground, fadeLayer, 1.0f);
@@ -957,5 +960,10 @@ public class GameplayManager : MonoBehaviour
     {
         PlayerPrefs.DeleteAll();
         levelSelectButtonsGenerator.RegenerateLevels();
+    }
+
+    public void ReturnToTime()
+    {
+        timeLeft = 0.0f;
     }
 }

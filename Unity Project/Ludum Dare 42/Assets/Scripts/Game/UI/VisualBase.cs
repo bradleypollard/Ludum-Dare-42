@@ -10,6 +10,7 @@ public class VisualBase : MonoBehaviour
 	protected Vector2 spawnLocation;
 	public Vector2 GetSpawnLocation() { return spawnLocation; }
 
+    [HideInInspector]
     public float localScale = 1.0f;
 
     public void Start()
