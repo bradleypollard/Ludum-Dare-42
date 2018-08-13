@@ -7,13 +7,16 @@ public class VisualBase : MonoBehaviour
     [HideInInspector]
 	public ObjectOrientation objectOrientation;
 
-	private Vector2 spawnLocation;
+	protected Vector2 spawnLocation;
 	public Vector2 GetSpawnLocation() { return spawnLocation; }
 
-	public void Start()
+    public float localScale = 1.0f;
+
+    public void Start()
 	{
 		spawnLocation = GetComponent<RectTransform>().anchoredPosition;
-	}
+        GetComponent<RectTransform>().localScale = Vector2.one * localScale;
+    }
 
 	public void Rotate( bool _clockwise )
 	{
@@ -41,5 +44,17 @@ public class VisualBase : MonoBehaviour
 
         RectTransform trans = GetComponent<RectTransform>();
         trans.rotation = Quaternion.identity;
+
+        localScale = 1.0f;
+        GetComponent<RectTransform>().localScale = Vector2.one * localScale;
+    }
+
+    public void Update()
+    {
+        if (GetComponent<RectTransform>().localScale.x != localScale)
+        {
+            float newLocalScale = Mathf.Lerp(GetComponent<RectTransform>().localScale.x, localScale, Time.deltaTime * 5.0f);
+            GetComponent<RectTransform>().localScale = Vector2.one * newLocalScale;
+        }
     }
 }

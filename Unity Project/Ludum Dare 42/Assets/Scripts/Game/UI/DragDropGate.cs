@@ -91,9 +91,8 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                 {
                     CellCoordinates cell = new CellCoordinates((uint)oGrid.x, (uint)oGrid.y);
                     m_cellCoordinates = cell;
-                    m_isPlaced = true;
 
-                    if (m_visualGate != null)
+                    if (m_visualGate != null && !m_isPlaced)
                     {
                         GameObject copy = Instantiate(gameObject, m_gameplayManager.scrollViewParent);
                         copy.GetComponent<VisualBase>().ResetBase();
@@ -113,6 +112,8 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                             copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
                         }
                     }
+
+                    m_isPlaced = true;
                 }
                 else
                 {

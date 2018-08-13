@@ -92,6 +92,10 @@ public class VisualGridManager : MonoBehaviour
                 //Check that this gridObject won't overlap anything
                 if(!IsGridObjectValid(actualPos, _visualGate, false))
                 {
+                    if (_visualGate != null)
+                    {
+                        _visualGate.localScale = 1.0f;
+                    }
                     return actualPos;
                 }
             }
@@ -105,9 +109,19 @@ public class VisualGridManager : MonoBehaviour
 
             flooredSnapPoint += (squareSize * 0.5f);
 
+            //Resize
+            if(_visualGate != null)
+            {
+                _visualGate.localScale = 5.0f / (Mathf.Min(gridWidth, gridHeight));
+            }
+
             return flooredSnapPoint + startPos;
         }
 
+        if (_visualGate != null)
+        {
+            _visualGate.localScale = 1.0f;
+        }
         return actualPos;
     }
 
