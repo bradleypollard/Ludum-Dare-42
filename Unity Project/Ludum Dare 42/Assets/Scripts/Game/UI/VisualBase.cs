@@ -48,6 +48,19 @@ public class VisualBase : MonoBehaviour
 
         localScale = 1.0f;
         GetComponent<RectTransform>().localScale = Vector2.one * localScale;
+
+        for(int i = 1; i <= 2; i++)
+        {
+            if(transform.Find("InConnector_" + i) != null)
+            {
+                transform.Find("InConnector_" + i).gameObject.SetActive(true);
+            }
+
+            if (transform.Find("OutConnector_" + i) != null)
+            {
+                transform.Find("OutConnector_" + i).gameObject.SetActive(true);
+            }
+        }
     }
 
     public void Update()

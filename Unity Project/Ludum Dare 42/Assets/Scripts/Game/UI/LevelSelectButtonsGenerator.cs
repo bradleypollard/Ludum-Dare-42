@@ -69,7 +69,8 @@ public class LevelSelectButtonsGenerator : MonoBehaviour
             }
             else
             {
-                levelText.text = "Infinite";
+                levelText.text = "Endless";
+                levelText.fontSize = (int)(levelText.fontSize * 0.75f);
                 //rect.Rotate(new Vector3(0, 0, 90));
             }
         }
