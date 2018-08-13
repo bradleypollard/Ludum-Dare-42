@@ -280,7 +280,14 @@ public class GameplayManager : MonoBehaviour
 				{
 					timerText.color = unsolvedWireColour;
 					timerText.text = "0";
-					yield return FadeInText( TimeUpText, 0.5f );
+
+                    //Random Level
+                    if (_file.Name != "")
+                    {
+                        PlayerPrefs.SetInt("InfiniteScore", wave);
+                    }
+
+                    yield return FadeInText( TimeUpText, 0.5f );
 				}
 				yield return new WaitForSeconds(1.0f);
             }

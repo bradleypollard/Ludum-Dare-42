@@ -27,14 +27,22 @@ public class LevelScore : MonoBehaviour
 	{
         if (ScoreText != null)
         {
-            int score = PlayerPrefs.GetInt(LevelName + "Score", -1);
-            if (score >= 0)
+            if (LevelName != "")
             {
-                ScoreText.text = score.ToString() + " Cells Left";
+                int score = PlayerPrefs.GetInt(LevelName + "Score", -1);
+                if (score >= 0)
+                {
+                    ScoreText.text = score.ToString() + " Cells Left";
+                }
+                else
+                {
+                    ScoreText.text = "";
+                }
             }
             else
             {
-                ScoreText.text = "";
+                int score = PlayerPrefs.GetInt("InfiniteScore", 0);
+                ScoreText.text = score.ToString() + " Waves";
             }
         }
 	}

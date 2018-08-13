@@ -26,7 +26,7 @@ public class LevelSelectButtonsGenerator : MonoBehaviour
         }
 
         //Get Unlocked Levels
-        bool isUnlocked = true;
+        int isUnlocked = 2;
         levelObjects = new List<GameObject>();
 
         scrollView.GetComponent<RectTransform>().sizeDelta = new Vector2(222 * levelNames.Count, 400);
@@ -41,17 +41,16 @@ public class LevelSelectButtonsGenerator : MonoBehaviour
             {
                 levelButton = Instantiate(levelButtonCompletePrefab, scrollView.transform);
             }
-            else if (isUnlocked)
+            else if (isUnlocked > 0)
             {
                 levelButton = Instantiate(levelButtonPrefab, scrollView.transform);
-                isUnlocked = false;
+                isUnlocked --;
             }
             else
             {
                 levelButton = Instantiate(levelButtonLockedPrefab, scrollView.transform);
             }
             levelObjects.Add(levelButton);
-
 
             RectTransform rect = levelButton.GetComponent<RectTransform>();
             rect.anchoredPosition = new Vector2(150 + (222 * i), 200);
@@ -63,7 +62,16 @@ public class LevelSelectButtonsGenerator : MonoBehaviour
             }
 
             Text levelText = levelButton.transform.Find("LevelName").GetComponent<Text>();
-            levelText.text = "Level" + System.Environment.NewLine + (i + 1).ToString();
+
+            if (i > 0)
+            {
+                levelText.text = "Level" + System.Environment.NewLine + (i).ToString();
+            }
+            else
+            {
+                levelText.text = "Infinite";
+                //rect.Rotate(new Vector3(0, 0, 90));
+            }
         }
     }
 }
