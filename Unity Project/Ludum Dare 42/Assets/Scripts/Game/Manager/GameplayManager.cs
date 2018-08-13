@@ -994,4 +994,9 @@ public class GameplayManager : MonoBehaviour
         PlayerPrefs.DeleteAll();
         levelSelectButtonsGenerator.RegenerateLevels();
     }
+
+    public void ReturnToTime()
+    {
+        timeLeft = 0.0f;
+    }
 }
