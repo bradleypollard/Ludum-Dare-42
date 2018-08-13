@@ -861,6 +861,8 @@ public class GameplayManager : MonoBehaviour
 		string name = "";
 		List<InputCell> inputs = new List<InputCell>();
 		List<OutputCell> outputs = new List<OutputCell>();
+		List<GateType> buttons = new List<GateType>{ GateType.Add, GateType.Subtract, GateType.IncrementDecrement, GateType.Multiply, GateType.Divide, GateType.Cross, GateType.Replicate };
+		List<int> incrementDecrementValues = new List<int>(); 
 		int numStartingOutputs = 1;
 		int dimensionX = 5;
 		int dimensionY = 5;
@@ -870,6 +872,8 @@ public class GameplayManager : MonoBehaviour
 		name = "one";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
+		buttons = new List<GateType> { GateType.Add, GateType.Subtract, GateType.IncrementDecrement };
+		incrementDecrementValues = new List<int> { 1, -1 };
 		numStartingOutputs = 1;
 		dimensionX = 3;
 		dimensionY = 3;
@@ -881,13 +885,15 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 3 ), ObjectOrientation.Or0, 1 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 1 ), ObjectOrientation.Or0, 2 ) );
 
-		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, buttons, incrementDecrementValues, numStartingOutputs, dimensionX, dimensionY, color ) );
 
 
 		// Level Two
 		name = "two";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
+		buttons = new List<GateType> { GateType.Add, GateType.Subtract, GateType.IncrementDecrement };
+		incrementDecrementValues = new List<int> { 1, -1 };
 		numStartingOutputs = 1;
 		dimensionX = 3;
 		dimensionY = 3;
@@ -900,13 +906,15 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 2 ), ObjectOrientation.Or0, 10 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 3 ), ObjectOrientation.Or0, 3 ) );
 
-		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, buttons, incrementDecrementValues, numStartingOutputs, dimensionX, dimensionY, color ) );
 
 
 		// Level Three
 		name = "three";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
+		buttons = new List<GateType> { GateType.IncrementDecrement, GateType.Add, GateType.Subtract };
+		incrementDecrementValues = new List<int> { 1, -1 };
 		numStartingOutputs = 1;
 		dimensionX = 3;
 		dimensionY = 3;
@@ -920,13 +928,15 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 2 ), ObjectOrientation.Or0, 5 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 4, 3 ), ObjectOrientation.Or0, 3 ) );
 
-		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, buttons, incrementDecrementValues, numStartingOutputs, dimensionX, dimensionY, color ) );
 
 
 		// Level Four
 		name = "four";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
+		buttons = new List<GateType> { GateType.IncrementDecrement, GateType.Add, GateType.Subtract, GateType.Cross, GateType.Replicate };
+		incrementDecrementValues = new List<int> { 1, -1 };
 		numStartingOutputs = 1;
 		dimensionX = 5;
 		dimensionY = 5;
@@ -941,13 +951,15 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 4 ), ObjectOrientation.Or0, 6 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 5 ), ObjectOrientation.Or0, 2 ) );
 
-		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, buttons, incrementDecrementValues, numStartingOutputs, dimensionX, dimensionY, color ) );
 
 
 		// Level Five
 		name = "five";
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
+		buttons = new List<GateType> { GateType.IncrementDecrement, GateType.Add, GateType.Subtract, GateType.Multiply, GateType.Divide, GateType.Cross, GateType.Replicate };
+		incrementDecrementValues = new List<int> { 1, -1 };
 		numStartingOutputs = 2;
 		dimensionX = 7;
 		dimensionY = 7;
@@ -967,7 +979,7 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 8 ), ObjectOrientation.Or0, 9 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 8, 1 ), ObjectOrientation.Or0, 35 ) );
 
-		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, buttons, incrementDecrementValues, numStartingOutputs, dimensionX, dimensionY, color ) );
 	}
 
     public void ResetSave()

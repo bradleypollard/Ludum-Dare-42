@@ -7,11 +7,13 @@ using System.IO;
 
 public class LevelFile
 {
-	public LevelFile( string _name, List<InputCell> _inputs, List<OutputCell> outputs, int _numStartingOutputs, int _dimensionX, int _dimensionY, Color _BGColour )
+	public LevelFile( string _name, List<InputCell> _inputs, List<OutputCell> _outputs, List<GateType> _buttons, List<int> _incDecValues, int _numStartingOutputs, int _dimensionX, int _dimensionY, Color _BGColour )
 	{
 		Name = _name;
 		Inputs = _inputs;
-		Outputs = outputs;
+		Outputs = _outputs;
+		Buttons = _buttons;
+		IncDecValues = _incDecValues;
 		NumStartingOutputs = _numStartingOutputs;
 		DimensionX = _dimensionX;
 		DimensionY = _dimensionY;
@@ -21,6 +23,8 @@ public class LevelFile
 	public string Name;
 	public List<InputCell> Inputs;
 	public List<OutputCell> Outputs;
+	public List<GateType> Buttons;
+	public List<int> IncDecValues;
 	public int NumStartingOutputs;
 	public int DimensionX, DimensionY;
 	public Color BGColour;
