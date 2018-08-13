@@ -185,7 +185,12 @@ public class VisualGridManager : MonoBehaviour
                         gridObject = new CrossGate(cell, _gate.objectOrientation);
                         break;
                     }
-            }
+				case GateType.Replicate:
+				{
+					gridObject = new ReplicateGate( cell, _gate.objectOrientation );
+					break;
+				}
+			}
 
             foreach(CellCoordinates coordinates in gridObject.Coordinates)
             {

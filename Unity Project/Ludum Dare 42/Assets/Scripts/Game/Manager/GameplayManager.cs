@@ -524,7 +524,12 @@ public class GameplayManager : MonoBehaviour
                 gridObject = new CrossGate(_coordinates, _orientation);
                 break;
             }
-        }
+			case GateType.Replicate:
+			{
+				gridObject = new ReplicateGate( _coordinates, _orientation );
+				break;
+			}
+		}
 
         gridManager.InsertObject(gridObject);
         placedGridObjects.Add(gridObject, _selfGameObject);
@@ -701,13 +706,15 @@ public class GameplayManager : MonoBehaviour
 		inputs = new List<InputCell>();
 		outputs = new List<OutputCell>();
 		numStartingOutputs = 1;
-		dimensionX = 5;
-		dimensionY = 5;
+		dimensionX = 3;
+		dimensionY = 3;
 		ColorUtility.TryParseHtmlString( "#439C89", out color );
 
-		inputs.Add( new InputCell( new CellCoordinates( 0, 2 ), ObjectOrientation.Or0, 1 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 0, 3 ), ObjectOrientation.Or0, 1 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 0, 1 ), ObjectOrientation.Or0, 1 ) );
 
-		outputs.Add( new OutputCell( new CellCoordinates( 6, 2 ), ObjectOrientation.Or0, 1 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 4, 3 ), ObjectOrientation.Or0, 1 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 4, 1 ), ObjectOrientation.Or0, 2 ) );
 
 		m_levels.Add( "one", new LevelFile( inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 

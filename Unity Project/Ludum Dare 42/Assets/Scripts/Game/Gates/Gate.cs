@@ -9,7 +9,8 @@ public enum GateType
 	IncrementDecrement,
 	Multiply,
 	Divide,
-	Cross
+	Cross,
+	Replicate
 }
 
 public abstract class Gate : GridObject
