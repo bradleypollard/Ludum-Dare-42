@@ -264,7 +264,7 @@ public class WireVisualManager : MonoBehaviour
             {
                 foreach (VisualWire visualWire in completedWires.ToArray())
                 {
-                    if (visualWire.cellCoordinates == _cellCoordinates)
+                    if (visualWire.cellCoordinates == connection)
                     {
                         foreach (GameObject gameObjectToKill in visualWire.wireObjects)
                         {
