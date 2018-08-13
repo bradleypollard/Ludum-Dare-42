@@ -122,7 +122,16 @@ public class GridManager : MonoBehaviour
 					GridObject input = GetCell( inputCoords );
 					if ( input != null && input.ObjectType == GridObjectType.Wire )
 					{
-						ClearCell( input.Coordinates[0] );
+						Wire wire = (Wire)input;
+						for ( uint i = 0; i < o.Coordinates.Length; ++i )
+						{
+							if ( o.Coordinates[i] == wire.Exit )
+							{
+								// This wire actually connects to us, destroy it
+								ClearCell( input.Coordinates[0] );
+								break;
+							}
+						}
 					}
 				}
 				foreach ( CellCoordinates outputCoords in gate.Outputs )
@@ -130,7 +139,16 @@ public class GridManager : MonoBehaviour
 					GridObject output = GetCell( outputCoords );
 					if ( output != null && output.ObjectType == GridObjectType.Wire )
 					{
-						ClearCell( output.Coordinates[0] );
+						Wire wire = (Wire)output;
+						for ( uint i = 0; i < o.Coordinates.Length; ++i )
+						{
+							if ( o.Coordinates[i] == wire.Entry )
+							{
+								// This wire actually connects to us, destroy it
+								ClearCell( output.Coordinates[0] );
+								break;
+							}
+						}
 					}
 				}
 			}
