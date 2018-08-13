@@ -34,30 +34,37 @@ public class LevelButtonGenerator : MonoBehaviour
 
         //Make Buttons
         int buttonCount = 0;
-        int incdecCount = 0;
         float gateHeight = gateSize - 100.0f;
 
         foreach (GateType gateType in _gates)
         {
-            GameObject gateButton = Instantiate(iconPrefabs[(int)gateType], scrollView.transform); 
-            levelObjects.Add(gateButton);
+			int numToCreate = 1;
+			if ( gateType == GateType.IncrementDecrement )
+			{
+				numToCreate = _incDecValues.Count;
+			}
 
-            RectTransform rect = gateButton.GetComponent<RectTransform>();
-            rect.anchoredPosition = new Vector2(94.0f, gateHeight);
-            gateHeight -= rect.sizeDelta.y + 50.0f;
+			for ( int i = 0; i < numToCreate; ++i  )
+			{
+				GameObject gateButton = Instantiate( iconPrefabs[(int)gateType], scrollView.transform );
+				levelObjects.Add( gateButton );
 
-            if (gateType == GateType.IncrementDecrement)
-            {
-                int value = _incDecValues[incdecCount];
-                VisualGate incDec = gateButton.GetComponent<VisualGate>();
-                incDec.value = value;
+				RectTransform rect = gateButton.GetComponent<RectTransform>();
+				rect.anchoredPosition = new Vector2( 94.0f, gateHeight );
+				gateHeight -= rect.sizeDelta.y + 50.0f;
 
-                gateButton.transform.Find("Text").GetComponent<Text>().text = (value < 0 ? "-" : "+") + value;
+				if ( gateType == GateType.IncrementDecrement )
+				{
+					int value = _incDecValues[i];
+					VisualGate incDec = gateButton.GetComponent<VisualGate>();
+					incDec.value = value;
 
-                incdecCount++;
-            }
+					gateButton.transform.Find( "Text" ).GetComponent<Text>().text = ( value <= 0 ? "" : "+" ) + value;
+				}
 
-            buttonCount++;
+				buttonCount++;
+			}
+			
         }
 	}
 }
