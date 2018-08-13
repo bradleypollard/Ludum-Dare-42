@@ -65,7 +65,7 @@ public class GridManager : MonoBehaviour
 		{
 			for ( int j = 0; j < DimensionY; ++j )
 			{
-				if ( m_grid[i,j] == null  )
+				if ( m_grid[i, j] == null )
 				{
 					count++;
 				}
@@ -158,9 +158,9 @@ public class GridManager : MonoBehaviour
 		m_generation = 0;
 		m_inputs = new List<InputCell>();
 		m_outputs = new List<OutputCell>();
-        m_futureOutputs = new List<OutputCell>();
+		m_futureOutputs = new List<OutputCell>();
 
-    }
+	}
 
 	private void GenerateInputs()
 	{
@@ -289,6 +289,46 @@ public class GridManager : MonoBehaviour
 			if ( !_checkedObjects.Contains( inputs[i] ) )
 			{
 				ready = false;
+				break;
+			}
+			// Check if the output of this input actually aligns with us...
+			switch ( inputs[i].ObjectType )
+			{
+				case GridObjectType.Gate:
+				{
+					Gate gate = (Gate)inputs[i];
+					ready = false;
+					for ( uint j = 0; j < gate.Outputs.Length; ++j )
+					{
+						if ( gate.Outputs[j] == _gate.GetCoordinateForInput( i ) )
+						{
+							ready = true;
+							break;
+						}
+					}
+					break;
+				}
+				case GridObjectType.Input:
+				{
+					InputCell input = (InputCell)inputs[i];
+					ready = input.Exit == _gate.GetCoordinateForInput( i );
+					break;
+				}
+				case GridObjectType.Wire:
+				{
+					Wire wire = (Wire)inputs[i];
+					ready = wire.Exit == _gate.GetCoordinateForInput( i );
+					break;
+				}
+				default:
+				{
+					Debug.LogError( "GridManager: SolveOutput encountered an invalid GridObjectType at " + _gate.Inputs[i] + " !" );
+					ready = false;
+					break;
+				}
+			}
+			if ( !ready )
+			{
 				break;
 			}
 		}
