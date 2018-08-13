@@ -521,13 +521,13 @@ public class GameplayManager : MonoBehaviour
 		_text2.color = endColour2;
 	}
 
-	public void AddGate(GateType _type, CellCoordinates _coordinates, ObjectOrientation _orientation, GameObject _selfGameObject, int _value = 0)
+	public void AddGate(GateType _type, CellCoordinates _coordinates, ObjectOrientation _orientation, GameObject _selfGameObject, int _value = 0, bool _isSwap = false)
     {
         //Check if an object is already there
         GridObject gridObject = gridManager.GetCell(_coordinates);
         if(gridObject != null)
         {
-            ClearCell(_coordinates, false);
+            ClearCell(_coordinates, _isSwap);
             gridObject = null;
         }
 
@@ -690,7 +690,7 @@ public class GameplayManager : MonoBehaviour
     public void UpdateGiblets(CellCoordinates _coordinates, bool _updateNeighbour = false)
     {
         GridObject gridObject = gridManager.GetCell(_coordinates);
-        if (gridObject.ObjectType == GridObjectType.Gate)
+        if (gridObject != null && gridObject.ObjectType == GridObjectType.Gate)
         {
             Gate gate = (Gate)gridObject;
 
