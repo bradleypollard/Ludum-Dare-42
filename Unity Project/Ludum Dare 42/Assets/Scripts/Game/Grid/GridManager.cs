@@ -256,7 +256,7 @@ public class GridManager : MonoBehaviour
 			Debug.Log( "GridManager: Output added - " + _outputs[i].Coordinates[0].ToString() + " target " + _outputs[i].OutputTarget );
 		}
 		m_outputs = _outputs.GetRange( 0, _numStartingOutputs );
-		m_futureOutputs = _outputs.GetRange( _numStartingOutputs, _outputs.Count - 1 );
+		m_futureOutputs = _outputs.GetRange( _numStartingOutputs, _outputs.Count - _numStartingOutputs );
 		NumTotalOutputs = (uint)_outputs.Count;
 		NumStartingOutputs = (uint)_numStartingOutputs;
 	}

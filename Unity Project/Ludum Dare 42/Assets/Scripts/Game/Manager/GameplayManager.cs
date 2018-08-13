@@ -932,5 +932,31 @@ public class GameplayManager : MonoBehaviour
 		outputs.Add( new OutputCell( new CellCoordinates( 6, 5 ), ObjectOrientation.Or0, 2 ) );
 
 		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
+
+
+		// Level Five
+		name = "five";
+		inputs = new List<InputCell>();
+		outputs = new List<OutputCell>();
+		numStartingOutputs = 2;
+		dimensionX = 7;
+		dimensionY = 7;
+		ColorUtility.TryParseHtmlString( "#571007", out color );
+
+		inputs.Add( new InputCell( new CellCoordinates( 0, 4 ), ObjectOrientation.Or0, 8 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 0, 6 ), ObjectOrientation.Or0, 9 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 1, 0 ), ObjectOrientation.Or270, 2 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 3, 0 ), ObjectOrientation.Or270, 7 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 5, 0 ), ObjectOrientation.Or270, 3 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 4, 8 ), ObjectOrientation.Or90, 1 ) );
+		inputs.Add( new InputCell( new CellCoordinates( 7, 8 ), ObjectOrientation.Or90, 5 ) );
+
+		outputs.Add( new OutputCell( new CellCoordinates( 8, 4 ), ObjectOrientation.Or0, 16 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 5, 8 ), ObjectOrientation.Or0, 11 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 3, 8 ), ObjectOrientation.Or0, 4 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 6, 8 ), ObjectOrientation.Or0, 9 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 8, 1 ), ObjectOrientation.Or0, 35 ) );
+
+		m_levels.Add( name, new LevelFile( name, inputs, outputs, numStartingOutputs, dimensionX, dimensionY, color ) );
 	}
 }
