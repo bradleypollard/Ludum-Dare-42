@@ -9,12 +9,16 @@ public class LevelScore : MonoBehaviour
 	private GameplayManager Manager;
 	public Text ScoreText;
     private Button LevelButton;
+    private RectTransform rectTransform;
+    private Image image;
 
-	// Use this for initialization
-	void Start()
+    // Use this for initialization
+    void Start()
 	{
 		Manager = FindObjectOfType<GameplayManager>();
         LevelButton = GetComponent<Button>();
+        rectTransform = GetComponent<RectTransform>();
+        image = GetComponent<Image>();
 
         LevelButton.onClick.AddListener( delegate { Manager.StartGame( LevelName ); } );
 	}
