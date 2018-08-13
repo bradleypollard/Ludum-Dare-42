@@ -758,6 +758,44 @@ public class GameplayManager : MonoBehaviour
                     count++;
                 }
             }
+
+            //Create Visual Wire
+            {
+                Gate gate = (Gate)gridObject;
+                uint index = 0;
+                foreach (CellCoordinates inputCoords in gate.Inputs)
+                {
+                    GridObject inputGridObject = gridManager.GetCell(inputCoords);
+                    if (inputGridObject != null)
+                    {
+                        if (inputGridObject.ObjectType != GridObjectType.Wire)
+                        {
+                            if (IsConnected(false, inputCoords, gridObject))
+                            {
+                                wireVisualManager.CreateWireAndLink(inputCoords, gate.GetCoordinateForInput(index));
+                            }
+                        }
+                    }
+                    index++;
+                }
+
+                index = 0;
+                foreach (CellCoordinates outputCoords in gate.Outputs)
+                {
+                    GridObject outputGridObject = gridManager.GetCell(outputCoords);
+                    if (outputGridObject != null)
+                    {
+                        if (outputGridObject.ObjectType != GridObjectType.Wire)
+                        {
+                            if (IsConnected(true, outputCoords, gridObject))
+                            {
+                                wireVisualManager.CreateWireAndLink(_coordinates, outputCoords);
+                            }
+                        }
+                    }
+                    index++;
+                }
+            }
         }
     }
 	
