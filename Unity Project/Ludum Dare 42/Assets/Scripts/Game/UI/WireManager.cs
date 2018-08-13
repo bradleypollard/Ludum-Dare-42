@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class WireManager : MonoBehaviour
 {
+	public bool DebugLog = false;
+	public bool LogVerbose = false;
+
 	private GridManager m_gridManager;
 	private bool m_inWireEditMode;
 	private Stack<CellCoordinates> m_passedThrough;
@@ -69,7 +72,10 @@ public class WireManager : MonoBehaviour
 					{
 						log += x.ToString() + " ";
 					}
-					// Debug.Log( log );
+					if ( LogVerbose)
+					{
+						Log( log );
+					}
 				}
 			}
 
@@ -178,7 +184,7 @@ public class WireManager : MonoBehaviour
 		GridObject gridObject = m_gridManager.GetCell( _start );
 		if ( gridObject != null && ( gridObject.ObjectType == GridObjectType.Gate || gridObject.ObjectType == GridObjectType.Input ) )
 		{
-			Debug.Log( "WireManager: Starting drag from " + _start.ToString() );
+			Log( "WireManager: Starting drag from " + _start.ToString() );
 			m_passedThrough.Push( _start );
 			m_isDragging = true;
 		}
@@ -190,13 +196,13 @@ public class WireManager : MonoBehaviour
 		GridObject end = m_gridManager.GetCell( _end );
 		if ( end == null )
 		{
-			Debug.Log( "WireManager: Commit attempted on an empty cell " + _end.ToString() + ", ending mode." );
+			Log( "WireManager: Commit attempted on an empty cell " + _end.ToString() + ", ending mode." );
 			ResetMode();
 			return;
 		}
 		if ( m_passedThrough.Count < 3 )
 		{
-			Debug.Log( "WireManager: Commit attempted with too few cells passed through." );
+			Log( "WireManager: Commit attempted with too few cells passed through." );
 			ResetMode();
 			return;
 		}
@@ -211,7 +217,7 @@ public class WireManager : MonoBehaviour
 		m_gameplayManager.UpdateGiblets( toCreate.Entry );
 		m_gameplayManager.UpdateGiblets( toCreate.Exit );
 
-		Debug.Log( "WireManager: Successfully committed at " + _end.ToString() );
+		Log( "WireManager: Successfully committed at " + _end.ToString() );
 		ResetMode();
 	}
 
@@ -229,7 +235,7 @@ public class WireManager : MonoBehaviour
 					if ( _cell == prev )
 					{
 						// Early out if we went backwards
-						Debug.Log( "WireManager: Going backwards to " + _cell.ToString() );
+						Log( "WireManager: Going backwards to " + _cell.ToString() );
 						m_passedThrough.Push( prev );
 						return;
 					}
@@ -288,7 +294,7 @@ public class WireManager : MonoBehaviour
 					if ( cellObject == null )
 					{
 						// Cell is unoccupied, add it
-						Debug.Log( "WireManager: Passing through " + _cell.ToString() );
+						Log( "WireManager: Passing through " + _cell.ToString() );
 						m_passedThrough.Push( _cell );
 					}
 					else
@@ -311,7 +317,7 @@ public class WireManager : MonoBehaviour
 								if ( isValid )
 								{
 									// Head lines up with an input for this gate so add Gate as end point
-									Debug.Log( "WireManager: Passing through " + _cell.ToString() );
+									Log( "WireManager: Passing through " + _cell.ToString() );
 									m_passedThrough.Push( _cell );
 								}
 								else
@@ -326,7 +332,7 @@ public class WireManager : MonoBehaviour
 								if ( output.Entry == head )
 								{
 									// Entry of Output lines up with head, so add Output as end point
-									Debug.Log( "WireManager: Passing through " + _cell.ToString() );
+									Log( "WireManager: Passing through " + _cell.ToString() );
 									m_passedThrough.Push( _cell );
 								}
 								else
@@ -354,5 +360,13 @@ public class WireManager : MonoBehaviour
 		int xDif = Mathf.Abs( (int)_cell.X - (int)_other.X );
 		int yDif = Mathf.Abs( (int)_cell.Y - (int)_other.Y );
 		return xDif + yDif <= 1;
+	}
+
+	private void Log( string _log )
+	{
+		if ( DebugLog )
+		{
+			Debug.Log( _log );
+		}
 	}
 }

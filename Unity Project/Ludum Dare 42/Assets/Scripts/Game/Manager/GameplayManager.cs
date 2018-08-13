@@ -576,7 +576,43 @@ public class GameplayManager : MonoBehaviour
             {
                 if (inputGridObject.ObjectType != GridObjectType.Wire)
                 {
-                    wireVisualManager.CreateWireAndLink(inputCoords, gate.GetCoordinateForInput(index), false);
+					switch ( inputGridObject.ObjectType )
+					{
+						case GridObjectType.Input:
+						{
+							InputCell cell = (InputCell)inputGridObject;
+							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
+							{
+								if ( gridObject.Coordinates[i] == cell.Exit )
+								{
+									wireVisualManager.CreateWireAndLink( inputCoords, gate.GetCoordinateForInput( index ), false );
+									break;
+								}
+							}
+							break;
+						}
+						case GridObjectType.Gate:
+						{
+							Gate gateCell = (Gate)inputGridObject;
+							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
+							{
+								bool updated = false;
+								for ( uint j = 0; j < gateCell.Outputs.Length; ++j )
+								{
+									if ( gridObject.Coordinates[i] == gateCell.Outputs[j] )
+									{
+										wireVisualManager.CreateWireAndLink( inputCoords, gate.GetCoordinateForInput( index ), false );
+										break;
+									}
+								}
+								if ( updated )
+								{
+									break;
+								}
+							}
+							break;
+						}
+					}
                 }
             }
             index++;
@@ -590,7 +626,42 @@ public class GameplayManager : MonoBehaviour
             {
                 if (outputGridObject.ObjectType != GridObjectType.Wire)
                 {
-                    wireVisualManager.CreateWireAndLink(_coordinates, gate.GetCoordinateForInput(index), true);
+					switch ( outputGridObject.ObjectType )
+					{
+						case GridObjectType.Output:
+						{
+							OutputCell cell = (OutputCell)outputGridObject;
+							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
+							{
+								if ( gridObject.Coordinates[i] == cell.Entry )
+								{
+									wireVisualManager.CreateWireAndLink( _coordinates, gate.GetCoordinateForInput( index ), true );
+								}
+							}
+							break;
+						}
+						case GridObjectType.Gate:
+						{
+							Gate gateCell = (Gate)outputGridObject;
+							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
+							{
+								bool updated = false;
+								for ( uint j = 0; j < gateCell.Inputs.Length; ++j )
+								{
+									if ( gridObject.Coordinates[i] == gateCell.Inputs[j] )
+									{
+										wireVisualManager.CreateWireAndLink( _coordinates, gate.GetCoordinateForInput( index ), true );
+										break;
+									}
+								}
+								if ( updated )
+								{
+									break;
+								}
+							}
+							break;
+						}
+					}
                 }
             }
             index++;

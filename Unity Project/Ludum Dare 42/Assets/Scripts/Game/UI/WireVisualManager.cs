@@ -10,6 +10,7 @@ public class WireVisualManager : MonoBehaviour
     VisualGridManager visualGridManager;
 
     public GameObject wirePrefab, wireParent, gridParent;
+	public bool DebugLog = false;
 
     private bool isShowingLocalWire = false;
     private Dictionary<CellCoordinates, List<GameObject>> completedWires;
@@ -147,7 +148,7 @@ public class WireVisualManager : MonoBehaviour
                 currentStart = _wirePath[i];
                 newWire = false;
 
-                Debug.Log("Visual Wire Manager: Start line at " + currentStart);
+                Log("Visual Wire Manager: Start line at " + currentStart);
             }
             else
             {
@@ -156,7 +157,7 @@ public class WireVisualManager : MonoBehaviour
                 {
                     currentEnd = _wirePath[i];
                     direction = new Vector2Int((int)currentEnd.X - (int)currentStart.X, (int)currentEnd.Y - (int)currentStart.Y);
-                    Debug.Log("Visual Wire Manager: Forming at direction " + direction +" at " + currentEnd);
+                    Log("Visual Wire Manager: Forming at direction " + direction +" at " + currentEnd);
 
                     currentWire = CreateWire(currentStart, currentEnd, direction);
                 }
@@ -168,11 +169,11 @@ public class WireVisualManager : MonoBehaviour
                     {
                         currentEnd = _wirePath[i];
                         currentWire.GetComponent<RectTransform>().sizeDelta = new Vector2((visualGridManager.GetScreenFromGrid(currentStart) - visualGridManager.GetScreenFromGrid(currentEnd)).magnitude + 5, 10.0f);
-                        Debug.Log("Visual Wire Manager: Direction continues at " + currentEnd);
+                        Log("Visual Wire Manager: Direction continues at " + currentEnd);
                     }
                     else
                     {
-                        Debug.Log("Visual Wire Manager: Direction changes at " + currentEnd);
+                        Log("Visual Wire Manager: Direction changes at " + currentEnd);
                         //This is where this wire ends
                         localGameObjects.Add(currentWire);
 
@@ -197,7 +198,7 @@ public class WireVisualManager : MonoBehaviour
     GameObject CreateWire(CellCoordinates _currentStart, CellCoordinates _currentEnd, Vector2Int _direction)
     {
         GameObject currentWire = Instantiate(wirePrefab, gridParent.transform);
-        Debug.Log("Visual Wire Manager:Creating Wire at Start point:" + _currentStart + " & End point:" + _currentEnd);
+        Log("Visual Wire Manager:Creating Wire at Start point:" + _currentStart + " & End point:" + _currentEnd);
         currentWire.transform.SetAsFirstSibling();
         currentWire.GetComponent<RectTransform>().anchoredPosition = visualGridManager.GetScreenFromGrid(_currentStart) + new Vector2(-5, 0);
         currentWire.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 90) * Quaternion.LookRotation(Vector3.forward, new Vector3(_direction.x, _direction.y, 0.0f));
@@ -258,4 +259,12 @@ public class WireVisualManager : MonoBehaviour
             }
         }
     }
+
+	private void Log( string _log )
+	{
+		if ( DebugLog )
+		{
+			Debug.Log( _log );
+		}
+	}
 }
