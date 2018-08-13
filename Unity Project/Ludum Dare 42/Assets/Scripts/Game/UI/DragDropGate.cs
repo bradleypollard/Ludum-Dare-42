@@ -78,12 +78,6 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                     m_infoPopup.PopText();
                 }
 
-                //If we were on a space clear it
-                if (m_isPlaced)
-                {
-                    m_gameplayManager.ClearCell(m_cellCoordinates);
-                }
-
                 Vector2Int oGrid = Vector2Int.zero;
 
                 if (m_visualGridManager.GetGridCoordinates(m_rectTransform.anchoredPosition, ref oGrid, false)
@@ -111,6 +105,12 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
 
                             copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
                         }
+                    }
+
+                    //If we were on a space clear it
+                    if (m_isPlaced)
+                    {
+                        m_gameplayManager.ClearCell(m_cellCoordinates);
                     }
 
                     m_isPlaced = true;
