@@ -40,7 +40,6 @@ public class LevelButtonGenerator : MonoBehaviour
         }
 		gateSize += 40;
 
-
 		scrollView.GetComponent<RectTransform>().sizeDelta = new Vector2(scrollView.GetComponent<RectTransform>().sizeDelta.x, gateSize);
 
         //Make Buttons
