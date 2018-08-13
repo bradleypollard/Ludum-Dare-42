@@ -39,6 +39,8 @@ public class GameplayManager : MonoBehaviour
     public RectTransform gridParent, scrollViewParent;
     public GameObject inputCellPrefab, outputCellPrefab;
 
+    public RectTransform timerImage;
+
     //Components
     private GridManager gridManager;
     private WireVisualManager wireVisualManager;
@@ -226,7 +228,9 @@ public class GameplayManager : MonoBehaviour
             {
                 timeLeft -= Time.deltaTime;
 
-                if(timeLeft <= 0.0f)
+                timerImage.Rotate(new Vector3(0, 0, 180.0f * Time.deltaTime));
+
+                if (timeLeft <= 0.0f)
                 {
                     isPlaying = false;
                 }
@@ -386,7 +390,7 @@ public class GameplayManager : MonoBehaviour
         {
             if (timerText != null)
             {
-                timerText.text = (timeLeft > 0 ? Mathf.Floor(timeLeft) + 1 : 0).ToString();
+                timerText.text = (timeLeft > 0 ? (timeLeft < 100 ?Mathf.Floor(timeLeft) + 1 : 100) : 0).ToString();
             }
 
             if (wave >= 0 && waveText != null)
