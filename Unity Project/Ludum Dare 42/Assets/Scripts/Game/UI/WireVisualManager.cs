@@ -208,12 +208,12 @@ public class WireVisualManager : MonoBehaviour
         return currentWire;
     }
 
-    public void CreateWireAndLink(CellCoordinates _currentStart, CellCoordinates _currentEnd, bool _useEnd)
+    public void CreateWireAndLink(CellCoordinates _currentStart, CellCoordinates _currentEnd)
     {
         Vector2Int direction = new Vector2Int((int)_currentEnd.X - (int)_currentStart.X, (int)_currentEnd.Y - (int)_currentStart.Y);
         GameObject wire = CreateWire(_currentStart, _currentEnd, direction);
 
-        completedWires.Add(_useEnd ? _currentEnd : _currentStart, new List<GameObject>() { wire });
+        completedWires.Add(_currentEnd, new List<GameObject>() { wire });
     }
 
     void ClearLocalPath()

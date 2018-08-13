@@ -592,7 +592,7 @@ public class GameplayManager : MonoBehaviour
                 {
 					if ( IsConnected( false, inputCoords , gridObject) )
 					{
-						wireVisualManager.CreateWireAndLink( inputCoords, gate.GetCoordinateForInput( index ), false );
+						wireVisualManager.CreateWireAndLink( inputCoords, gate.GetCoordinateForInput( index ) );
 					}
                 }
             }
@@ -609,7 +609,7 @@ public class GameplayManager : MonoBehaviour
                 {
 					if ( IsConnected( true, outputCoords , gridObject) )
 					{
-						wireVisualManager.CreateWireAndLink( _coordinates, outputCoords, true );
+						wireVisualManager.CreateWireAndLink( _coordinates, outputCoords );
 					}
                 }
             }
