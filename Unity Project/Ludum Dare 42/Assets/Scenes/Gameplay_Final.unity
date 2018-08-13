@@ -3375,6 +3375,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec71e2f7f5f0c2e448d983127aaf26d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DebugLog: 0
+  LogVerbose: 0
 --- !u!114 &2060991417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3389,6 +3391,7 @@ MonoBehaviour:
   wirePrefab: {fileID: 1554733539451246, guid: b0c32cdee8b29704d8f4e78ac9c0edc8, type: 2}
   wireParent: {fileID: 1881415692}
   gridParent: {fileID: 854337374}
+  DebugLog: 0
 --- !u!114 &2060991418
 MonoBehaviour:
   m_ObjectHideFlags: 0
