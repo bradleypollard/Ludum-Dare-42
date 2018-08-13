@@ -87,6 +87,14 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                     CellCoordinates cell = new CellCoordinates((uint)oGrid.x, (uint)oGrid.y);
                     m_cellCoordinates = cell;
 
+                    if(m_isPlaced)
+                    {
+                        if (m_cellCoordinates != oldCoordinates)
+                        {
+                            m_gameplayManager.ClearCell(oldCoordinates, true);
+                        }
+                    }
+
                     if (m_visualGate != null)
                     {
                         VisualGate visualGate = GetComponent<VisualGate>();
@@ -113,10 +121,6 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                     //If we were on a space clear it
                     if (m_isPlaced)
                     {
-                        if (m_cellCoordinates != oldCoordinates)
-                        {
-                            m_gameplayManager.ClearCell(oldCoordinates, true);
-                        }
                         m_gameplayManager.UpdateGiblets(m_cellCoordinates, true);
                     }
 

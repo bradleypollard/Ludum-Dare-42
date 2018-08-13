@@ -292,7 +292,7 @@ public class GameplayManager : MonoBehaviour
 					timerText.text = "0";
 
                     //Random Level
-                    if (_file.Name != "")
+                    if (_file != null)
                     {
                         PlayerPrefs.SetInt("InfiniteScore", wave);
                     }
@@ -794,7 +794,23 @@ public class GameplayManager : MonoBehaviour
                     {
                         if (_startObject.Coordinates[i] == cell.Exit)
                         {
-                            return true;
+                            if (_startObject.ObjectType == GridObjectType.Gate)
+                            {
+                                Gate usAsGate = (Gate)gridManager.GetCell(_startObject.Coordinates[i]);
+
+                                foreach (CellCoordinates input in usAsGate.Inputs)
+                                {
+                                    if (input == _coords)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+
+                                return true;
+                            }
                         }
                     }
                     break;
@@ -806,9 +822,24 @@ public class GameplayManager : MonoBehaviour
                     {
 						if (_startObject.Coordinates[i] == cell.Entry )
 						{
+                            if (_startObject.ObjectType == GridObjectType.Gate)
+                            {
+                                Gate usAsGate = (Gate)gridManager.GetCell(_startObject.Coordinates[i]);
 
-							return true;
-						}
+                                foreach (CellCoordinates output in usAsGate.Outputs)
+                                {
+                                    if (output == _coords)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+
+                                return true;
+                            }
+                        }
 					}
 					break;
 				}
