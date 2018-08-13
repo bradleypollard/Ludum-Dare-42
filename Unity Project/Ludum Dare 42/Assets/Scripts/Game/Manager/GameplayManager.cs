@@ -83,6 +83,22 @@ public class GameplayManager : MonoBehaviour
         orginalBackgroundColour = backgroundColour;
     }
 
+	public void QuitGame()
+	{
+		StartCoroutine( OnQuit() );
+	}
+
+	private IEnumerator OnQuit()
+	{
+		// Transition
+
+		Color clearedBackground = backgroundColour;
+		clearedBackground.a = 0.0f;
+		yield return FadeBackground( clearedBackground, Color.black, fadeLayer, 1.0f );
+		
+		Application.Quit();
+	}
+
     public void StartGame(string levelName)
     {
         //Reset Values
