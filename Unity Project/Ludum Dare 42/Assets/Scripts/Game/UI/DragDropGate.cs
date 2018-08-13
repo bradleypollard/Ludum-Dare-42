@@ -92,20 +92,23 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                         VisualGate visualGate = GetComponent<VisualGate>();
                         if (visualGate != null)
                         {
-                            if (visualGate.gateType != GateType.IncrementDecrement)
+                            if (m_cellCoordinates != oldCoordinates)
                             {
-                                m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject);
-                            }
-                            else
-                            {
-                                m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject, visualGate.value);
-                            }
+                                if (visualGate.gateType != GateType.IncrementDecrement)
+                                {
+                                    m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject, 0, m_isPlaced);
+                                }
+                                else
+                                {
+                                    m_gameplayManager.AddGate(visualGate.gateType, cell, visualGate.objectOrientation, gameObject, visualGate.value, m_isPlaced);
+                                }
 
-                            if (!m_isPlaced)
-                            {
-                                GameObject copy = Instantiate(gameObject, m_gameplayManager.scrollViewParent);
-                                copy.GetComponent<VisualBase>().ResetBase();
-                                copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
+                                if (!m_isPlaced)
+                                {
+                                    GameObject copy = Instantiate(gameObject, m_gameplayManager.scrollViewParent);
+                                    copy.GetComponent<VisualBase>().ResetBase();
+                                    copy.GetComponent<RectTransform>().anchoredPosition = visualGate.GetSpawnLocation();
+                                }
                             }
                         }
                     }
@@ -113,7 +116,10 @@ public class DragDropGate : Selectable, IPointerDownHandler, IPointerUpHandler, 
                     //If we were on a space clear it
                     if (m_isPlaced)
                     {
-                        m_gameplayManager.ClearCell(oldCoordinates, true);
+                        if (m_cellCoordinates != oldCoordinates)
+                        {
+                            m_gameplayManager.ClearCell(oldCoordinates, true);
+                        }
                         m_gameplayManager.UpdateGiblets(m_cellCoordinates, true);
                     }
 
