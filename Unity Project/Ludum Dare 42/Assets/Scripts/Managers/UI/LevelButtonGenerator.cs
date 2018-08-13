@@ -23,11 +23,16 @@ public class LevelButtonGenerator : MonoBehaviour
 
         levelObjects = new List<GameObject>();
 
-        float gateSize = 80;
+        float gateSize = 50;
         foreach (GateType gateType in _gates)
         {
             RectTransform rect = iconPrefabs[(int)gateType].GetComponent<RectTransform>();
             gateSize += rect.sizeDelta.y + 40;
+        }
+
+        if(_gates.Contains(GateType.IncrementDecrement))
+        {
+            gateSize += ((_incDecValues.Count - 1) * 120) + 40;
         }
 
         scrollView.GetComponent<RectTransform>().sizeDelta = new Vector2(scrollView.GetComponent<RectTransform>().sizeDelta.x, gateSize);
