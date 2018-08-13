@@ -576,42 +576,9 @@ public class GameplayManager : MonoBehaviour
             {
                 if (inputGridObject.ObjectType != GridObjectType.Wire)
                 {
-					switch ( inputGridObject.ObjectType )
+					if ( IsConnected( false, inputCoords ) )
 					{
-						case GridObjectType.Input:
-						{
-							InputCell cell = (InputCell)inputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								if ( gridObject.Coordinates[i] == cell.Exit )
-								{
-									wireVisualManager.CreateWireAndLink( inputCoords, gate.GetCoordinateForInput( index ), false );
-									break;
-								}
-							}
-							break;
-						}
-						case GridObjectType.Gate:
-						{
-							Gate gateCell = (Gate)inputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								bool updated = false;
-								for ( uint j = 0; j < gateCell.Outputs.Length; ++j )
-								{
-									if ( gridObject.Coordinates[i] == gateCell.Outputs[j] )
-									{
-										wireVisualManager.CreateWireAndLink( inputCoords, gate.GetCoordinateForInput( index ), false );
-										break;
-									}
-								}
-								if ( updated )
-								{
-									break;
-								}
-							}
-							break;
-						}
+						wireVisualManager.CreateWireAndLink( inputCoords, gate.GetCoordinateForInput( index ), false );
 					}
                 }
             }
@@ -626,41 +593,9 @@ public class GameplayManager : MonoBehaviour
             {
                 if (outputGridObject.ObjectType != GridObjectType.Wire)
                 {
-					switch ( outputGridObject.ObjectType )
+					if ( IsConnected( false, outputCoords ) )
 					{
-						case GridObjectType.Output:
-						{
-							OutputCell cell = (OutputCell)outputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								if ( gridObject.Coordinates[i] == cell.Entry )
-								{
-									wireVisualManager.CreateWireAndLink( _coordinates, gate.GetCoordinateForInput( index ), true );
-								}
-							}
-							break;
-						}
-						case GridObjectType.Gate:
-						{
-							Gate gateCell = (Gate)outputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								bool updated = false;
-								for ( uint j = 0; j < gateCell.Inputs.Length; ++j )
-								{
-									if ( gridObject.Coordinates[i] == gateCell.Inputs[j] )
-									{
-										wireVisualManager.CreateWireAndLink( _coordinates, gate.GetCoordinateForInput( index ), true );
-										break;
-									}
-								}
-								if ( updated )
-								{
-									break;
-								}
-							}
-							break;
-						}
+						wireVisualManager.CreateWireAndLink( _coordinates, outputCoords, true );
 					}
                 }
             }
@@ -772,74 +707,23 @@ public class GameplayManager : MonoBehaviour
             int count = 1;
             foreach (CellCoordinates inputCoords in gate.Inputs)
 			{
-				GridObject inputGridObject = gridManager.GetCell( inputCoords );
-				if ( inputGridObject != null )
+				if ( IsConnected( false, inputCoords ) )
 				{
-					switch ( inputGridObject.ObjectType )
-					{
-						case GridObjectType.Wire:
-						{
-							Wire wire = (Wire)inputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								if ( gridObject.Coordinates[i] == wire.Exit )
-								{
-									//Hide Giblets
-									placedGridObjects[gridObject].transform.Find( "InConnector_" + count ).gameObject.SetActive( false );
-									break;
-								}
-							}
-							break;
-						}
-						case GridObjectType.Input:
-						{
-							InputCell cell = (InputCell)inputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								if ( gridObject.Coordinates[i] == cell.Exit )
-								{
-									//Hide Giblets
-									placedGridObjects[gridObject].transform.Find( "InConnector_" + count ).gameObject.SetActive( false );
-									break;
-								}
-							}
-							break;
-						}
-						case GridObjectType.Gate:
-						{
-							Gate gateCell = (Gate)inputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								bool updated = false;
-								for ( uint j = 0; j < gateCell.Outputs.Length; ++j )
-								{
-									if ( gridObject.Coordinates[i] == gateCell.Outputs[j] )
-									{
-										//Hide Giblets
-										placedGridObjects[gridObject].transform.Find( "InConnector_" + count ).gameObject.SetActive( false );
-										updated = true;
+					//Hide Giblets
+					placedGridObjects[gridObject].transform.Find( "InConnector_" + count ).gameObject.SetActive( false );
 
-										if ( _updateNeighbour )
-										{
-											// Neighbour is gate so update their giblets too
-											UpdateGiblets( inputCoords );
-										}
-										break;
-									}
-								}
-								if ( updated )
-								{
-									break;
-								}
-							}
-							break;
-						}
+					if ( _updateNeighbour )
+					{
+						// Neighbour is gate so update their giblets too
+						UpdateGiblets( inputCoords );
 					}
 				}
 				else
 				{
+					// Show giblets
 					placedGridObjects[gridObject].transform.Find( "InConnector_" + count ).gameObject.SetActive( true );
 				}
+
 
 				count++;
 			}
@@ -847,81 +731,93 @@ public class GameplayManager : MonoBehaviour
             count = 1;
             foreach (CellCoordinates outputCoords in gate.Outputs)
             {
-                GridObject outputGridObject = gridManager.GetCell(outputCoords);
-				if ( outputGridObject != null )
-                {
-					switch ( outputGridObject.ObjectType )
+                if ( IsConnected( true, outputCoords ) )
+				{
+					//Hide Giblets
+					placedGridObjects[gridObject].transform.Find( "OutConnector_" + count ).gameObject.SetActive( false );
+
+					if ( _updateNeighbour )
 					{
-						case GridObjectType.Wire:
-						{
-							Wire wire = (Wire)outputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								if ( gridObject.Coordinates[i] == wire.Entry )
-								{
-									//Hide Giblets
-									placedGridObjects[gridObject].transform.Find( "OutConnector_" + count ).gameObject.SetActive( false );
-									break;
-								}
-							}
-							break;
-						}
-						case GridObjectType.Output:
-						{
-							OutputCell cell = (OutputCell)outputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								if ( gridObject.Coordinates[i] == cell.Entry )
-								{
-									//Hide Giblets
-									placedGridObjects[gridObject].transform.Find( "OutConnector_" + count ).gameObject.SetActive( false );
-									break;
-								}
-							}
-							break;
-						}
-						case GridObjectType.Gate:
-						{
-							Gate gateCell = (Gate)outputGridObject;
-							for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
-							{
-								bool updated = false;
-								for ( uint j = 0; j < gateCell.Inputs.Length; ++j )
-								{
-									if ( gridObject.Coordinates[i] == gateCell.Inputs[j] )
-									{
-										//Hide Giblets
-										placedGridObjects[gridObject].transform.Find( "OutConnector_" + count ).gameObject.SetActive( false );
-										updated = true;
-
-										if ( _updateNeighbour )
-										{
-											// Neighbour is gate so update their giblets too
-											UpdateGiblets( outputCoords );
-										}
-										break;
-									}
-								}
-								if ( updated )
-								{
-									break;
-								}
-							}
-							break;
-						}
+						// Neighbour is gate so update their giblets too
+						UpdateGiblets( outputCoords );
 					}
-                }
-                else
-                {
-                    placedGridObjects[gridObject].transform.Find("OutConnector_" + count).gameObject.SetActive(true);
-                }
+				}
+				else
+				{
+					placedGridObjects[gridObject].transform.Find( "OutConnector_" + count ).gameObject.SetActive( true );
+				}
 
-                count++;
+				
+
+
+
+				count++;
             }
         }
     }
 
-    struct GameInputOutput
+
+
+	private bool IsConnected( bool _isOutput, CellCoordinates _coords )
+	{
+		GridObject gridObject = gridManager.GetCell( _coords );
+		if ( gridObject != null )
+		{
+			switch ( gridObject.ObjectType )
+			{
+				case GridObjectType.Wire:
+				{
+					Wire wire = (Wire)gridObject;
+					for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
+					{
+						CellCoordinates toCompare = _isOutput ? wire.Entry : wire.Exit;
+						if ( gridObject.Coordinates[i] == toCompare )
+						{
+							return true;
+						}
+					}
+					break;
+				}
+				case GridObjectType.Output:
+				{
+					OutputCell cell = (OutputCell)gridObject;
+					for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
+					{
+						if ( gridObject.Coordinates[i] == cell.Entry )
+						{
+
+							return true;
+						}
+					}
+					break;
+				}
+				case GridObjectType.Gate:
+				{
+					Gate gateCell = (Gate)gridObject;
+					for ( uint i = 0; i < gridObject.Coordinates.Length; ++i )
+					{
+						bool updated = false;
+						for ( uint j = 0; j < gateCell.Inputs.Length; ++j )
+						{
+							CellCoordinates[] toCompare = _isOutput ? gateCell.Inputs : gateCell.Outputs;
+							if ( gridObject.Coordinates[i] == toCompare[j] )
+							{
+								return true;
+							}
+						}
+						if ( updated )
+						{
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+		return false;
+	}
+
+	struct GameInputOutput
     {
         Vector2Int m_position;
         int m_value;
