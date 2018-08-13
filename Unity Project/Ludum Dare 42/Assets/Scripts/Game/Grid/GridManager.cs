@@ -9,7 +9,7 @@ public class GridManager : MonoBehaviour
 	public uint NumStartingOutputs = 1;
 	public uint NumTotalOutputs = 5;
 	public int MaxInputValue = 10;
-	public int MaxOutputTarget = 10;
+	public int MaxOutputTarget = 20;
 	public bool IsSolved = false;
 
 	private GridObject[,] m_grid;
@@ -55,6 +55,8 @@ public class GridManager : MonoBehaviour
 		}
 		else
 		{
+			NumTotalOutputs = (uint)Random.Range( 7, DimensionX * 2 + DimensionY * 2 );
+			NumInputs = DimensionX * 2 + DimensionY * 2 - NumTotalOutputs;
 			GenerateInputs();
 			GenerateOutputs();
 		}
@@ -193,20 +195,58 @@ public class GridManager : MonoBehaviour
 
 	private void GenerateInput()
 	{
-		bool clampX = Random.Range( 0, 1) < 0.5f;
-		bool highOrLow = Random.Range(0,1) < 0.5f;
-		uint x = (uint)Random.Range( 1, DimensionY );
-		uint y = (uint)Random.Range( 1, DimensionY );
-		int value = Random.Range( 1, MaxInputValue + 1 );
-		while ( GetCell( new CellCoordinates( x, y ) ) != null )
-		{
-			y = (uint)Random.Range( 1, DimensionY );
-		}
+		bool success = false;
 
-		InputCell input = new InputCell( new CellCoordinates( x, y ), ObjectOrientation.Or0, value );
-		m_inputs.Add( input );
-		InsertObject( input );
-		Debug.Log( "GridManager: Input added - (" + x + "," + y + ") value " + value );
+		while ( !success )
+		{
+			bool clampX = Random.Range( 0, 1 ) < 0.5f;
+			bool clampHigh = Random.Range( 0, 1 ) < 0.5f;
+			uint x = 0;
+			uint y = 0;
+			ObjectOrientation or = ObjectOrientation.Or0;
+			if ( clampX )
+			{
+				if ( clampHigh )
+				{
+					or = ObjectOrientation.Or180;
+					x = DimensionX + 1;
+					y = (uint)Random.Range( 1, DimensionY );
+				}
+				else
+				{
+					or = ObjectOrientation.Or0;
+					x = 0;
+					y = (uint)Random.Range( 1, DimensionY );
+				}
+			}
+			else
+			{
+				if ( clampHigh )
+				{
+					or = ObjectOrientation.Or90;
+					x = (uint)Random.Range( 1, DimensionX );
+					y = DimensionY + 1;
+				}
+				else
+				{
+					or = ObjectOrientation.Or270;
+					x = (uint)Random.Range( 1, DimensionX );
+					y = 0;
+				}
+			}
+			
+			int value = Random.Range( 1, MaxInputValue + 1 );
+
+			success = GetCell( new CellCoordinates( x, y ) ) == null;
+
+			if ( success )
+			{
+				InputCell input = new InputCell( new CellCoordinates( x, y ), or, value );
+				m_inputs.Add( input );
+				InsertObject( input );
+				Debug.Log( "GridManager: Input added - (" + x + "," + y + ") value " + value );
+			}
+		}
 	}
 
 	private void LoadInputs( List<InputCell> _inputs )
@@ -216,6 +256,7 @@ public class GridManager : MonoBehaviour
 			InsertObject( input );
 			Debug.Log( "GridManager: Input added - " + input.Coordinates[0].ToString() + " value " + input.InputValue );
 		}
+		NumInputs = (uint)_inputs.Count;
 		m_inputs = _inputs;
 	}
 
@@ -231,25 +272,67 @@ public class GridManager : MonoBehaviour
 
 	private void GenerateOutput( bool _insert )
 	{
-		uint x = DimensionX + 1;
-		uint y = (uint)Random.Range( 1, DimensionY );
-		int target = Random.Range( 1, MaxOutputTarget + 1 );
-		while ( GetCell( new CellCoordinates( x, y ) ) != null )
+		bool success = false;
+
+		while ( !success )
 		{
-			y = (uint)Random.Range( 1, DimensionY );
+			bool clampX = Random.Range( 0, 1 ) < 0.5f;
+			bool clampHigh = Random.Range( 0, 1 ) < 0.5f;
+			uint x = 0;
+			uint y = 0;
+			ObjectOrientation or = ObjectOrientation.Or0;
+			if ( clampX )
+			{
+				if ( clampHigh )
+				{
+					or = ObjectOrientation.Or0;
+					x = DimensionX + 1;
+					y = (uint)Random.Range( 1, DimensionY );
+				}
+				else
+				{
+					or = ObjectOrientation.Or180;
+					x = 0;
+					y = (uint)Random.Range( 1, DimensionY );
+				}
+			}
+			else
+			{
+				if ( clampHigh )
+				{
+					or = ObjectOrientation.Or270;
+					x = (uint)Random.Range( 1, DimensionX );
+					y = DimensionY + 1;
+				}
+				else
+				{
+					or = ObjectOrientation.Or90;
+					x = (uint)Random.Range( 1, DimensionX );
+					y = 0;
+				}
+			}
+
+			int target = Random.Range( 1, MaxInputValue + 1 );
+
+			success = GetCell( new CellCoordinates( x, y ) ) == null;
+
+			if ( success )
+			{
+				OutputCell output = ( new OutputCell( new CellCoordinates( x, y ), or, target ) );
+				if ( _insert )
+				{
+					m_outputs.Add( output );
+					InsertObject( output );
+					Debug.Log( "GridManager: Output added - " + output.Coordinates[0].ToString() + " target " + output.OutputTarget );
+				}
+				else
+				{
+					m_futureOutputs.Add( output );
+				}
+			}
 		}
 
-		OutputCell output = ( new OutputCell( new CellCoordinates( x, y ), ObjectOrientation.Or0, target ) );
-		if ( _insert )
-		{
-			m_outputs.Add( output );
-			InsertObject( output );
-			Debug.Log( "GridManager: Output added - " + output.Coordinates[0].ToString() + " target " + output.OutputTarget );
-		}
-		else
-		{
-			m_futureOutputs.Add( output );
-		}
+		
 	}
 
 	private void LoadOutputs( List<OutputCell> _outputs, int _numStartingOutputs )
