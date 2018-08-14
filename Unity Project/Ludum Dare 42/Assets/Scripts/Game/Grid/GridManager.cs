@@ -42,8 +42,8 @@ public class GridManager : MonoBehaviour
 		}
 		else
 		{
-			// Random dimensions within range
-			DimensionX = new uint[] { 3,5,7 }[ Random.Range( 0, 2 )];
+            // Random dimensions within range
+            DimensionX = 7;
 			DimensionY = DimensionX;
 		}
 		ClearGrid();

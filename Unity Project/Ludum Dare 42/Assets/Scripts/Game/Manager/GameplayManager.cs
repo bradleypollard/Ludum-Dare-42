@@ -202,34 +202,35 @@ public class GameplayManager : MonoBehaviour
         clearedBackground = backgroundColour;
 		clearedBackground.a = 0.0f;
 		yield return FadeBackground( clearedBackground, backgroundColour, fadeLayer, 1.0f );
-		
 
-		gameInterface.SetActive( false );
+        //Clear visual grid
+        foreach (GameObject input in inputs.Values)
+        {
+            Destroy(input);
+        }
+        foreach (GameObject output in outputs.Values)
+        {
+            Destroy(output);
+        }
+        foreach (GameObject grid in placedGridObjects.Values)
+        {
+            Destroy(grid);
+        }
+        foreach (WireVisualManager.VisualWire visualWire in wireVisualManager.GetCompletedWires())
+        {
+            foreach (GameObject wire in visualWire.wireObjects)
+            {
+                Destroy(wire);
+            }
+        }
+
+        levelButtonGenerator.ClearButtons();
+
+        gameInterface.SetActive( false );
 		mainMenu.SetActive( true );
 
 		yield return FadeBackground( fadeLayer.color, clearedBackground, fadeLayer, 1.0f );
         fadeLayer.raycastTarget = false;
-
-        //Clear visual grid
-        foreach ( GameObject input in inputs.Values )
-		{
-			Destroy( input );
-		}
-		foreach ( GameObject output in outputs.Values )
-		{
-			Destroy( output );
-		}
-		foreach ( GameObject grid in placedGridObjects.Values )
-		{
-			Destroy( grid );
-		}
-		foreach (WireVisualManager.VisualWire visualWire in wireVisualManager.GetCompletedWires() )
-		{
-			foreach ( GameObject wire in visualWire.wireObjects)
-			{
-				Destroy( wire );
-}
-		}
 	}
 
     private IEnumerator GameLoop( LevelFile _file )
@@ -246,6 +247,12 @@ public class GameplayManager : MonoBehaviour
                 if (timeLeft <= 0.0f)
                 {
                     isPlaying = false;
+
+                    //Random Level
+                    if (_file == null)
+                    {
+                        PlayerPrefs.SetInt("InfiniteScore", wave);
+                    }
                 }
 
                 ColourCells(false, true);
@@ -290,12 +297,6 @@ public class GameplayManager : MonoBehaviour
 				{
 					timerText.color = unsolvedWireColour;
 					timerText.text = "0";
-
-                    //Random Level
-                    if (_file != null)
-                    {
-                        PlayerPrefs.SetInt("InfiniteScore", wave);
-                    }
 
                     yield return FadeInText( TimeUpText, 0.5f );
 				}

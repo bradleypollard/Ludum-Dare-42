@@ -9,6 +9,18 @@ public class LevelButtonGenerator : MonoBehaviour
     public List<GameObject> iconPrefabs;
     private List<GameObject> levelObjects;
 
+    public void ClearButtons()
+    {
+        //Delete old GameObjects
+        if (levelObjects != null)
+        {
+            for(int i = 0; i < scrollView.transform.childCount; i++)
+            {
+                Destroy(scrollView.transform.GetChild(i).gameObject);
+            }
+        }
+    }
+
     // Update is called once per frame
     public void RegenerateButtons(List<GateType> _gates, List<int> _incDecValues)
     {
