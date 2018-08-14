@@ -42,7 +42,9 @@ public class GridManager : MonoBehaviour
 		}
 		else
 		{
-			// TODO Random dimensions
+			// Random dimensions within range
+			DimensionX = new uint[] { 3,5,7 }[ Random.Range( 0, 2 )];
+			DimensionY = DimensionX;
 		}
 		ClearGrid();
 		IsSolved = false;
@@ -300,6 +302,8 @@ public class GridManager : MonoBehaviour
 		List<GridObject> ret = new List<GridObject> { _gate };
 		GridObject[] inputs = new GridObject[_gate.Inputs.Length];
 		bool ready = true;
+		int numReadyInputs = inputs.Length;
+		bool[] readyInputs = new bool[_gate.Inputs.Length];
 		for ( uint i = 0; i < inputs.Length; ++i )
 		{
 			// Check if all inputs have been solved
@@ -307,7 +311,9 @@ public class GridManager : MonoBehaviour
 			if ( !_checkedObjects.Contains( inputs[i] ) )
 			{
 				ready = false;
-				break;
+				readyInputs[i] = false;
+				numReadyInputs--;
+				continue;
 			}
 			// Check if the output of this input actually aligns with us...
 			switch ( inputs[i].ObjectType )
@@ -347,28 +353,38 @@ public class GridManager : MonoBehaviour
 			}
 			if ( !ready )
 			{
-				break;
+				numReadyInputs--;
+				readyInputs[i] = false;
+				continue;
 			}
+
+			readyInputs[i] = true;
 		}
-		if ( ready )
+		if ( numReadyInputs == inputs.Length || ( _gate.Type == GateType.Cross && numReadyInputs > 0 ) )
 		{
 			int[] inputValues = new int[inputs.Length];
 			for ( uint i = 0; i < inputs.Length; ++i )
 			{
 				// Get value for coordinate which depepnds on which input we are getting 
-				inputValues[i] = inputs[i].GetValueForCoordinate( _gate.GetCoordinateForInput( i ) );
+				if ( readyInputs[i] )
+				{
+					inputValues[i] = inputs[i].GetValueForCoordinate( _gate.GetCoordinateForInput( i ) );
+				}
 			}
 			// Actually perform the operation
-			_gate.DoOperation( inputValues );
+			_gate.DoOperation( inputValues, readyInputs, numReadyInputs );
 
 			ret = new List<GridObject>();
 			for ( uint i = 0; i < _gate.Outputs.Length; ++i )
 			{
-				// Need to solve all outputs next
-				GridObject output = GetCell( _gate.Outputs[i] );
-				if ( output != null )
+				if ( _gate.Type != GateType.Cross || readyInputs[i] )
 				{
-					ret.Add( output );
+					// Need to solve all outputs next (cross can only solve outputs it has readyInputs for!)
+					GridObject output = GetCell( _gate.Outputs[i] );
+					if ( output != null )
+					{
+						ret.Add( output );
+					}
 				}
 			}
 		}

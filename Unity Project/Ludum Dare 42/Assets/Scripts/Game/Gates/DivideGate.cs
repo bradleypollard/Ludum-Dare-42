@@ -9,11 +9,11 @@ public class DivideGate : Gate
 	{
 	}
 
-	public override void DoOperation( int[] _inputs )
+	public override void DoOperation( int[] _inputs, bool[] _readyInputs, int numReadyInputs )
 	{
-		if ( _inputs.Length != 2 )
+		if ( _inputs.Length != 2 || numReadyInputs != _inputs.Length )
 		{
-			Debug.LogError( "DivideGate: Expected 2 inputs got " + _inputs.Length );
+			Debug.LogError( "MultiplyGate: Expected 2 inputs got " + numReadyInputs );
 		}
 
 		int result = _inputs[0] / _inputs[1];

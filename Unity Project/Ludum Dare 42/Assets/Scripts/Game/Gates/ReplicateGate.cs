@@ -9,13 +9,13 @@ public class ReplicateGate : Gate
 	{
 	}
 
-	public override void DoOperation( int[] _inputs )
+	public override void DoOperation( int[] _inputs, bool[] _readyInputs, int numReadyInputs )
 	{
-		if ( _inputs.Length != 1 )
+		if ( _inputs.Length != 1 || numReadyInputs != _inputs.Length )
 		{
-			Debug.LogError( "ReplicateGate: Expected 1 input got " + _inputs.Length );
+			Debug.LogError( "ReplicateGate: Expected 1 inputs got " + numReadyInputs );
 		}
-		
+
 		CurrentValues = new int[] { _inputs[0], _inputs[0] };
 	}
 

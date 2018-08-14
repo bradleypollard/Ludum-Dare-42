@@ -12,11 +12,11 @@ public class IncrementDecrementGate : Gate
 		m_amount = _amount;
 	}
 
-	public override void DoOperation( int[] _inputs )
+	public override void DoOperation( int[] _inputs, bool[] _readyInputs, int numReadyInputs )
 	{
-		if ( _inputs.Length != 1 )
+		if ( _inputs.Length != 1 || numReadyInputs != _inputs.Length )
 		{
-			Debug.LogError( "IncrementDecrementGate: Expected 1 input got " + _inputs.Length );
+			Debug.LogError( "IncrementDecrementGate: Expected 1 inputs got " + numReadyInputs );
 		}
 
 		int result = _inputs[0] + m_amount;

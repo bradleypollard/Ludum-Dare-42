@@ -9,13 +9,13 @@ public class CrossGate : Gate
 	{
 	}
 
-	public override void DoOperation( int[] _inputs )
+	public override void DoOperation( int[] _inputs, bool[] _readyInputs, int numReadyInputs )
 	{
 		if ( _inputs.Length != 2 )
 		{
 			Debug.LogError( "CrossGate: Expected 2 input got " + _inputs.Length );
 		}
-		CurrentValues = new int[] { _inputs[0], _inputs[1] };
+		CurrentValues = new int[] { _readyInputs[0] ? _inputs[0] : 0, _readyInputs[1] ? _inputs[1] : 0 };
 	}
 
 	private static CellCoordinates[] FindFootprint( CellCoordinates _coordinates, ObjectOrientation _orientation )
