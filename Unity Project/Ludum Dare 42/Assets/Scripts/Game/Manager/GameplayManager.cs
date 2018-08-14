@@ -1027,9 +1027,9 @@ public class GameplayManager : MonoBehaviour
 		inputs.Add( new InputCell( new CellCoordinates( 7, 8 ), ObjectOrientation.Or90, 5 ) );
 
 		outputs.Add( new OutputCell( new CellCoordinates( 8, 4 ), ObjectOrientation.Or0, 16 ) );
-		outputs.Add( new OutputCell( new CellCoordinates( 5, 8 ), ObjectOrientation.Or0, 11 ) );
-		outputs.Add( new OutputCell( new CellCoordinates( 3, 8 ), ObjectOrientation.Or0, 4 ) );
-		outputs.Add( new OutputCell( new CellCoordinates( 6, 8 ), ObjectOrientation.Or0, 9 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 5, 8 ), ObjectOrientation.Or270, 11 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 3, 8 ), ObjectOrientation.Or270, 4 ) );
+		outputs.Add( new OutputCell( new CellCoordinates( 6, 8 ), ObjectOrientation.Or270, 9 ) );
 		outputs.Add( new OutputCell( new CellCoordinates( 8, 1 ), ObjectOrientation.Or0, 35 ) );
 
 		m_levels.Add( name, new LevelFile( name, inputs, outputs, buttons, incrementDecrementValues, numStartingOutputs, dimensionX, dimensionY, color ) );
